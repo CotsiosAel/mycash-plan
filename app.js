@@ -1,4 +1,4 @@
-const appVersion = "1.7";
+const appVersion = "1.8";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -11,6 +11,8 @@ const storageKeys = {
 const expenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
 const incomeCategories = ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"];
 
+const historyFilterCategories = [...new Set([...incomeCategories, ...expenseCategories])];
+
 const today = new Date();
 
 const state = {
@@ -18,6 +20,9 @@ const state = {
   goals: JSON.parse(localStorage.getItem(storageKeys.goals) || '{"goalAmount":0,"savedAmount":0}'),
   budgets: normalizeBudgets(JSON.parse(localStorage.getItem(storageKeys.budgets) || "{}")),
   filter: "all",
+  categoryFilter: "all",
+  recurringFilter: "all",
+  searchQuery: "",
   selectedMonth: new Date(today.getFullYear(), today.getMonth(), 1),
   editingId: null,
   security: normalizeSecurity(JSON.parse(localStorage.getItem(storageKeys.security) || "{}")),
@@ -36,6 +41,10 @@ const elements = {
   goalForm: document.querySelector("#goalForm"),
   budgetForm: document.querySelector("#budgetForm"),
   filter: document.querySelector("#filter"),
+  categoryFilter: document.querySelector("#categoryFilter"),
+  recurringFilter: document.querySelector("#recurringFilter"),
+  historySearch: document.querySelector("#historySearch"),
+  clearHistoryFilters: document.querySelector("#clearHistoryFilters"),
   type: document.querySelector("#type"),
   category: document.querySelector("#category"),
   amount: document.querySelector("#amount"),
@@ -549,10 +558,52 @@ function renderDashboard() {
   }
 }
 
+function syncHistoryFilterControls() {
+  elements.filter.value = state.filter;
+  elements.categoryFilter.innerHTML = [
+    '<option value="all">Όλες οι κατηγορίες</option>',
+    ...historyFilterCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`),
+  ].join("");
+  elements.categoryFilter.value = historyFilterCategories.includes(state.categoryFilter) ? state.categoryFilter : "all";
+  state.categoryFilter = elements.categoryFilter.value;
+  elements.recurringFilter.value = state.recurringFilter;
+  elements.historySearch.value = state.searchQuery;
+}
+
+function normalizeSearchText(value) {
+  return String(value || "").toLocaleLowerCase("el-GR").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function transactionSearchText(transaction) {
+  const typeLabel = transaction.type === "income" ? "Έσοδο Έσοδα income" : "Έξοδο Έξοδα expense";
+  const sign = transaction.type === "income" ? "+" : "-";
+  return [
+    transaction.category,
+    transaction.note,
+    typeLabel,
+    `${sign}${euro.format(transaction.amount)}`,
+    String(transaction.amount),
+  ].join(" ");
+}
+
+function filterHistoryTransactions(transactions) {
+  const query = normalizeSearchText(state.searchQuery.trim());
+  return transactions.filter((transaction) => {
+    const matchesType = state.filter === "all" || transaction.type === state.filter;
+    const matchesCategory = state.categoryFilter === "all" || transaction.category === state.categoryFilter;
+    const matchesRecurring = state.recurringFilter === "all"
+      || (state.recurringFilter === "recurring" && transaction.recurring)
+      || (state.recurringFilter === "one-time" && !transaction.recurring);
+    const matchesSearch = !query || normalizeSearchText(transactionSearchText(transaction)).includes(query);
+    return matchesType && matchesCategory && matchesRecurring && matchesSearch;
+  });
+}
+
 function renderHistory() {
   renderMonthSelectors();
+  syncHistoryFilterControls();
   const monthly = selectedMonthTransactions();
-  const filtered = state.filter === "all" ? monthly : monthly.filter((transaction) => transaction.type === state.filter);
+  const filtered = filterHistoryTransactions(monthly);
   const monthlyIncome = sumByType(monthly, "income");
   const monthlyExpenses = sumByType(monthly, "expense");
   const monthlyBalance = monthlyIncome - monthlyExpenses;
@@ -562,11 +613,20 @@ function renderHistory() {
   elements.historyBalanceTotal.textContent = euro.format(monthlyBalance);
   elements.historyBalanceTotal.classList.toggle("negative", monthlyBalance < 0);
 
-  if (!filtered.length) {
+  if (!monthly.length) {
     elements.transactionList.innerHTML = `
       <div class="card empty-state history-empty">
         <strong>Δεν υπάρχουν συναλλαγές για αυτόν τον μήνα.</strong>
         <span>Πρόσθεσε έσοδα ή έξοδα για να ξεκινήσεις.</span>
+      </div>`;
+    return;
+  }
+
+  if (!filtered.length) {
+    elements.transactionList.innerHTML = `
+      <div class="card empty-state history-empty">
+        <strong>Δεν βρέθηκαν συναλλαγές με αυτά τα φίλτρα.</strong>
+        <span>Δοκίμασε διαφορετική αναζήτηση ή καθάρισε τα φίλτρα.</span>
       </div>`;
     return;
   }
@@ -815,6 +875,29 @@ elements.transactionList.addEventListener("click", (event) => {
 
 elements.filter.addEventListener("change", (event) => {
   state.filter = event.target.value;
+  renderHistory();
+});
+
+elements.categoryFilter.addEventListener("change", (event) => {
+  state.categoryFilter = event.target.value;
+  renderHistory();
+});
+
+elements.recurringFilter.addEventListener("change", (event) => {
+  state.recurringFilter = event.target.value;
+  renderHistory();
+});
+
+elements.historySearch.addEventListener("input", (event) => {
+  state.searchQuery = event.target.value;
+  renderHistory();
+});
+
+elements.clearHistoryFilters.addEventListener("click", () => {
+  state.filter = "all";
+  state.categoryFilter = "all";
+  state.recurringFilter = "all";
+  state.searchQuery = "";
   renderHistory();
 });
 

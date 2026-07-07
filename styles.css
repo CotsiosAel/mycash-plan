@@ -75,8 +75,13 @@ input:focus, select:focus { outline: 3px solid rgba(20, 184, 166, .22); border-c
 .history-summary strong { display: block; font-size: .95rem; letter-spacing: -.03em; color: var(--primary-dark); }
 .history-summary div:nth-child(1) strong { color: var(--income); }
 .history-summary div:nth-child(2) strong, .history-summary strong.negative { color: var(--expense); }
+.history-filters { width: 100%; display: grid; gap: 10px; padding: 12px; border: 1px solid rgba(15, 118, 110, .14); border-radius: 24px; background: rgba(255, 255, 255, .68); box-shadow: 0 12px 28px rgba(15, 23, 42, .06); }
+.history-search-label { display: block; }
+.history-search-label input { border-color: rgba(15, 118, 110, .18); background: rgba(255, 255, 255, .96); font-weight: 800; }
+.history-filter-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .filter-tabs { width: 100%; padding: 6px; border: 1px solid rgba(15, 118, 110, .16); border-radius: 20px; background: rgba(255,255,255,.72); }
 .filter-tabs select { border: 0; background: #ecfdf5; color: var(--primary-dark); font-weight: 900; }
+.clear-filters-button { width: 100%; border: 1px solid rgba(15, 118, 110, .18); border-radius: 18px; padding: 12px 14px; color: var(--primary-dark); background: linear-gradient(135deg, rgba(236, 253, 245, .95), rgba(255, 255, 255, .95)); font: inherit; font-weight: 950; }
 .transaction-list { display: grid; gap: 18px; margin-top: 16px; }
 .transaction-date-group { display: grid; gap: 10px; }
 .date-heading { margin: 0; padding: 0 4px; color: var(--primary-dark); font-size: .92rem; font-weight: 950; letter-spacing: -.01em; }
@@ -110,7 +115,7 @@ input:focus, select:focus { outline: 3px solid rgba(20, 184, 166, .22); border-c
 .nav-button.active { background: #ecfdf5; color: var(--primary-dark); }
 @media (min-width: 720px) { .app-shell { padding-top: calc(34px + var(--safe-area-top)); } .card { padding: 24px; } }
 
-@media (min-width: 520px) { .transaction-item { grid-template-columns: 1fr auto; } .transaction-side { justify-items: end; } .month-selector { width: auto; min-width: 280px; } .filter-tabs { width: auto; min-width: 180px; } }
+@media (min-width: 520px) { .transaction-item { grid-template-columns: 1fr auto; } .transaction-side { justify-items: end; } .month-selector { width: auto; min-width: 280px; } .history-filter-grid { grid-template-columns: repeat(3, 1fr); } .clear-filters-button { justify-self: end; width: auto; } }
 .budget-summary, .budget-inputs { display: grid; gap: 12px; }
 .budget-row { padding: 14px; border: 1px solid rgba(15, 118, 110, .14); border-radius: 20px; background: rgba(248, 250, 252, .88); }
 .budget-row-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
