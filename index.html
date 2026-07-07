@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0f172a" />
     <meta name="description" content="MyCash Plan - προσωπικός οικονομικός προγραμματισμός σε ευρώ." />
-    <title>MyCash Plan 2.0</title>
+    <title>MyCash Plan 2.1</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230f172a'/%3E%3Cpath fill='%2334d399' d='M46 112c0-32 24-56 56-56 17 0 31 6 42 17l-17 17c-7-7-15-10-25-10-18 0-32 14-32 32s14 32 32 32c10 0 18-3 25-10l17 17c-11 11-25 17-42 17-32 0-56-24-56-56Z'/%3E%3Cpath fill='%23f8fafc' d='M42 37h108v19H42z'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="styles.css" />
@@ -15,7 +15,7 @@
       <header class="hero">
         <div>
           <p class="eyebrow">Προσωπικό ταμείο</p>
-          <h1>MyCash Plan <span class="version-badge">2.0</span></h1>
+          <h1>MyCash Plan <span class="version-badge">2.1</span></h1>
         </div>
         <div class="hero-actions">
           <button id="manualLockHeader" class="lock-now-button" type="button" hidden>Κλείδωμα τώρα</button>
@@ -42,6 +42,12 @@
             <article class="stat-card income"><span>Έσοδα μήνα</span><strong id="incomeTotal">0,00 €</strong></article>
             <article class="stat-card expense"><span>Έξοδα μήνα</span><strong id="expenseTotal">0,00 €</strong></article>
           </div>
+          <article class="card account-summary-card">
+            <div class="section-heading">
+              <h3>Υπόλοιπα λογαριασμών</h3>
+            </div>
+            <div id="accountSummary" class="account-summary"></div>
+          </article>
           <article class="card monthly-stats-card">
             <div class="section-heading">
               <h3>Στατιστικά μήνα</h3>
@@ -80,14 +86,26 @@
               <select id="type" required>
                 <option value="income">Έσοδο</option>
                 <option value="expense">Έξοδο</option>
+                <option value="transfer">Μεταφορά</option>
               </select>
             </label>
             <label>Ποσό (€)
               <input id="amount" type="number" min="0.01" step="0.01" placeholder="π.χ. 45.50" required />
             </label>
-            <label>Κατηγορία
+            <label id="categoryLabel">Κατηγορία
               <select id="category" required></select>
             </label>
+            <label id="accountLabel">Λογαριασμός
+              <select id="account" required></select>
+            </label>
+            <div id="transferFields" class="transfer-fields" hidden>
+              <label>Από λογαριασμό
+                <select id="fromAccount"></select>
+              </label>
+              <label>Προς λογαριασμό
+                <select id="toAccount"></select>
+              </label>
+            </div>
             <label>Σημείωση
               <input id="note" type="text" placeholder="Προαιρετική περιγραφή" />
             </label>
@@ -136,6 +154,11 @@
                     <option value="all">Όλες οι κατηγορίες</option>
                   </select>
                 </div>
+                <div class="filter-tabs" aria-label="Φίλτρο λογαριασμού">
+                  <select id="accountFilter" aria-label="Φίλτρο λογαριασμού">
+                    <option value="all">Όλοι οι λογαριασμοί</option>
+                  </select>
+                </div>
                 <div class="filter-tabs" aria-label="Φίλτρο μηνιαίων συναλλαγών">
                   <select id="recurringFilter" aria-label="Φίλτρο μηνιαίων συναλλαγών">
                     <option value="all">Όλες</option>
@@ -182,12 +205,38 @@
             </div>
             <div class="app-info-list">
               <strong>MyCash Plan</strong>
-              <span>Version 2.0</span>
+              <span>Version 2.1</span>
               <p class="muted">Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου.</p>
               <p class="muted">Κράτησε backup για να μη χάσεις τα δεδομένα σου.</p>
             </div>
             <button id="checkUpdate" type="button" class="secondary-button small-action-button">Έλεγχος ενημέρωσης</button>
             <p id="settingsMessage" class="settings-message" aria-live="polite"></p>
+          </article>
+          <article id="accountsSettingsCard" class="card accounts-settings-card">
+            <div class="section-heading">
+              <h3>Πορτοφόλια & Λογαριασμοί</h3>
+            </div>
+            <p class="muted">Οργάνωσε πού βρίσκονται τα χρήματά σου.</p>
+            <p id="accountMessage" class="account-message" aria-live="polite"></p>
+            <form id="accountForm" class="account-form">
+              <label>Όνομα λογαριασμού
+                <input id="accountName" type="text" placeholder="π.χ. Μετρητά, Revolut, Τράπεζα" autocomplete="off" />
+              </label>
+              <label>Τύπος
+                <select id="accountType">
+                  <option value="cash">Μετρητά</option>
+                  <option value="bank">Τράπεζα</option>
+                  <option value="card">Κάρτα</option>
+                  <option value="savings">Αποταμίευση</option>
+                  <option value="other">Άλλο</option>
+                </select>
+              </label>
+              <label>Αρχικό υπόλοιπο
+                <input id="accountStartingBalance" type="number" step="0.01" placeholder="Αρχικό υπόλοιπο" />
+              </label>
+              <button type="submit" class="primary-button">Προσθήκη λογαριασμού</button>
+            </form>
+            <div id="accountsList" class="accounts-list"></div>
           </article>
           <article class="card security-card">
             <div class="section-heading">

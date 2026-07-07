@@ -1,4 +1,4 @@
-const appVersion = "2.0";
+const appVersion = "2.1";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -8,7 +8,11 @@ const storageKeys = {
   sessionUnlocked: "mycash-plan-session-unlocked",
   customCategories: "mycash-plan-custom-categories",
   onboardingSeen: "mycash-plan-onboarding-seen",
+  accounts: "mycash-plan-accounts",
 };
+
+const defaultAccountName = "Μετρητά";
+const accountTypeLabels = { cash: "Μετρητά", bank: "Τράπεζα", card: "Κάρτα", savings: "Αποταμίευση", other: "Άλλο" };
 
 const defaultExpenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
 const defaultIncomeCategories = ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"];
@@ -17,6 +21,7 @@ const defaultIncomeCategories = ["Μισθός", "Επιχείρηση", "Δώρ
 const today = new Date();
 
 const state = {
+  accounts: normalizeAccounts(JSON.parse(localStorage.getItem(storageKeys.accounts) || "[]")),
   transactions: normalizeTransactions(JSON.parse(localStorage.getItem(storageKeys.transactions) || "[]")),
   goals: JSON.parse(localStorage.getItem(storageKeys.goals) || '{"goalAmount":0,"savedAmount":0}'),
   customCategories: normalizeCustomCategories(JSON.parse(localStorage.getItem(storageKeys.customCategories) || "{}")),
@@ -24,6 +29,7 @@ const state = {
   filter: "all",
   categoryFilter: "all",
   recurringFilter: "all",
+  accountFilter: "all",
   searchQuery: "",
   selectedMonth: new Date(today.getFullYear(), today.getMonth(), 1),
   editingId: null,
@@ -31,6 +37,7 @@ const state = {
   hiddenAt: null,
 };
 state.budgets = normalizeBudgets(state.budgets);
+if (!localStorage.getItem(storageKeys.accounts)) saveAccounts();
 
 const euro = new Intl.NumberFormat("el-GR", { style: "currency", currency: "EUR" });
 const dateFormatter = new Intl.DateTimeFormat("el-GR", { dateStyle: "medium" });
@@ -44,13 +51,21 @@ const elements = {
   goalForm: document.querySelector("#goalForm"),
   budgetForm: document.querySelector("#budgetForm"),
   categoryForm: document.querySelector("#categoryForm"),
+  accountForm: document.querySelector("#accountForm"),
   filter: document.querySelector("#filter"),
   categoryFilter: document.querySelector("#categoryFilter"),
   recurringFilter: document.querySelector("#recurringFilter"),
+  accountFilter: document.querySelector("#accountFilter"),
   historySearch: document.querySelector("#historySearch"),
   clearHistoryFilters: document.querySelector("#clearHistoryFilters"),
   type: document.querySelector("#type"),
   category: document.querySelector("#category"),
+  categoryLabel: document.querySelector("#categoryLabel"),
+  account: document.querySelector("#account"),
+  accountLabel: document.querySelector("#accountLabel"),
+  transferFields: document.querySelector("#transferFields"),
+  fromAccount: document.querySelector("#fromAccount"),
+  toAccount: document.querySelector("#toAccount"),
   amount: document.querySelector("#amount"),
   note: document.querySelector("#note"),
   date: document.querySelector("#date"),
@@ -68,6 +83,7 @@ const elements = {
   expenseTotal: document.querySelector("#expenseTotal"),
   balanceTotal: document.querySelector("#balanceTotal"),
   friendlyMessage: document.querySelector("#friendlyMessage"),
+  accountSummary: document.querySelector("#accountSummary"),
   categorySummary: document.querySelector("#categorySummary"),
   monthlyStats: document.querySelector("#monthlyStats"),
   smartInsights: document.querySelector("#smartInsights"),
@@ -91,6 +107,11 @@ const elements = {
   categoryMessage: document.querySelector("#categoryMessage"),
   incomeCategoryList: document.querySelector("#incomeCategoryList"),
   expenseCategoryList: document.querySelector("#expenseCategoryList"),
+  accountName: document.querySelector("#accountName"),
+  accountType: document.querySelector("#accountType"),
+  accountStartingBalance: document.querySelector("#accountStartingBalance"),
+  accountMessage: document.querySelector("#accountMessage"),
+  accountsList: document.querySelector("#accountsList"),
   securityPanel: document.querySelector("#securityPanel"),
   securityMessage: document.querySelector("#securityMessage"),
   settingsMessage: document.querySelector("#settingsMessage"),
@@ -105,6 +126,46 @@ const elements = {
   lockMessage: document.querySelector("#lockMessage"),
 };
 
+
+function normalizeAccounts(accounts) {
+  const seen = new Set();
+  const normalized = (Array.isArray(accounts) ? accounts : []).reduce((list, account, index) => {
+    const name = String(account?.name || "").trim();
+    const id = String(account?.id || `acc_legacy_${index}`).trim();
+    if (!name || !id || seen.has(id)) return list;
+    seen.add(id);
+    list.push({
+      id,
+      name,
+      type: accountTypeLabels[account?.type] ? account.type : "other",
+      startingBalance: Number(account?.startingBalance) || 0,
+      archived: Boolean(account?.archived),
+    });
+    return list;
+  }, []);
+  if (!normalized.length) normalized.push({ id: "acc_default_cash", name: defaultAccountName, type: "cash", startingBalance: 0, archived: false });
+  return normalized;
+}
+
+function saveAccounts() {
+  localStorage.setItem(storageKeys.accounts, JSON.stringify(state.accounts));
+}
+
+function defaultAccount() {
+  return state.accounts.find((account) => account.name === defaultAccountName) || state.accounts[0];
+}
+
+function accountForTransaction(transaction) {
+  return state.accounts.find((account) => account.id === transaction?.accountId) || defaultAccount();
+}
+
+function activeAccounts() {
+  return state.accounts.filter((account) => !account.archived);
+}
+
+function transactionAccountId(transaction) {
+  return transaction?.accountId || defaultAccount().id;
+}
 
 function uniqueTrimmedCategories(categories) {
   const seen = new Set();
@@ -245,12 +306,15 @@ function applyLockState() {
 function normalizeTransactions(transactions) {
   return Array.isArray(transactions) ? transactions.map((transaction, index) => ({
     id: transaction.id || `legacy-${index}-${transaction.date || Date.now()}`,
-    type: transaction.type === "expense" ? "expense" : "income",
+    type: ["income", "expense", "transfer"].includes(transaction.type) ? transaction.type : "income",
     amount: Number(transaction.amount) || 0,
-    category: transaction.category || "Άλλο",
+    category: transaction.category || (transaction.type === "transfer" ? "Μεταφορά" : "Άλλο"),
+    accountId: transaction.accountId || "",
+    fromAccountId: transaction.fromAccountId || "",
+    toAccountId: transaction.toAccountId || "",
     note: transaction.note || "",
     date: transaction.date || new Date().toISOString().slice(0, 10),
-    recurring: Boolean(transaction.recurring),
+    recurring: transaction.type === "transfer" ? false : Boolean(transaction.recurring),
   })) : [];
 }
 
@@ -314,11 +378,13 @@ function clearAllUserData() {
   if (!confirm("Θέλεις σίγουρα να διαγράψεις όλα τα δεδομένα; Αυτή η ενέργεια δεν αναιρείται.")) return;
   const removePin = confirm("Θέλεις να αφαιρεθεί και το PIN;");
   state.transactions = [];
+  state.accounts = normalizeAccounts([]);
   state.goals = { goalAmount: 0, savedAmount: 0 };
   state.customCategories = { income: [], expense: [] };
   state.budgets = normalizeBudgets({});
   state.editingId = null;
   saveTransactions();
+  saveAccounts();
   saveGoals();
   saveBudgets();
   saveCustomCategories();
@@ -346,6 +412,7 @@ function createBackupPayload() {
     app: "MyCash Plan",
     version: appVersion,
     exportDate: new Date().toISOString(),
+    accounts: state.accounts,
     transactions: state.transactions,
     goals: state.goals,
     budgets: state.budgets,
@@ -366,7 +433,7 @@ function escapeCsvValue(value) {
 }
 
 function exportTransactionsCsv() {
-  const header = ["Date", "Type", "Category", "Note", "Amount", "Recurring"];
+  const header = ["Date", "Type", "Category", "Note", "Amount", "Recurring", "Account"];
   const rows = state.transactions.map((transaction) => [
     transaction.date,
     transaction.type,
@@ -374,6 +441,7 @@ function exportTransactionsCsv() {
     transaction.note,
     Number(transaction.amount).toFixed(2),
     transaction.recurring ? "Yes" : "No",
+    accountLabelForExport(transaction),
   ]);
   const csv = [header, ...rows].map((row) => row.map(escapeCsvValue).join(",")).join("\r\n");
   downloadFile(`\ufeff${csv}`, `mycash-plan-transactions-${todayFileStamp()}.csv`, "text/csv;charset=utf-8");
@@ -398,6 +466,7 @@ function restoreBackupPayload(payload) {
 
   if (!confirm("Η επαναφορά θα αντικαταστήσει τα τωρινά δεδομένα. Συνέχεια;")) return;
 
+  state.accounts = normalizeAccounts(payload.accounts || []);
   state.transactions = normalizeTransactions(payload.transactions);
   state.goals = {
     goalAmount: Number(payload.goals.goalAmount) || 0,
@@ -413,6 +482,7 @@ function restoreBackupPayload(payload) {
   state.editingId = null;
 
   saveTransactions();
+  saveAccounts();
   saveGoals();
   saveBudgets();
   saveCustomCategories();
@@ -485,6 +555,50 @@ function formatDateInputValue(date) {
 
 function sumByType(transactions, type) {
   return transactions.filter((item) => item.type === type).reduce((sum, item) => sum + item.amount, 0);
+}
+
+function accountLabelForExport(transaction) {
+  if (transaction.type === "transfer") {
+    const from = state.accounts.find((account) => account.id === transaction.fromAccountId) || defaultAccount();
+    const to = state.accounts.find((account) => account.id === transaction.toAccountId) || defaultAccount();
+    return `${from.name} → ${to.name}`;
+  }
+  return accountForTransaction(transaction).name;
+}
+
+function accountBalance(account, transactions = accountTransactionsThroughSelectedMonth()) {
+  return transactions.reduce((balance, transaction) => {
+    if (transaction.type === "income" && transactionAccountId(transaction) === account.id) return balance + transaction.amount;
+    if (transaction.type === "expense" && transactionAccountId(transaction) === account.id) return balance - transaction.amount;
+    if (transaction.type === "transfer") {
+      if ((transaction.fromAccountId || defaultAccount().id) === account.id) return balance - transaction.amount;
+      if ((transaction.toAccountId || defaultAccount().id) === account.id) return balance + transaction.amount;
+    }
+    return balance;
+  }, Number(account.startingBalance) || 0);
+}
+
+function accountTransactionsThroughSelectedMonth() {
+  const end = new Date(state.selectedMonth.getFullYear(), state.selectedMonth.getMonth() + 1, 0);
+  return state.transactions.flatMap((transaction) => {
+    const originalDate = new Date(`${transaction.date}T00:00:00`);
+    if (originalDate > end) return [];
+    if (!transaction.recurring) return [{ ...transaction }];
+    const occurrences = [];
+    for (let cursor = new Date(originalDate.getFullYear(), originalDate.getMonth(), 1); cursor <= end; cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)) {
+      occurrences.push({ ...transaction, displayDate: recurringDisplayDate(transaction.date, cursor.getFullYear(), cursor.getMonth()), isVirtualRecurring: cursor.getMonth() !== originalDate.getMonth() || cursor.getFullYear() !== originalDate.getFullYear() });
+    }
+    return occurrences;
+  });
+}
+
+function renderAccountSummary() {
+  const accounts = activeAccounts();
+  const balanceTransactions = accountTransactionsThroughSelectedMonth();
+  elements.accountSummary.innerHTML = accounts.length ? accounts.map((account) => {
+    const balance = accountBalance(account, balanceTransactions);
+    return `<div class="account-balance-row"><span>${escapeHtml(account.name)}</span><strong class="${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong></div>`;
+  }).join("") : '<p class="muted empty-copy">Δεν υπάρχουν ενεργοί λογαριασμοί.</p>';
 }
 
 function progressPercent(saved, goal) {
@@ -661,6 +775,7 @@ function renderDashboard() {
   renderMonthlyStatistics(monthly);
   renderCategorySummary(monthly);
   renderBudgetSummary(monthly);
+  renderAccountSummary();
 
   if (!monthly.length) {
     elements.friendlyMessage.textContent = "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.";
@@ -682,6 +797,9 @@ function syncHistoryFilterControls(monthly = selectedMonthTransactions()) {
   ].join("");
   elements.categoryFilter.value = historyCategories.includes(state.categoryFilter) ? state.categoryFilter : "all";
   state.categoryFilter = elements.categoryFilter.value;
+  elements.accountFilter.innerHTML = ['<option value="all">Όλοι οι λογαριασμοί</option>', ...state.accounts.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(account.name)}</option>`)].join("");
+  elements.accountFilter.value = state.accountFilter === "all" || state.accounts.some((account) => account.id === state.accountFilter) ? state.accountFilter : "all";
+  state.accountFilter = elements.accountFilter.value;
   elements.recurringFilter.value = state.recurringFilter;
   elements.historySearch.value = state.searchQuery;
 }
@@ -707,11 +825,12 @@ function filterHistoryTransactions(transactions) {
   return transactions.filter((transaction) => {
     const matchesType = state.filter === "all" || transaction.type === state.filter;
     const matchesCategory = state.categoryFilter === "all" || transaction.category === state.categoryFilter;
+    const matchesAccount = state.accountFilter === "all" || transactionAccountId(transaction) === state.accountFilter || transaction.fromAccountId === state.accountFilter || transaction.toAccountId === state.accountFilter;
     const matchesRecurring = state.recurringFilter === "all"
       || (state.recurringFilter === "recurring" && transaction.recurring)
       || (state.recurringFilter === "one-time" && !transaction.recurring);
     const matchesSearch = !query || normalizeSearchText(transactionSearchText(transaction)).includes(query);
-    return matchesType && matchesCategory && matchesRecurring && matchesSearch;
+    return matchesType && matchesCategory && matchesAccount && matchesRecurring && matchesSearch;
   });
 }
 
@@ -767,8 +886,9 @@ function renderHistory() {
 
 function transactionCard(transaction) {
   const isIncome = transaction.type === "income";
-  const typeLabel = isIncome ? "Έσοδο" : "Έξοδο";
-  const sign = isIncome ? "+" : "-";
+  const isTransfer = transaction.type === "transfer";
+  const typeLabel = isTransfer ? "Μεταφορά" : (isIncome ? "Έσοδο" : "Έξοδο");
+  const sign = isTransfer ? "" : (isIncome ? "+" : "-");
   const amount = `${sign}${euro.format(transaction.amount)}`;
   const note = transaction.note ? `<p class="transaction-note">${escapeHtml(transaction.note)}</p>` : "";
   const recurringMeta = transaction.recurring ? " · Μηνιαίο" : "";
@@ -782,7 +902,7 @@ function transactionCard(transaction) {
           ${recurringBadge}<span class="type-badge ${transaction.type}">${typeLabel}</span>
         </div>
         ${note}
-        <p class="transaction-meta">${dateFormatter.format(new Date(`${transaction.displayDate || transaction.date}T00:00:00`))} · ${typeLabel}${recurringMeta}</p>
+        <p class="transaction-meta">${dateFormatter.format(new Date(`${transaction.displayDate || transaction.date}T00:00:00`))} · ${typeLabel}${recurringMeta} · ${escapeHtml(accountLabelForExport(transaction))}</p>
       </div>
       <div class="transaction-side">
         <strong class="amount ${transaction.type}">${amount}</strong>
@@ -872,6 +992,14 @@ function renderCategorySettings() {
   elements.expenseCategoryList.innerHTML = renderList("expense");
 }
 
+function renderAccounts() {
+  elements.accountsList.innerHTML = state.accounts.map((account) => {
+    const balance = accountBalance(account);
+    const used = state.transactions.some((transaction) => transactionAccountId(transaction) === account.id || transaction.fromAccountId === account.id || transaction.toAccountId === account.id);
+    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(account.name)}</strong><span>${escapeHtml(accountTypeLabels[account.type] || accountTypeLabels.other)}${account.archived ? " · Αρχειοθετημένος" : ""}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? "Αρχειοθέτηση" : "Διαγραφή"}</button></div>`;
+  }).join("");
+}
+
 function renderGoals() {
   renderBudgetInputs();
   const percent = progressPercent(state.goals.savedAmount, state.goals.goalAmount);
@@ -883,9 +1011,12 @@ function renderGoals() {
     : "Δεν έχει οριστεί στόχος ακόμη.";
   renderSecurity();
   renderCategorySettings();
+  renderAccounts();
 }
 
 function render() {
+  updateTransactionTypeUi();
+  updateAccountOptions();
   updateCategoryOptions();
   renderDashboard();
   renderHistory();
@@ -905,6 +1036,30 @@ function categoryForType(type, preferredCategory = "") {
   return validCategoryForType(type, preferredCategory) ? preferredCategory : categories[0];
 }
 
+function updateAccountOptions(selectedValue = elements.account.value) {
+  const accounts = activeAccounts();
+  const fallback = defaultAccount();
+  const choices = accounts.length ? accounts : [fallback];
+  const options = choices.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(account.name)}</option>`).join("");
+  elements.account.innerHTML = options;
+  elements.fromAccount.innerHTML = options;
+  elements.toAccount.innerHTML = options;
+  const selected = choices.some((account) => account.id === selectedValue) ? selectedValue : fallback.id;
+  elements.account.value = selected;
+  elements.fromAccount.value = selected;
+  elements.toAccount.value = choices.find((account) => account.id !== selected)?.id || selected;
+}
+
+function updateTransactionTypeUi() {
+  const isTransfer = elements.type.value === "transfer";
+  elements.categoryLabel.hidden = isTransfer;
+  elements.accountLabel.hidden = isTransfer;
+  elements.recurring.closest("label").hidden = isTransfer;
+  elements.transferFields.hidden = !isTransfer;
+  elements.category.required = !isTransfer;
+  elements.account.required = !isTransfer;
+}
+
 function updateCategoryOptions(selectedValue = elements.category.value) {
   const baseCategories = categoriesForType(elements.type.value);
   const trimmedSelected = String(selectedValue || "").trim();
@@ -921,6 +1076,8 @@ function resetTransactionForm(message = "") {
   updateCategoryOptions();
   elements.date.valueAsDate = new Date();
   elements.recurring.checked = false;
+  updateTransactionTypeUi();
+  updateAccountOptions();
   elements.formTitle.textContent = "Νέα συναλλαγή";
   elements.formSubmit.textContent = "Αποθήκευση";
   elements.cancelEdit.hidden = true;
@@ -933,6 +1090,11 @@ function startEdit(transaction) {
   elements.formSubmit.textContent = "Αποθήκευση αλλαγών";
   elements.cancelEdit.hidden = false;
   elements.type.value = transaction.type;
+  updateTransactionTypeUi();
+  updateAccountOptions(transaction.accountId || transaction.fromAccountId || defaultAccount().id);
+  elements.account.value = transactionAccountId(transaction);
+  elements.fromAccount.value = transaction.fromAccountId || defaultAccount().id;
+  elements.toAccount.value = transaction.toAccountId || defaultAccount().id;
   updateCategoryOptions(transaction.category);
   elements.amount.value = transaction.amount;
   elements.note.value = transaction.note;
@@ -959,7 +1121,7 @@ document.querySelectorAll("[data-month-offset]").forEach((button) => {
 });
 
 elements.navButtons.forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
-elements.type.addEventListener("change", () => updateCategoryOptions());
+elements.type.addEventListener("change", () => { updateTransactionTypeUi(); updateCategoryOptions(); });
 elements.cancelEdit.addEventListener("click", () => resetTransactionForm());
 elements.downloadBackup.addEventListener("click", exportBackup);
 elements.exportCsv.addEventListener("click", exportTransactionsCsv);
@@ -996,20 +1158,60 @@ document.querySelector("#categorySettingsCard").addEventListener("click", (event
   render();
 });
 
+elements.accountForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = elements.accountName.value.trim();
+  if (!name) return showAccountMessage("Συμπλήρωσε όνομα λογαριασμού.", true);
+  state.accounts.push({ id: `acc_${Date.now()}`, name, type: elements.accountType.value, startingBalance: Number(elements.accountStartingBalance.value) || 0, archived: false });
+  saveAccounts();
+  elements.accountForm.reset();
+  showAccountMessage("Ο λογαριασμός προστέθηκε.");
+  render();
+});
+
+document.querySelector("#accountsSettingsCard").addEventListener("click", (event) => {
+  const button = event.target.closest(".delete-account-button");
+  if (!button) return;
+  const account = state.accounts.find((item) => item.id === button.dataset.accountId);
+  if (!account) return;
+  const used = state.transactions.some((transaction) => transactionAccountId(transaction) === account.id || transaction.fromAccountId === account.id || transaction.toAccountId === account.id);
+  if (used) {
+    if (!account.archived && activeAccounts().length <= 1) return showAccountMessage("Χρειάζεται τουλάχιστον ένας ενεργός λογαριασμός.", true);
+    if (!confirm("Υπάρχουν συναλλαγές σε αυτόν τον λογαριασμό. Θα γίνει αρχειοθέτηση και οι παλιές συναλλαγές θα παραμείνουν.")) return;
+    account.archived = true;
+  } else {
+    state.accounts = state.accounts.filter((item) => item.id !== account.id);
+    if (!state.accounts.length) state.accounts = normalizeAccounts([]);
+  }
+  saveAccounts();
+  showAccountMessage(used ? "Ο λογαριασμός αρχειοθετήθηκε." : "Ο λογαριασμός διαγράφηκε.");
+  render();
+});
+
+function showAccountMessage(message, isError = false) {
+  elements.accountMessage.textContent = message;
+  elements.accountMessage.classList.toggle("error", isError);
+}
+
 elements.transactionForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const form = event.currentTarget;
+  const isTransfer = elements.type.value === "transfer";
   const transaction = {
     id: state.editingId || (globalThis.crypto?.randomUUID?.() || String(Date.now())),
     type: elements.type.value,
     amount: Number(elements.amount.value),
-    category: categoryForType(elements.type.value, elements.category.value.trim()),
+    category: isTransfer ? "Μεταφορά" : categoryForType(elements.type.value, elements.category.value.trim()),
+    accountId: isTransfer ? "" : elements.account.value,
+    fromAccountId: isTransfer ? elements.fromAccount.value : "",
+    toAccountId: isTransfer ? elements.toAccount.value : "",
     note: elements.note.value.trim(),
     date: elements.date.value,
-    recurring: elements.recurring.checked,
+    recurring: isTransfer ? false : elements.recurring.checked,
   };
 
   if (!transaction.amount || !transaction.category || !transaction.date) return;
+  if (isTransfer && (!transaction.fromAccountId || !transaction.toAccountId || transaction.fromAccountId === transaction.toAccountId)) return;
   if (state.editingId) {
     state.transactions = state.transactions.map((item) => item.id === state.editingId ? transaction : item);
     resetTransactionForm("Οι αλλαγές αποθηκεύτηκαν επιτυχώς.");
@@ -1051,6 +1253,11 @@ elements.categoryFilter.addEventListener("change", (event) => {
   renderHistory();
 });
 
+elements.accountFilter.addEventListener("change", (event) => {
+  state.accountFilter = event.target.value;
+  renderHistory();
+});
+
 elements.recurringFilter.addEventListener("change", (event) => {
   state.recurringFilter = event.target.value;
   renderHistory();
@@ -1065,6 +1272,7 @@ elements.clearHistoryFilters.addEventListener("click", () => {
   state.filter = "all";
   state.categoryFilter = "all";
   state.recurringFilter = "all";
+  state.accountFilter = "all";
   state.searchQuery = "";
   renderHistory();
 });
