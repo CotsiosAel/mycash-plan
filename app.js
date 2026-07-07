@@ -1,4 +1,4 @@
-const appVersion = "1.9";
+const appVersion = "2.0";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -7,6 +7,7 @@ const storageKeys = {
   security: "mycash-plan-security",
   sessionUnlocked: "mycash-plan-session-unlocked",
   customCategories: "mycash-plan-custom-categories",
+  onboardingSeen: "mycash-plan-onboarding-seen",
 };
 
 const defaultExpenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
@@ -92,6 +93,11 @@ const elements = {
   expenseCategoryList: document.querySelector("#expenseCategoryList"),
   securityPanel: document.querySelector("#securityPanel"),
   securityMessage: document.querySelector("#securityMessage"),
+  settingsMessage: document.querySelector("#settingsMessage"),
+  checkUpdate: document.querySelector("#checkUpdate"),
+  clearAllData: document.querySelector("#clearAllData"),
+  onboardingOverlay: document.querySelector("#onboardingOverlay"),
+  finishOnboarding: document.querySelector("#finishOnboarding"),
   manualLockHeader: document.querySelector("#manualLockHeader"),
   lockOverlay: document.querySelector("#lockOverlay"),
   unlockForm: document.querySelector("#unlockForm"),
@@ -287,6 +293,52 @@ function downloadFile(content, fileName, type) {
 function showBackupMessage(message, isError = false) {
   elements.backupMessage.textContent = message;
   elements.backupMessage.classList.toggle("error", isError);
+}
+
+function showSettingsMessage(message, isError = false) {
+  elements.settingsMessage.textContent = message;
+  elements.settingsMessage.classList.toggle("error", isError);
+}
+
+function showOnboardingIfNeeded() {
+  if (localStorage.getItem(storageKeys.onboardingSeen) === "true") return;
+  elements.onboardingOverlay.hidden = false;
+}
+
+function finishOnboarding() {
+  localStorage.setItem(storageKeys.onboardingSeen, "true");
+  elements.onboardingOverlay.hidden = true;
+}
+
+function clearAllUserData() {
+  if (!confirm("Θέλεις σίγουρα να διαγράψεις όλα τα δεδομένα; Αυτή η ενέργεια δεν αναιρείται.")) return;
+  const removePin = confirm("Θέλεις να αφαιρεθεί και το PIN;");
+  state.transactions = [];
+  state.goals = { goalAmount: 0, savedAmount: 0 };
+  state.customCategories = { income: [], expense: [] };
+  state.budgets = normalizeBudgets({});
+  state.editingId = null;
+  saveTransactions();
+  saveGoals();
+  saveBudgets();
+  saveCustomCategories();
+  if (removePin) {
+    state.security = { enabled: false, salt: "", pinHash: "" };
+    saveSecurity();
+    setSessionUnlocked(false);
+  }
+  resetTransactionForm();
+  render();
+  applyLockState();
+  showSettingsMessage("Τα δεδομένα διαγράφηκαν.");
+}
+
+async function checkForUpdate() {
+  if ("serviceWorker" in navigator) {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration) await registration.update();
+  }
+  showSettingsMessage("Έγινε έλεγχος ενημέρωσης.");
 }
 
 function createBackupPayload() {
@@ -551,7 +603,7 @@ function renderMonthlyStatistics(monthly) {
     .map((message) => `<p>💡 ${escapeHtml(message)}</p>`).join("");
 
   elements.statsCategoryBreakdown.innerHTML = stats.sortedCategories.length
-    ? `<h4>Ανάλυση εξόδων</h4>${stats.sortedCategories.map(([category, amount]) => {
+    ? `<h4>Πού πήγαν τα έξοδα</h4><p class="muted stats-helper">Ποσοστό επί των συνολικών εξόδων του μήνα.</p>${stats.sortedCategories.map(([category, amount]) => {
       const percentage = stats.expenses > 0 ? (amount / stats.expenses) * 100 : 0;
       return `
         <div class="stats-bar-row">
@@ -587,7 +639,7 @@ function renderBudgetSummary(monthly) {
           <p>${status.text}</p>
         </article>`;
     }).join("")
-    : '<p class="muted empty-copy">Δεν έχεις ορίσει budgets ακόμη. Πήγαινε στους Στόχους για να ξεκινήσεις.</p>';
+    : '<p class="muted empty-copy">Όρισε budgets από τους Στόχους για να παρακολουθείς τα όριά σου.</p>';
 }
 
 function renderDashboard() {
@@ -610,12 +662,14 @@ function renderDashboard() {
   renderCategorySummary(monthly);
   renderBudgetSummary(monthly);
 
-  if (balance > 0) {
+  if (!monthly.length) {
+    elements.friendlyMessage.textContent = "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.";
+  } else if (balance > 0) {
     elements.friendlyMessage.textContent = "Υπέροχα! Αυτόν τον μήνα κρατάς θετικό υπόλοιπο.";
   } else if (balance < 0) {
     elements.friendlyMessage.textContent = "Προσοχή: τα έξοδα ξεπερνούν τα έσοδα. Μικρές αλλαγές βοηθούν.";
   } else {
-    elements.friendlyMessage.textContent = "Ξεκίνα προσθέτοντας έσοδα και έξοδα για καθαρή εικόνα.";
+    elements.friendlyMessage.textContent = "Τα έσοδα και τα έξοδα είναι ισορροπημένα αυτόν τον μήνα.";
   }
 }
 
@@ -910,6 +964,9 @@ elements.cancelEdit.addEventListener("click", () => resetTransactionForm());
 elements.downloadBackup.addEventListener("click", exportBackup);
 elements.exportCsv.addEventListener("click", exportTransactionsCsv);
 elements.restoreBackup.addEventListener("change", (event) => restoreBackupFile(event.target.files[0]));
+elements.checkUpdate.addEventListener("click", () => checkForUpdate().catch(() => showSettingsMessage("Δεν ήταν δυνατός ο έλεγχος ενημέρωσης.", true)));
+elements.clearAllData.addEventListener("click", clearAllUserData);
+elements.finishOnboarding.addEventListener("click", finishOnboarding);
 
 elements.categoryForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -1104,3 +1161,4 @@ if ("serviceWorker" in navigator) {
 resetTransactionForm();
 render();
 applyLockState();
+showOnboardingIfNeeded();

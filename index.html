@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0f172a" />
     <meta name="description" content="MyCash Plan - προσωπικός οικονομικός προγραμματισμός σε ευρώ." />
-    <title>MyCash Plan 1.9</title>
+    <title>MyCash Plan 2.0</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230f172a'/%3E%3Cpath fill='%2334d399' d='M46 112c0-32 24-56 56-56 17 0 31 6 42 17l-17 17c-7-7-15-10-25-10-18 0-32 14-32 32s14 32 32 32c10 0 18-3 25-10l17 17c-11 11-25 17-42 17-32 0-56-24-56-56Z'/%3E%3Cpath fill='%23f8fafc' d='M42 37h108v19H42z'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="styles.css" />
@@ -15,7 +15,7 @@
       <header class="hero">
         <div>
           <p class="eyebrow">Προσωπικό ταμείο</p>
-          <h1>MyCash Plan <span class="version-badge">1.9</span></h1>
+          <h1>MyCash Plan <span class="version-badge">2.0</span></h1>
         </div>
         <div class="hero-actions">
           <button id="manualLockHeader" class="lock-now-button" type="button" hidden>Κλείδωμα τώρα</button>
@@ -160,6 +160,56 @@
             <div id="budgetInputs" class="budget-inputs"></div>
             <button type="submit" class="primary-button">Αποθήκευση budgets</button>
           </form>
+          <form id="goalForm" class="card form-card">
+            <label>Στόχος αποταμίευσης (€)
+              <input id="goalAmount" type="number" min="0" step="0.01" placeholder="π.χ. 1000" />
+            </label>
+            <label>Τρέχον αποταμιευμένο ποσό (€)
+              <input id="savedAmount" type="number" min="0" step="0.01" placeholder="π.χ. 250" />
+            </label>
+            <button type="submit" class="primary-button">Ενημέρωση στόχου</button>
+          </form>
+          <article class="card goal-result">
+            <span id="goalPercent">0%</span>
+            <p id="goalText">Δεν έχει οριστεί στόχος ακόμη.</p>
+          </article>
+        </section>
+        <section id="settings" class="view" aria-labelledby="settings-title">
+          <h2 id="settings-title">Ρυθμίσεις</h2>
+          <article class="card app-info-card">
+            <div class="section-heading">
+              <h3>Πληροφορίες εφαρμογής</h3>
+            </div>
+            <div class="app-info-list">
+              <strong>MyCash Plan</strong>
+              <span>Version 2.0</span>
+              <p class="muted">Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου.</p>
+              <p class="muted">Κράτησε backup για να μη χάσεις τα δεδομένα σου.</p>
+            </div>
+            <button id="checkUpdate" type="button" class="secondary-button small-action-button">Έλεγχος ενημέρωσης</button>
+            <p id="settingsMessage" class="settings-message" aria-live="polite"></p>
+          </article>
+          <article class="card security-card">
+            <div class="section-heading">
+              <h3>Ασφάλεια εφαρμογής</h3>
+            </div>
+            <p class="muted">Βάλε PIN για να προστατεύεις τα οικονομικά σου στοιχεία.</p>
+            <p id="securityMessage" class="security-message" aria-live="polite"></p>
+            <div id="securityPanel" class="security-panel"></div>
+          </article>
+          <article class="card backup-card">
+            <div class="section-heading">
+              <h3>Backup & Εξαγωγή δεδομένων</h3>
+            </div>
+            <p class="muted">Κράτησε ένα backup για να μη χάσεις τα δεδομένα σου αν αλλάξεις συσκευή.</p>
+            <p id="backupMessage" class="backup-message" aria-live="polite"></p>
+            <div class="backup-actions">
+              <button id="downloadBackup" type="button" class="primary-button">Λήψη backup</button>
+              <button id="exportCsv" type="button" class="secondary-button">Εξαγωγή CSV</button>
+              <label class="restore-button secondary-button" for="restoreBackup">Επαναφορά από backup</label>
+              <input id="restoreBackup" class="visually-hidden" type="file" accept="application/json,.json" />
+            </div>
+          </article>
           <article id="categorySettingsCard" class="card category-settings-card">
             <div class="section-heading">
               <h3>Κατηγορίες</h3>
@@ -189,39 +239,12 @@
               </section>
             </div>
           </article>
-          <form id="goalForm" class="card form-card">
-            <label>Στόχος αποταμίευσης (€)
-              <input id="goalAmount" type="number" min="0" step="0.01" placeholder="π.χ. 1000" />
-            </label>
-            <label>Τρέχον αποταμιευμένο ποσό (€)
-              <input id="savedAmount" type="number" min="0" step="0.01" placeholder="π.χ. 250" />
-            </label>
-            <button type="submit" class="primary-button">Ενημέρωση στόχου</button>
-          </form>
-          <article class="card goal-result">
-            <span id="goalPercent">0%</span>
-            <p id="goalText">Δεν έχει οριστεί στόχος ακόμη.</p>
-          </article>
-          <article class="card security-card">
+          <article class="card danger-zone-card">
             <div class="section-heading">
-              <h3>Ασφάλεια εφαρμογής</h3>
+              <h3>Διαχείριση δεδομένων</h3>
             </div>
-            <p class="muted">Βάλε PIN για να προστατεύεις τα οικονομικά σου στοιχεία.</p>
-            <p id="securityMessage" class="security-message" aria-live="polite"></p>
-            <div id="securityPanel" class="security-panel"></div>
-          </article>
-          <article class="card backup-card">
-            <div class="section-heading">
-              <h3>Backup & Εξαγωγή δεδομένων</h3>
-            </div>
-            <p class="muted">Κράτησε ένα backup για να μη χάσεις τα δεδομένα σου αν αλλάξεις συσκευή.</p>
-            <p id="backupMessage" class="backup-message" aria-live="polite"></p>
-            <div class="backup-actions">
-              <button id="downloadBackup" type="button" class="primary-button">Λήψη backup</button>
-              <button id="exportCsv" type="button" class="secondary-button">Εξαγωγή CSV</button>
-              <label class="restore-button secondary-button" for="restoreBackup">Επαναφορά από backup</label>
-              <input id="restoreBackup" class="visually-hidden" type="file" accept="application/json,.json" />
-            </div>
+            <p class="muted">Διαγραφή συναλλαγών, στόχων, budgets και custom κατηγοριών από τη συσκευή.</p>
+            <button id="clearAllData" type="button" class="danger-button">Διαγραφή όλων των δεδομένων</button>
           </article>
         </section>
       </main>
@@ -231,7 +254,17 @@
         <button class="nav-button" data-view="add">➕<span>Προσθήκη</span></button>
         <button class="nav-button" data-view="history">📜<span>Ιστορικό</span></button>
         <button class="nav-button" data-view="goals">🎯<span>Στόχοι</span></button>
+        <button class="nav-button" data-view="settings">⚙️<span>Ρυθμίσεις</span></button>
       </nav>
+    </div>
+    <div id="onboardingOverlay" class="onboarding-overlay" hidden>
+      <div class="onboarding-card" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+        <div class="onboarding-icon">€</div>
+        <h2 id="onboardingTitle">Καλώς ήρθες στο MyCash Plan</h2>
+        <p>Κατέγραψε έσοδα, έξοδα, budgets και στόχους αποταμίευσης.</p>
+        <p>Τα δεδομένα μένουν στη συσκευή σου. Κράτησε backup από τις Ρυθμίσεις.</p>
+        <button id="finishOnboarding" type="button" class="primary-button">Ξεκινάμε</button>
+      </div>
     </div>
     <div id="lockOverlay" class="lock-overlay" hidden>
       <div class="lock-card" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
