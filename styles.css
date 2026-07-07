@@ -241,7 +241,8 @@ body.locked .app-shell { filter: blur(8px); pointer-events: none; user-select: n
 .account-list-item.archived { opacity: .78; border-style: dashed; }
 .archived-account-badge { display: inline-flex; width: fit-content; margin-top: 5px; padding: 5px 9px; border-radius: 999px; background: rgba(100, 116, 139, .14); color: #475569; font-size: .72rem; font-weight: 950; }
 .account-duplicate-warning { margin: 0; padding: 12px 13px; border: 1px solid rgba(245, 158, 11, .34); border-radius: 18px; background: rgba(255, 251, 235, .92); color: #92400e; font-size: .9rem; font-weight: 900; line-height: 1.35; }
+.edit-account-button { border: 0; border-radius: 14px; padding: 10px 12px; color: #0f766e; background: #ccfbf1; font: inherit; font-size: .84rem; font-weight: 900; }
 .delete-account-button { border: 0; border-radius: 14px; padding: 10px 12px; color: #991b1b; background: #fee2e2; font: inherit; font-size: .84rem; font-weight: 900; }
 .account-message { min-height: 1.25rem; margin: 0; color: var(--income); font-weight: 900; }
 .account-message.error { color: var(--expense); }
-@media (min-width: 520px) { .account-form, .transfer-fields { grid-template-columns: repeat(2, 1fr); } .account-form .primary-button { grid-column: 1 / -1; } .account-list-item { grid-template-columns: 1fr auto auto; } }
+@media (min-width: 520px) { .account-form, .transfer-fields { grid-template-columns: repeat(2, 1fr); } .account-form .primary-button { grid-column: 1 / -1; } .account-list-item { grid-template-columns: 1fr auto auto auto; } }
