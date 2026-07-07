@@ -269,7 +269,8 @@ body.locked .app-shell { filter: blur(8px); pointer-events: none; user-select: n
 .upcoming-message { min-height: 1.25rem; margin: -4px 2px 0; color: var(--income); font-size: .86rem; font-weight: 900; line-height: 1.3; }
 .upcoming-message.error { color: var(--expense); }
 .upcoming-item-actions { display: grid; justify-items: end; gap: 8px; }
-.record-upcoming-button { border: 0; border-radius: 14px; padding: 9px 12px; color: #f8fafc; background: linear-gradient(135deg, var(--primary), var(--accent)); font: inherit; font-size: .8rem; font-weight: 950; box-shadow: 0 10px 18px rgba(15, 118, 110, .18); }
-.record-upcoming-button:disabled { opacity: .6; }
+.record-upcoming-button { border: 0; border-radius: 14px; padding: 10px 14px; color: #ffffff; background: linear-gradient(135deg, #0f766e, #0d9488); font: inherit; font-size: .84rem; font-weight: 950; letter-spacing: .01em; text-shadow: 0 1px 1px rgba(15, 23, 42, .18); box-shadow: 0 12px 22px rgba(15, 118, 110, .34), inset 0 1px 0 rgba(255, 255, 255, .22); }
+.record-upcoming-button:active { transform: translateY(1px); box-shadow: 0 8px 16px rgba(15, 118, 110, .28), inset 0 1px 0 rgba(255, 255, 255, .18); }
+.record-upcoming-button:disabled { cursor: wait; opacity: .82; filter: saturate(.85); }
 @media (max-width: 380px) { .upcoming-item { grid-template-columns: 1fr; } .upcoming-item-actions { justify-items: stretch; } .record-upcoming-button { width: 100%; } }
 @media (min-width: 520px) { .upcoming-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); } .upcoming-helper { grid-column: 1 / -1; } }
