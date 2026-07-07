@@ -1,9 +1,11 @@
-const appVersion = "1.5";
+const appVersion = "1.6";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
   goals: "mycash-plan-goals",
   budgets: "mycash-plan-budgets",
+  security: "mycash-plan-security",
+  sessionUnlocked: "mycash-plan-session-unlocked",
 };
 
 const expenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
@@ -18,6 +20,8 @@ const state = {
   filter: "all",
   selectedMonth: new Date(today.getFullYear(), today.getMonth(), 1),
   editingId: null,
+  security: normalizeSecurity(JSON.parse(localStorage.getItem(storageKeys.security) || "{}")),
+  hiddenAt: null,
 };
 
 const euro = new Intl.NumberFormat("el-GR", { style: "currency", currency: "EUR" });
@@ -66,7 +70,101 @@ const elements = {
   exportCsv: document.querySelector("#exportCsv"),
   restoreBackup: document.querySelector("#restoreBackup"),
   backupMessage: document.querySelector("#backupMessage"),
+  securityPanel: document.querySelector("#securityPanel"),
+  securityMessage: document.querySelector("#securityMessage"),
+  manualLockHeader: document.querySelector("#manualLockHeader"),
+  lockOverlay: document.querySelector("#lockOverlay"),
+  unlockForm: document.querySelector("#unlockForm"),
+  unlockPin: document.querySelector("#unlockPin"),
+  lockMessage: document.querySelector("#lockMessage"),
 };
+
+
+function normalizeSecurity(security) {
+  const enabled = security?.enabled === true;
+  return {
+    enabled,
+    salt: enabled && typeof security.salt === "string" ? security.salt : "",
+    pinHash: enabled && typeof security.pinHash === "string" ? security.pinHash : "",
+  };
+}
+
+function saveSecurity() {
+  localStorage.setItem(storageKeys.security, JSON.stringify(state.security));
+}
+
+function isValidPin(pin) {
+  return /^\d{4}$/.test(pin);
+}
+
+function bytesToBase64(bytes) {
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary);
+}
+
+function base64ToBytes(base64) {
+  return Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
+}
+
+async function hashPin(pin, saltBase64) {
+  const encoder = new TextEncoder();
+  const salt = base64ToBytes(saltBase64);
+  const pinBytes = encoder.encode(pin);
+  const data = new Uint8Array(salt.length + pinBytes.length);
+  data.set(salt);
+  data.set(pinBytes, salt.length);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return bytesToBase64(new Uint8Array(digest));
+}
+
+function createSalt() {
+  const salt = new Uint8Array(16);
+  crypto.getRandomValues(salt);
+  return bytesToBase64(salt);
+}
+
+async function verifyPin(pin) {
+  if (!state.security.enabled || !state.security.salt || !state.security.pinHash || !isValidPin(pin)) return false;
+  return (await hashPin(pin, state.security.salt)) === state.security.pinHash;
+}
+
+function showSecurityMessage(message, isError = false) {
+  elements.securityMessage.textContent = message;
+  elements.securityMessage.classList.toggle("error", isError);
+}
+
+function setSessionUnlocked(unlocked) {
+  if (unlocked) sessionStorage.setItem(storageKeys.sessionUnlocked, "true");
+  else sessionStorage.removeItem(storageKeys.sessionUnlocked);
+}
+
+function isSessionUnlocked() {
+  return sessionStorage.getItem(storageKeys.sessionUnlocked) === "true";
+}
+
+function showLockScreen(message = "") {
+  if (!state.security.enabled) return;
+  setSessionUnlocked(false);
+  elements.lockMessage.textContent = message;
+  elements.lockMessage.classList.toggle("error", Boolean(message));
+  elements.lockOverlay.hidden = false;
+  document.body.classList.add("locked");
+  elements.unlockPin.value = "";
+  elements.unlockPin.focus();
+}
+
+function hideLockScreen() {
+  elements.lockOverlay.hidden = true;
+  document.body.classList.remove("locked");
+  elements.lockMessage.textContent = "";
+}
+
+function applyLockState() {
+  elements.manualLockHeader.hidden = !state.security.enabled;
+  if (state.security.enabled && !isSessionUnlocked()) showLockScreen();
+  else hideLockScreen();
+}
 
 function normalizeTransactions(transactions) {
   return Array.isArray(transactions) ? transactions.map((transaction, index) => ({
@@ -129,6 +227,7 @@ function createBackupPayload() {
     transactions: state.transactions,
     goals: state.goals,
     budgets: state.budgets,
+    security: state.security.enabled ? state.security : undefined,
   };
 }
 
@@ -182,6 +281,11 @@ function restoreBackupPayload(payload) {
     savedAmount: Number(payload.goals.savedAmount) || 0,
   };
   state.budgets = normalizeBudgets(payload.budgets);
+  if (payload.security) {
+    state.security = normalizeSecurity(payload.security);
+    saveSecurity();
+    setSessionUnlocked(!state.security.enabled);
+  }
   state.editingId = null;
 
   saveTransactions();
@@ -189,6 +293,7 @@ function restoreBackupPayload(payload) {
   saveBudgets();
   resetTransactionForm();
   render();
+  applyLockState();
   showBackupMessage("Το backup επαναφέρθηκε επιτυχώς.");
 }
 
@@ -434,6 +539,58 @@ function renderBudgetInputs() {
     </label>`).join("");
 }
 
+
+function renderSecurity() {
+  elements.manualLockHeader.hidden = !state.security.enabled;
+  if (!state.security.enabled) {
+    elements.securityPanel.innerHTML = `
+      <form id="enablePinForm" class="security-form">
+        <label>PIN
+          <input id="newPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" placeholder="••••" />
+        </label>
+        <label>Επιβεβαίωση PIN
+          <input id="confirmPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" placeholder="••••" />
+        </label>
+        <button type="submit" class="primary-button">Ενεργοποίηση PIN</button>
+      </form>`;
+    return;
+  }
+
+  elements.securityPanel.innerHTML = `
+    <div class="security-status">Το PIN είναι ενεργό</div>
+    <div class="security-actions">
+      <button id="lockNowSecurity" type="button" class="secondary-button">Κλείδωμα τώρα</button>
+      <button id="showChangePin" type="button" class="secondary-button">Αλλαγή PIN</button>
+      <button id="showDisablePin" type="button" class="danger-button">Απενεργοποίηση PIN</button>
+    </div>
+    <div id="pinActionPanel" class="pin-action-panel"></div>`;
+}
+
+function renderPinAction(action) {
+  const panel = document.querySelector("#pinActionPanel");
+  if (!panel) return;
+  panel.innerHTML = action === "change" ? `
+    <form id="changePinForm" class="security-form">
+      <label>Τρέχον PIN<input id="currentPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" pattern="[0-9]*" /></label>
+      <label>Νέο PIN<input id="changedPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" /></label>
+      <label>Επιβεβαίωση νέου PIN<input id="changedConfirmPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" /></label>
+      <button type="submit" class="primary-button">Αποθήκευση νέου PIN</button>
+    </form>` : `
+    <form id="disablePinForm" class="security-form">
+      <label>Τρέχον PIN<input id="disableCurrentPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" pattern="[0-9]*" /></label>
+      <button type="submit" class="danger-button">Απενεργοποίηση PIN</button>
+    </form>`;
+}
+
+async function setNewPin(pin) {
+  const salt = createSalt();
+  state.security = { enabled: true, salt, pinHash: await hashPin(pin, salt) };
+  saveSecurity();
+  setSessionUnlocked(true);
+  renderSecurity();
+  applyLockState();
+}
+
 function renderGoals() {
   renderBudgetInputs();
   const percent = progressPercent(state.goals.savedAmount, state.goals.goalAmount);
@@ -443,6 +600,7 @@ function renderGoals() {
   elements.goalText.textContent = state.goals.goalAmount > 0
     ? `Έχεις αποταμιεύσει ${euro.format(state.goals.savedAmount)} από ${euro.format(state.goals.goalAmount)}.`
     : "Δεν έχει οριστεί στόχος ακόμη.";
+  renderSecurity();
 }
 
 function render() {
@@ -594,9 +752,74 @@ elements.goalForm.addEventListener("submit", (event) => {
   render();
 });
 
+
+elements.unlockForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (await verifyPin(elements.unlockPin.value)) {
+    setSessionUnlocked(true);
+    hideLockScreen();
+    return;
+  }
+  elements.unlockPin.value = "";
+  elements.lockMessage.textContent = "Λάθος PIN. Δοκίμασε ξανά.";
+  elements.lockMessage.classList.add("error");
+});
+
+elements.manualLockHeader.addEventListener("click", () => showLockScreen());
+
+elements.securityPanel.addEventListener("click", (event) => {
+  if (event.target.closest("#lockNowSecurity")) showLockScreen();
+  if (event.target.closest("#showChangePin")) renderPinAction("change");
+  if (event.target.closest("#showDisablePin")) renderPinAction("disable");
+});
+
+elements.securityPanel.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const form = event.target;
+  if (form.id === "enablePinForm") {
+    const pin = form.querySelector("#newPin").value;
+    const confirmPin = form.querySelector("#confirmPin").value;
+    if (!isValidPin(pin)) return showSecurityMessage("Το PIN πρέπει να έχει ακριβώς 4 ψηφία.", true);
+    if (pin !== confirmPin) return showSecurityMessage("Τα PIN δεν ταιριάζουν.", true);
+    await setNewPin(pin);
+    showSecurityMessage("Το PIN ενεργοποιήθηκε επιτυχώς.");
+  }
+  if (form.id === "changePinForm") {
+    const currentPin = form.querySelector("#currentPin").value;
+    const newPin = form.querySelector("#changedPin").value;
+    const confirmPin = form.querySelector("#changedConfirmPin").value;
+    if (!(await verifyPin(currentPin))) return showSecurityMessage("Το τρέχον PIN δεν είναι σωστό.", true);
+    if (!isValidPin(newPin)) return showSecurityMessage("Το νέο PIN πρέπει να έχει ακριβώς 4 ψηφία.", true);
+    if (newPin !== confirmPin) return showSecurityMessage("Τα νέα PIN δεν ταιριάζουν.", true);
+    await setNewPin(newPin);
+    showSecurityMessage("Το PIN άλλαξε επιτυχώς.");
+  }
+  if (form.id === "disablePinForm") {
+    const currentPin = form.querySelector("#disableCurrentPin").value;
+    if (!(await verifyPin(currentPin))) return showSecurityMessage("Το τρέχον PIN δεν είναι σωστό.", true);
+    state.security = { enabled: false, salt: "", pinHash: "" };
+    saveSecurity();
+    setSessionUnlocked(false);
+    renderSecurity();
+    applyLockState();
+    showSecurityMessage("Το PIN απενεργοποιήθηκε επιτυχώς.");
+  }
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!state.security.enabled) return;
+  if (document.hidden) {
+    state.hiddenAt = Date.now();
+    return;
+  }
+  if (state.hiddenAt && Date.now() - state.hiddenAt > 2 * 60 * 1000) showLockScreen();
+  state.hiddenAt = null;
+});
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
 }
 
 resetTransactionForm();
 render();
+applyLockState();
