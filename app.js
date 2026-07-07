@@ -11,7 +11,9 @@ const storageKeys = {
   accounts: "mycash-plan-accounts",
 };
 
-const defaultAccountName = "Μετρητά";
+const defaultAccountName = "Κύριος λογαριασμός";
+const legacyDefaultAccountName = "Μετρητά";
+const defaultAccountId = "acc_default_cash";
 const duplicateAccountWarning = "Βρέθηκαν παρόμοιοι λογαριασμοί. Μπορείς να αρχειοθετήσεις αυτόν που δεν χρησιμοποιείς.";
 const accountTypeLabels = { cash: "Μετρητά", bank: "Τράπεζα", card: "Κάρτα", savings: "Αποταμίευση", other: "Άλλο" };
 
@@ -144,7 +146,7 @@ function normalizeAccounts(accounts) {
     });
     return list;
   }, []);
-  if (!normalized.length) normalized.push({ id: "acc_default_cash", name: defaultAccountName, type: "cash", startingBalance: 0, archived: false });
+  if (!normalized.length) normalized.push({ id: defaultAccountId, name: defaultAccountName, type: "cash", startingBalance: 0, archived: false });
   return normalized;
 }
 
@@ -161,14 +163,15 @@ function normalizedAccountName(name) {
     .replace(/\s+/g, " ");
 }
 
-function accountNameExists(name) {
+function accountNameExists(name, ignoredAccountId = "") {
   const normalizedName = normalizedAccountName(name);
-  return state.accounts.some((account) => normalizedAccountName(account.name) === normalizedName);
+  return state.accounts.some((account) => account.id !== ignoredAccountId
+    && (normalizedAccountName(account.name) === normalizedName || normalizedAccountName(displayAccountName(account)) === normalizedName));
 }
 
 function duplicateAccountNameGroups() {
   const groups = state.accounts.reduce((map, account) => {
-    const key = normalizedAccountName(account.name);
+    const key = normalizedAccountName(displayAccountName(account));
     if (!key) return map;
     if (!map.has(key)) map.set(key, []);
     map.get(key).push(account);
@@ -177,8 +180,22 @@ function duplicateAccountNameGroups() {
   return [...groups.values()].filter((group) => group.length > 1);
 }
 
+function isLegacyDefaultAccount(account) {
+  return account?.id === defaultAccountId && normalizedAccountName(account.name) === normalizedAccountName(legacyDefaultAccountName);
+}
+
+function displayAccountName(account) {
+  return isLegacyDefaultAccount(account) ? defaultAccountName : account?.name || defaultAccountName;
+}
+
+function accountTypeLabel(account) {
+  return accountTypeLabels[account?.type] || accountTypeLabels.other;
+}
+
 function defaultAccount() {
-  return state.accounts.find((account) => account.name === defaultAccountName) || state.accounts[0];
+  return state.accounts.find((account) => account.id === defaultAccountId)
+    || state.accounts.find((account) => account.name === defaultAccountName || isLegacyDefaultAccount(account))
+    || state.accounts[0];
 }
 
 function accountForTransaction(transaction) {
@@ -587,9 +604,9 @@ function accountLabelForExport(transaction) {
   if (transaction.type === "transfer") {
     const from = state.accounts.find((account) => account.id === transaction.fromAccountId) || defaultAccount();
     const to = state.accounts.find((account) => account.id === transaction.toAccountId) || defaultAccount();
-    return `${from.name} → ${to.name}`;
+    return `${displayAccountName(from)} → ${displayAccountName(to)}`;
   }
-  return accountForTransaction(transaction).name;
+  return displayAccountName(accountForTransaction(transaction));
 }
 
 function accountBalance(account, transactions = accountTransactionsThroughSelectedMonth()) {
@@ -632,7 +649,7 @@ function renderAccountSummary() {
 
   const accountRows = accounts.map((account) => {
     const balance = accountBalance(account, balanceTransactions);
-    return `<div class="account-balance-row"><span>${escapeHtml(account.name)}</span><strong class="${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong></div>`;
+    return `<div class="account-balance-row"><span>${escapeHtml(displayAccountName(account))}<small>${escapeHtml(accountTypeLabel(account))}</small></span><strong class="${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong></div>`;
   }).join("");
   const totalAvailableBalance = totalAvailableAccountBalance(accounts, balanceTransactions);
 
@@ -840,7 +857,7 @@ function syncHistoryFilterControls(monthly = selectedMonthTransactions()) {
   ].join("");
   elements.categoryFilter.value = historyCategories.includes(state.categoryFilter) ? state.categoryFilter : "all";
   state.categoryFilter = elements.categoryFilter.value;
-  elements.accountFilter.innerHTML = ['<option value="all">Όλοι οι λογαριασμοί</option>', ...state.accounts.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(account.name)}</option>`)].join("");
+  elements.accountFilter.innerHTML = ['<option value="all">Όλοι οι λογαριασμοί</option>', ...state.accounts.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(displayAccountName(account))}</option>`)].join("");
   elements.accountFilter.value = state.accountFilter === "all" || state.accounts.some((account) => account.id === state.accountFilter) ? state.accountFilter : "all";
   state.accountFilter = elements.accountFilter.value;
   elements.recurringFilter.value = state.recurringFilter;
@@ -1043,7 +1060,7 @@ function renderAccounts() {
     const balance = accountBalance(account);
     const used = state.transactions.some((transaction) => transactionAccountId(transaction) === account.id || transaction.fromAccountId === account.id || transaction.toAccountId === account.id);
     const archivedBadge = account.archived ? '<span class="archived-account-badge">Αρχειοθετημένος</span>' : "";
-    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(account.name)}</strong><span>${escapeHtml(accountTypeLabels[account.type] || accountTypeLabels.other)}${archivedBadge}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? "Αρχειοθέτηση" : "Διαγραφή"}</button></div>`;
+    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(displayAccountName(account))}</strong><span>${escapeHtml(accountTypeLabel(account))}${archivedBadge}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="edit-account-button" data-account-id="${escapeHtml(account.id)}" type="button">Μετονομασία</button><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? "Αρχειοθέτηση" : "Διαγραφή"}</button></div>`;
   }).join("");
   elements.accountsList.innerHTML = `${duplicateWarning}${accountRows}`;
 }
@@ -1088,7 +1105,7 @@ function updateAccountOptions(selectedValue = elements.account.value) {
   const accounts = activeAccounts();
   const fallback = defaultAccount();
   const choices = accounts.length ? accounts : [fallback];
-  const options = choices.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(account.name)}</option>`).join("");
+  const options = choices.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(displayAccountName(account))}</option>`).join("");
   elements.account.innerHTML = options;
   elements.fromAccount.innerHTML = options;
   elements.toAccount.innerHTML = options;
@@ -1219,6 +1236,22 @@ elements.accountForm.addEventListener("submit", (event) => {
 });
 
 document.querySelector("#accountsSettingsCard").addEventListener("click", (event) => {
+  const editButton = event.target.closest(".edit-account-button");
+  if (editButton) {
+    const account = state.accounts.find((item) => item.id === editButton.dataset.accountId);
+    if (!account) return;
+    const name = prompt("Νέο όνομα λογαριασμού", displayAccountName(account));
+    if (name === null) return;
+    const normalizedName = name.trim().replace(/\s+/g, " ");
+    if (!normalizedName) return showAccountMessage("Συμπλήρωσε όνομα λογαριασμού.", true);
+    if (accountNameExists(normalizedName, account.id)) return showAccountMessage("Υπάρχει ήδη λογαριασμός με αυτό το όνομα.", true);
+    account.name = normalizedName;
+    saveAccounts();
+    showAccountMessage("Ο λογαριασμός μετονομάστηκε.");
+    render();
+    return;
+  }
+
   const button = event.target.closest(".delete-account-button");
   if (!button) return;
   const account = state.accounts.find((item) => item.id === button.dataset.accountId);
