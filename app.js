@@ -1,4 +1,4 @@
-const appVersion = "1.8";
+const appVersion = "1.9";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -6,19 +6,20 @@ const storageKeys = {
   budgets: "mycash-plan-budgets",
   security: "mycash-plan-security",
   sessionUnlocked: "mycash-plan-session-unlocked",
+  customCategories: "mycash-plan-custom-categories",
 };
 
-const expenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
-const incomeCategories = ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"];
+const defaultExpenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
+const defaultIncomeCategories = ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"];
 
-const historyFilterCategories = [...new Set([...incomeCategories, ...expenseCategories])];
 
 const today = new Date();
 
 const state = {
   transactions: normalizeTransactions(JSON.parse(localStorage.getItem(storageKeys.transactions) || "[]")),
   goals: JSON.parse(localStorage.getItem(storageKeys.goals) || '{"goalAmount":0,"savedAmount":0}'),
-  budgets: normalizeBudgets(JSON.parse(localStorage.getItem(storageKeys.budgets) || "{}")),
+  customCategories: normalizeCustomCategories(JSON.parse(localStorage.getItem(storageKeys.customCategories) || "{}")),
+  budgets: JSON.parse(localStorage.getItem(storageKeys.budgets) || "{}"),
   filter: "all",
   categoryFilter: "all",
   recurringFilter: "all",
@@ -28,6 +29,7 @@ const state = {
   security: normalizeSecurity(JSON.parse(localStorage.getItem(storageKeys.security) || "{}")),
   hiddenAt: null,
 };
+state.budgets = normalizeBudgets(state.budgets);
 
 const euro = new Intl.NumberFormat("el-GR", { style: "currency", currency: "EUR" });
 const dateFormatter = new Intl.DateTimeFormat("el-GR", { dateStyle: "medium" });
@@ -40,6 +42,7 @@ const elements = {
   transactionForm: document.querySelector("#transactionForm"),
   goalForm: document.querySelector("#goalForm"),
   budgetForm: document.querySelector("#budgetForm"),
+  categoryForm: document.querySelector("#categoryForm"),
   filter: document.querySelector("#filter"),
   categoryFilter: document.querySelector("#categoryFilter"),
   recurringFilter: document.querySelector("#recurringFilter"),
@@ -82,6 +85,11 @@ const elements = {
   exportCsv: document.querySelector("#exportCsv"),
   restoreBackup: document.querySelector("#restoreBackup"),
   backupMessage: document.querySelector("#backupMessage"),
+  categoryType: document.querySelector("#categoryType"),
+  categoryName: document.querySelector("#categoryName"),
+  categoryMessage: document.querySelector("#categoryMessage"),
+  incomeCategoryList: document.querySelector("#incomeCategoryList"),
+  expenseCategoryList: document.querySelector("#expenseCategoryList"),
   securityPanel: document.querySelector("#securityPanel"),
   securityMessage: document.querySelector("#securityMessage"),
   manualLockHeader: document.querySelector("#manualLockHeader"),
@@ -91,6 +99,56 @@ const elements = {
   lockMessage: document.querySelector("#lockMessage"),
 };
 
+
+function uniqueTrimmedCategories(categories) {
+  const seen = new Set();
+  return (Array.isArray(categories) ? categories : []).reduce((list, category) => {
+    const name = String(category || "").trim();
+    const key = name.toLocaleLowerCase("el-GR");
+    if (!name || seen.has(key)) return list;
+    seen.add(key);
+    list.push(name);
+    return list;
+  }, []);
+}
+
+function normalizeCustomCategories(customCategories) {
+  return {
+    income: uniqueTrimmedCategories(customCategories?.income),
+    expense: uniqueTrimmedCategories(customCategories?.expense),
+  };
+}
+
+function saveCustomCategories() {
+  localStorage.setItem(storageKeys.customCategories, JSON.stringify(state.customCategories));
+}
+
+function allCategoriesForType(type) {
+  const defaults = type === "expense" ? defaultExpenseCategories : defaultIncomeCategories;
+  const custom = state?.customCategories?.[type] || [];
+  return [...new Set([...defaults, ...custom])];
+}
+
+function allExpenseCategoryRows() {
+  return [...new Set([
+    ...allCategoriesForType("expense"),
+    ...state.transactions.filter((transaction) => transaction.type === "expense").map((transaction) => transaction.category),
+    ...Object.keys(state.budgets || {}),
+  ])].filter(Boolean);
+}
+
+function allHistoryCategories(monthly = selectedMonthTransactions()) {
+  return [...new Set([
+    ...allCategoriesForType("income"),
+    ...allCategoriesForType("expense"),
+    ...monthly.map((transaction) => transaction.category),
+  ])].filter(Boolean);
+}
+
+function showCategoryMessage(message, isError = false) {
+  elements.categoryMessage.textContent = message;
+  elements.categoryMessage.classList.toggle("error", isError);
+}
 
 function normalizeSecurity(security) {
   const enabled = security?.enabled === true;
@@ -195,7 +253,7 @@ function saveTransactions() {
 }
 
 function normalizeBudgets(budgets) {
-  return expenseCategories.reduce((normalized, category) => {
+  return [...new Set([...allCategoriesForType("expense"), ...Object.keys(budgets || {})])].reduce((normalized, category) => {
     const amount = Number(budgets?.[category]) || 0;
     normalized[category] = amount > 0 ? amount : 0;
     return normalized;
@@ -239,6 +297,7 @@ function createBackupPayload() {
     transactions: state.transactions,
     goals: state.goals,
     budgets: state.budgets,
+    customCategories: state.customCategories,
     security: state.security.enabled ? state.security : undefined,
   };
 }
@@ -292,6 +351,7 @@ function restoreBackupPayload(payload) {
     goalAmount: Number(payload.goals.goalAmount) || 0,
     savedAmount: Number(payload.goals.savedAmount) || 0,
   };
+  state.customCategories = normalizeCustomCategories(payload.customCategories || {});
   state.budgets = normalizeBudgets(payload.budgets);
   if (payload.security) {
     state.security = normalizeSecurity(payload.security);
@@ -303,6 +363,7 @@ function restoreBackupPayload(payload) {
   saveTransactions();
   saveGoals();
   saveBudgets();
+  saveCustomCategories();
   resetTransactionForm();
   render();
   applyLockState();
@@ -416,7 +477,7 @@ function renderCategorySummary(monthly) {
 
 function activeBudgetsWithSpending(monthly) {
   const totals = expenseTotalsByCategory(monthly);
-  return expenseCategories
+  return allExpenseCategoryRows()
     .map((category) => ({ category, budget: Number(state.budgets[category]) || 0, spent: totals[category] || 0 }))
     .filter((item) => item.budget > 0);
 }
@@ -558,13 +619,14 @@ function renderDashboard() {
   }
 }
 
-function syncHistoryFilterControls() {
+function syncHistoryFilterControls(monthly = selectedMonthTransactions()) {
+  const historyCategories = allHistoryCategories(monthly);
   elements.filter.value = state.filter;
   elements.categoryFilter.innerHTML = [
     '<option value="all">Όλες οι κατηγορίες</option>',
-    ...historyFilterCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`),
+    ...historyCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`),
   ].join("");
-  elements.categoryFilter.value = historyFilterCategories.includes(state.categoryFilter) ? state.categoryFilter : "all";
+  elements.categoryFilter.value = historyCategories.includes(state.categoryFilter) ? state.categoryFilter : "all";
   state.categoryFilter = elements.categoryFilter.value;
   elements.recurringFilter.value = state.recurringFilter;
   elements.historySearch.value = state.searchQuery;
@@ -601,8 +663,8 @@ function filterHistoryTransactions(transactions) {
 
 function renderHistory() {
   renderMonthSelectors();
-  syncHistoryFilterControls();
   const monthly = selectedMonthTransactions();
+  syncHistoryFilterControls(monthly);
   const filtered = filterHistoryTransactions(monthly);
   const monthlyIncome = sumByType(monthly, "income");
   const monthlyExpenses = sumByType(monthly, "expense");
@@ -679,7 +741,7 @@ function transactionCard(transaction) {
 }
 
 function renderBudgetInputs() {
-  elements.budgetInputs.innerHTML = expenseCategories.map((category) => `
+  elements.budgetInputs.innerHTML = allExpenseCategoryRows().map((category) => `
     <label class="budget-input-row">
       <span>${escapeHtml(category)}</span>
       <input type="number" min="0" step="0.01" inputmode="decimal" data-budget-category="${escapeHtml(category)}" value="${state.budgets[category] || ""}" placeholder="0,00" />
@@ -738,6 +800,24 @@ async function setNewPin(pin) {
   applyLockState();
 }
 
+function renderCategorySettings() {
+  const renderList = (type) => {
+    const defaults = type === "expense" ? defaultExpenseCategories : defaultIncomeCategories;
+    const custom = state.customCategories[type] || [];
+    const rows = [
+      ...defaults.map((category) => ({ category, fixed: true })),
+      ...custom.map((category) => ({ category, fixed: false })),
+    ];
+    return rows.map(({ category, fixed }) => `
+      <li class="category-list-item">
+        <span>${escapeHtml(category)}</span>
+        ${fixed ? '<span class="fixed-category-badge">Προεπιλογή</span>' : `<button class="delete-category-button" data-category-type="${type}" data-category-name="${escapeHtml(category)}" type="button">Διαγραφή</button>`}
+      </li>`).join("");
+  };
+  elements.incomeCategoryList.innerHTML = renderList("income");
+  elements.expenseCategoryList.innerHTML = renderList("expense");
+}
+
 function renderGoals() {
   renderBudgetInputs();
   const percent = progressPercent(state.goals.savedAmount, state.goals.goalAmount);
@@ -748,6 +828,7 @@ function renderGoals() {
     ? `Έχεις αποταμιεύσει ${euro.format(state.goals.savedAmount)} από ${euro.format(state.goals.goalAmount)}.`
     : "Δεν έχει οριστεί στόχος ακόμη.";
   renderSecurity();
+  renderCategorySettings();
 }
 
 function render() {
@@ -758,7 +839,7 @@ function render() {
 }
 
 function categoriesForType(type) {
-  return type === "expense" ? expenseCategories : incomeCategories;
+  return allCategoriesForType(type);
 }
 
 function validCategoryForType(type, category) {
@@ -771,8 +852,10 @@ function categoryForType(type, preferredCategory = "") {
 }
 
 function updateCategoryOptions(selectedValue = elements.category.value) {
-  const categories = categoriesForType(elements.type.value);
-  const selectedCategory = categoryForType(elements.type.value, selectedValue);
+  const baseCategories = categoriesForType(elements.type.value);
+  const trimmedSelected = String(selectedValue || "").trim();
+  const categories = trimmedSelected && !baseCategories.includes(trimmedSelected) ? [...baseCategories, trimmedSelected] : baseCategories;
+  const selectedCategory = categories.includes(trimmedSelected) ? trimmedSelected : categories[0];
   elements.category.innerHTML = categories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
   elements.category.value = selectedCategory;
 }
@@ -827,6 +910,34 @@ elements.cancelEdit.addEventListener("click", () => resetTransactionForm());
 elements.downloadBackup.addEventListener("click", exportBackup);
 elements.exportCsv.addEventListener("click", exportTransactionsCsv);
 elements.restoreBackup.addEventListener("change", (event) => restoreBackupFile(event.target.files[0]));
+
+elements.categoryForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const type = elements.categoryType.value === "income" ? "income" : "expense";
+  const name = elements.categoryName.value.trim();
+  if (!name) return showCategoryMessage("Συμπλήρωσε όνομα κατηγορίας.", true);
+  const exists = allCategoriesForType(type).some((category) => category.toLocaleLowerCase("el-GR") === name.toLocaleLowerCase("el-GR"));
+  if (exists) return showCategoryMessage("Αυτή η κατηγορία υπάρχει ήδη.", true);
+  state.customCategories[type].push(name);
+  saveCustomCategories();
+  elements.categoryName.value = "";
+  showCategoryMessage("Η κατηγορία προστέθηκε.");
+  render();
+});
+
+document.querySelector("#categorySettingsCard").addEventListener("click", (event) => {
+  const button = event.target.closest(".delete-category-button");
+  if (!button) return;
+  const type = button.dataset.categoryType;
+  const name = button.dataset.categoryName;
+  if (!confirm("Θέλεις σίγουρα να διαγράψεις αυτή την κατηγορία;")) return;
+  const hasTransactions = state.transactions.some((transaction) => transaction.type === type && transaction.category === name);
+  if (hasTransactions && !confirm("Υπάρχουν συναλλαγές με αυτή την κατηγορία. Αν τη διαγράψεις, οι παλιές συναλλαγές θα παραμείνουν όπως είναι.")) return;
+  state.customCategories[type] = state.customCategories[type].filter((category) => category !== name);
+  saveCustomCategories();
+  showCategoryMessage("Η κατηγορία διαγράφηκε.");
+  render();
+});
 
 elements.transactionForm.addEventListener("submit", (event) => {
   event.preventDefault();
