@@ -1,4 +1,4 @@
-const appVersion = "2.1";
+const appVersion = "2.2";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -87,6 +87,8 @@ const elements = {
   balanceTotal: document.querySelector("#balanceTotal"),
   friendlyMessage: document.querySelector("#friendlyMessage"),
   accountSummary: document.querySelector("#accountSummary"),
+  upcomingSummary: document.querySelector("#upcomingSummary"),
+  upcomingList: document.querySelector("#upcomingList"),
   categorySummary: document.querySelector("#categorySummary"),
   monthlyStats: document.querySelector("#monthlyStats"),
   smartInsights: document.querySelector("#smartInsights"),
@@ -661,6 +663,107 @@ function renderAccountSummary() {
     </div>`;
 }
 
+function selectedMonthStatus() {
+  const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const selectedMonthStart = new Date(state.selectedMonth.getFullYear(), state.selectedMonth.getMonth(), 1);
+  if (selectedMonthStart < currentMonthStart) return "past";
+  if (selectedMonthStart > currentMonthStart) return "future";
+  return "current";
+}
+
+function upcomingRecurringTransactionsForSelectedMonth() {
+  if (selectedMonthStatus() === "past") return [];
+  const todayValue = formatDateInputValue(today);
+  return selectedMonthTransactions()
+    .filter((transaction) => transaction.recurring && transaction.displayDate)
+    .filter((transaction) => selectedMonthStatus() === "future" || transaction.displayDate >= todayValue)
+    .sort((a, b) => a.displayDate.localeCompare(b.displayDate) || a.category.localeCompare(b.category, "el"));
+}
+
+function accountTransactionsThroughDate(endDate) {
+  return state.transactions.flatMap((transaction) => {
+    const originalDate = new Date(`${transaction.date}T00:00:00`);
+    if (originalDate > endDate) return [];
+    if (!transaction.recurring) return [{ ...transaction }];
+    const occurrences = [];
+    for (let cursor = new Date(originalDate.getFullYear(), originalDate.getMonth(), 1); cursor <= endDate; cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)) {
+      const displayDate = recurringDisplayDate(transaction.date, cursor.getFullYear(), cursor.getMonth());
+      if (new Date(`${displayDate}T00:00:00`) <= endDate) {
+        occurrences.push({ ...transaction, displayDate, isVirtualRecurring: cursor.getMonth() !== originalDate.getMonth() || cursor.getFullYear() !== originalDate.getFullYear() });
+      }
+    }
+    return occurrences;
+  });
+}
+
+function typeLabelForTransaction(type) {
+  if (type === "transfer") return "Μεταφορά";
+  return type === "income" ? "Έσοδο" : "Έξοδο";
+}
+
+function upcomingAccountName(transaction) {
+  if (transaction.type === "transfer") return accountLabelForExport(transaction);
+  return displayAccountName(accountForTransaction(transaction));
+}
+
+function renderUpcomingTransactions() {
+  const status = selectedMonthStatus();
+  const upcoming = upcomingRecurringTransactionsForSelectedMonth();
+  const upcomingIncome = sumByType(upcoming, "income");
+  const upcomingExpenses = sumByType(upcoming, "expense");
+  const activeAccountBalance = totalAvailableAccountBalance(activeAccounts(), accountTransactionsThroughDate(today));
+  const forecast = activeAccountBalance + upcomingIncome - upcomingExpenses;
+
+  elements.upcomingSummary.innerHTML = [
+    ["Αναμενόμενα έσοδα", euro.format(upcomingIncome), "income"],
+    ["Αναμενόμενα έξοδα", euro.format(upcomingExpenses), "expense"],
+    ["Εκτίμηση μετά τις προσεχείς κινήσεις", euro.format(forecast), forecast < 0 ? "expense" : "income"],
+  ].map(([label, value, className]) => `
+    <div class="upcoming-summary-item ${className}">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+    </div>`).join("");
+
+  if (status === "past") {
+    elements.upcomingList.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν προσεχείς κινήσεις για παλιότερο μήνα.</p>';
+    return;
+  }
+
+  if (!upcoming.length) {
+    elements.upcomingList.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν προσεχείς κινήσεις για αυτόν τον μήνα.</p>';
+    return;
+  }
+
+  const todayStart = new Date(`${formatDateInputValue(today)}T00:00:00`);
+  const visible = upcoming.slice(0, 5);
+  const extraCount = upcoming.length - visible.length;
+  elements.upcomingList.innerHTML = `
+    ${visible.map((transaction) => {
+      const dueDate = new Date(`${transaction.displayDate}T00:00:00`);
+      const daysUntilDue = Math.round((dueDate - todayStart) / 86400000);
+      const dueSoon = transaction.type === "expense" && daysUntilDue >= 0 && daysUntilDue <= 3;
+      const title = transaction.note || transaction.category || typeLabelForTransaction(transaction.type);
+      const sign = transaction.type === "income" ? "+" : (transaction.type === "expense" ? "-" : "");
+      return `
+        <article class="upcoming-item ${transaction.type} ${dueSoon ? "due-soon" : ""}">
+          <div class="upcoming-item-main">
+            <div class="upcoming-title-row">
+              <strong>${escapeHtml(title)}</strong>
+              <span class="type-badge ${transaction.type}">${typeLabelForTransaction(transaction.type)}</span>
+            </div>
+            <p>${historyDateFormatter.format(dueDate)} · ${escapeHtml(upcomingAccountName(transaction))}</p>
+            <div class="upcoming-badges">
+              <span class="recurring-badge">Μηνιαίο</span>
+              ${dueSoon ? '<span class="due-soon-badge">Έρχεται σύντομα</span>' : ""}
+            </div>
+          </div>
+          <strong class="amount ${transaction.type}">${sign}${euro.format(transaction.amount)}</strong>
+        </article>`;
+    }).join("")}
+    ${extraCount > 0 ? `<p class="upcoming-more">+ ${extraCount} ακόμα</p>` : ""}`;
+  // TODO(v2.3): Add safe "Καταχώρηση" action after duplicate handling is designed for generated recurring instances.
+}
+
 function progressPercent(saved, goal) {
   if (!goal || goal <= 0) return 0;
   return Math.min(Math.round((saved / goal) * 100), 100);
@@ -836,6 +939,7 @@ function renderDashboard() {
   renderCategorySummary(monthly);
   renderBudgetSummary(monthly);
   renderAccountSummary();
+  renderUpcomingTransactions();
 
   if (!monthly.length) {
     elements.friendlyMessage.textContent = "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.";

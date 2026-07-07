@@ -1,4 +1,4 @@
-const CACHE_NAME = "mycash-plan-v2.1.3";
+const CACHE_NAME = "mycash-plan-v2.2";
 const ASSETS = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json"];
 
 self.addEventListener("install", (event) => {
