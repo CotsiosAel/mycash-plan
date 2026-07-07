@@ -1,6 +1,7 @@
 const storageKeys = {
   transactions: "mycash-plan-transactions",
   goals: "mycash-plan-goals",
+  budgets: "mycash-plan-budgets",
 };
 
 const expenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
@@ -11,6 +12,7 @@ const today = new Date();
 const state = {
   transactions: normalizeTransactions(JSON.parse(localStorage.getItem(storageKeys.transactions) || "[]")),
   goals: JSON.parse(localStorage.getItem(storageKeys.goals) || '{"goalAmount":0,"savedAmount":0}'),
+  budgets: normalizeBudgets(JSON.parse(localStorage.getItem(storageKeys.budgets) || "{}")),
   filter: "all",
   selectedMonth: new Date(today.getFullYear(), today.getMonth(), 1),
   editingId: null,
@@ -26,6 +28,7 @@ const elements = {
   navButtons: document.querySelectorAll(".nav-button"),
   transactionForm: document.querySelector("#transactionForm"),
   goalForm: document.querySelector("#goalForm"),
+  budgetForm: document.querySelector("#budgetForm"),
   filter: document.querySelector("#filter"),
   type: document.querySelector("#type"),
   category: document.querySelector("#category"),
@@ -47,6 +50,8 @@ const elements = {
   balanceTotal: document.querySelector("#balanceTotal"),
   friendlyMessage: document.querySelector("#friendlyMessage"),
   categorySummary: document.querySelector("#categorySummary"),
+  budgetSummary: document.querySelector("#budgetSummary"),
+  budgetInputs: document.querySelector("#budgetInputs"),
   savingsPercent: document.querySelector("#savingsPercent"),
   savingsBar: document.querySelector("#savingsBar"),
   savingsText: document.querySelector("#savingsText"),
@@ -71,6 +76,18 @@ function normalizeTransactions(transactions) {
 
 function saveTransactions() {
   localStorage.setItem(storageKeys.transactions, JSON.stringify(state.transactions));
+}
+
+function normalizeBudgets(budgets) {
+  return expenseCategories.reduce((normalized, category) => {
+    const amount = Number(budgets?.[category]) || 0;
+    normalized[category] = amount > 0 ? amount : 0;
+    return normalized;
+  }, {});
+}
+
+function saveBudgets() {
+  localStorage.setItem(storageKeys.budgets, JSON.stringify(state.budgets));
 }
 
 function saveGoals() {
@@ -145,18 +162,54 @@ function renderMonthSelectors() {
   elements.historyMonthLabel.textContent = label;
 }
 
-function renderCategorySummary(monthly) {
-  const totals = monthly
+function expenseTotalsByCategory(monthly) {
+  return monthly
     .filter((transaction) => transaction.type === "expense")
     .reduce((summary, transaction) => {
       summary[transaction.category] = (summary[transaction.category] || 0) + transaction.amount;
       return summary;
     }, {});
+}
+
+function renderCategorySummary(monthly) {
+  const totals = expenseTotalsByCategory(monthly);
   const sorted = Object.entries(totals).sort(([, a], [, b]) => b - a);
 
   elements.categorySummary.innerHTML = sorted.length
     ? sorted.map(([category, total]) => `<div class="category-row"><span>${escapeHtml(category)}</span><strong>${euro.format(total)}</strong></div>`).join("")
     : '<p class="muted empty-copy">Δεν υπάρχουν έξοδα για αυτόν τον μήνα. Καλή αρχή!</p>';
+}
+
+
+function budgetStatus(percentage) {
+  if (percentage >= 100) return { className: "danger", text: "Ξεπέρασες το budget" };
+  if (percentage >= 80) return { className: "warning", text: "Πλησιάζεις το όριο" };
+  return { className: "positive", text: "Εντός budget" };
+}
+
+function renderBudgetSummary(monthly) {
+  const totals = expenseTotalsByCategory(monthly);
+  const activeBudgets = expenseCategories
+    .map((category) => ({ category, budget: Number(state.budgets[category]) || 0, spent: totals[category] || 0 }))
+    .filter((item) => item.budget > 0);
+
+  elements.budgetSummary.innerHTML = activeBudgets.length
+    ? activeBudgets.map(({ category, budget, spent }) => {
+      const rawPercentage = budget > 0 ? (spent / budget) * 100 : 0;
+      const percentage = Math.round(rawPercentage);
+      const status = budgetStatus(rawPercentage);
+      return `
+        <article class="budget-row ${status.className}">
+          <div class="budget-row-top">
+            <strong>${escapeHtml(category)}</strong>
+            <span>${percentage}%</span>
+          </div>
+          <div class="budget-amounts">${euro.format(spent)} από ${euro.format(budget)}</div>
+          <div class="progress-track budget-track"><div class="progress-bar budget-bar" style="width: ${Math.min(percentage, 100)}%"></div></div>
+          <p>${status.text}</p>
+        </article>`;
+    }).join("")
+    : '<p class="muted empty-copy">Δεν έχεις ορίσει budgets ακόμη. Πήγαινε στους Στόχους για να ξεκινήσεις.</p>';
 }
 
 function renderDashboard() {
@@ -176,6 +229,7 @@ function renderDashboard() {
     ? `${euro.format(state.goals.savedAmount)} από ${euro.format(state.goals.goalAmount)}`
     : "Όρισε στόχο για να ξεκινήσεις.";
   renderCategorySummary(monthly);
+  renderBudgetSummary(monthly);
 
   if (balance > 0) {
     elements.friendlyMessage.textContent = "Υπέροχα! Αυτόν τον μήνα κρατάς θετικό υπόλοιπο.";
@@ -255,7 +309,16 @@ function transactionCard(transaction) {
     </article>`;
 }
 
+function renderBudgetInputs() {
+  elements.budgetInputs.innerHTML = expenseCategories.map((category) => `
+    <label class="budget-input-row">
+      <span>${escapeHtml(category)}</span>
+      <input type="number" min="0" step="0.01" inputmode="decimal" data-budget-category="${escapeHtml(category)}" value="${state.budgets[category] || ""}" placeholder="0,00" />
+    </label>`).join("");
+}
+
 function renderGoals() {
+  renderBudgetInputs();
   const percent = progressPercent(state.goals.savedAmount, state.goals.goalAmount);
   elements.goalAmount.value = state.goals.goalAmount || "";
   elements.savedAmount.value = state.goals.savedAmount || "";
@@ -388,6 +451,17 @@ elements.transactionList.addEventListener("click", (event) => {
 elements.filter.addEventListener("change", (event) => {
   state.filter = event.target.value;
   renderHistory();
+});
+
+elements.budgetForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const nextBudgets = {};
+  elements.budgetInputs.querySelectorAll("[data-budget-category]").forEach((input) => {
+    nextBudgets[input.dataset.budgetCategory] = Math.max(Number(input.value) || 0, 0);
+  });
+  state.budgets = normalizeBudgets(nextBudgets);
+  saveBudgets();
+  render();
 });
 
 elements.goalForm.addEventListener("submit", (event) => {

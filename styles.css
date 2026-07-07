@@ -111,3 +111,22 @@ input:focus, select:focus { outline: 3px solid rgba(20, 184, 166, .22); border-c
 @media (min-width: 720px) { .app-shell { padding-top: calc(34px + var(--safe-area-top)); } .card { padding: 24px; } }
 
 @media (min-width: 520px) { .transaction-item { grid-template-columns: 1fr auto; } .transaction-side { justify-items: end; } .month-selector { width: auto; min-width: 280px; } .filter-tabs { width: auto; min-width: 180px; } }
+.budget-summary, .budget-inputs { display: grid; gap: 12px; }
+.budget-row { padding: 14px; border: 1px solid rgba(15, 118, 110, .14); border-radius: 20px; background: rgba(248, 250, 252, .88); }
+.budget-row-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.budget-row-top strong { font-size: 1rem; letter-spacing: -.02em; }
+.budget-row-top span { font-weight: 950; color: var(--primary-dark); }
+.budget-amounts { color: var(--muted); font-size: .92rem; font-weight: 800; margin-bottom: 10px; }
+.budget-track { height: 10px; background: #e2e8f0; }
+.budget-bar { background: linear-gradient(90deg, var(--primary), #34d399); }
+.budget-row p { margin: 10px 0 0; font-size: .84rem; font-weight: 950; color: var(--primary-dark); }
+.budget-row.warning { border-color: rgba(245, 158, 11, .34); background: rgba(255, 251, 235, .9); }
+.budget-row.warning .budget-bar { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.budget-row.warning p, .budget-row.warning .budget-row-top span { color: #92400e; }
+.budget-row.danger { border-color: rgba(220, 38, 38, .28); background: rgba(254, 242, 242, .92); }
+.budget-row.danger .budget-bar { background: linear-gradient(90deg, #dc2626, #f97316); }
+.budget-row.danger p, .budget-row.danger .budget-row-top span { color: #991b1b; }
+.budget-input-row { grid-template-columns: 1fr; padding: 12px; border: 1px solid rgba(148, 163, 184, .18); border-radius: 18px; background: #f8fafc; }
+.budget-input-row span { color: var(--ink); font-weight: 950; }
+.budget-form h3, .budget-form p { margin-bottom: 0; }
+@media (min-width: 520px) { .budget-input-row { grid-template-columns: 1fr 160px; align-items: center; } }
