@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0f172a" />
     <meta name="description" content="MyCash Plan - προσωπικός οικονομικός προγραμματισμός σε ευρώ." />
-    <title>MyCash Plan</title>
+    <title>MyCash Plan 1.1</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230f172a'/%3E%3Cpath fill='%2334d399' d='M46 112c0-32 24-56 56-56 17 0 31 6 42 17l-17 17c-7-7-15-10-25-10-18 0-32 14-32 32s14 32 32 32c10 0 18-3 25-10l17 17c-11 11-25 17-42 17-32 0-56-24-56-56Z'/%3E%3Cpath fill='%23f8fafc' d='M42 37h108v19H42z'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="styles.css" />
@@ -15,14 +15,21 @@
       <header class="hero">
         <div>
           <p class="eyebrow">Προσωπικό ταμείο</p>
-          <h1>MyCash Plan</h1>
+          <h1>MyCash Plan <span class="version-badge">1.1</span></h1>
         </div>
         <div class="hero-badge" aria-label="Νόμισμα ευρώ">€</div>
       </header>
 
       <main>
         <section id="dashboard" class="view active" aria-labelledby="dashboard-title">
-          <h2 id="dashboard-title">Πίνακας ελέγχου</h2>
+          <div class="section-heading stacked-heading">
+            <h2 id="dashboard-title">Πίνακας ελέγχου</h2>
+            <div class="month-selector" aria-label="Επιλογή μήνα για τον πίνακα ελέγχου">
+              <button type="button" data-month-offset="-1" aria-label="Προηγούμενος μήνας">‹</button>
+              <strong id="dashboardMonthLabel">Ιούλιος 2026</strong>
+              <button type="button" data-month-offset="1" aria-label="Επόμενος μήνας">›</button>
+            </div>
+          </div>
           <div class="summary-card premium-card">
             <p id="friendlyMessage">Ας οργανώσουμε τα χρήματά σου με ηρεμία.</p>
             <strong id="balanceTotal">0,00 €</strong>
@@ -32,6 +39,12 @@
             <article class="stat-card income"><span>Έσοδα μήνα</span><strong id="incomeTotal">0,00 €</strong></article>
             <article class="stat-card expense"><span>Έξοδα μήνα</span><strong id="expenseTotal">0,00 €</strong></article>
           </div>
+          <article class="card">
+            <div class="section-heading">
+              <h3>Έξοδα ανά κατηγορία</h3>
+            </div>
+            <div id="categorySummary" class="category-summary"></div>
+          </article>
           <article class="card">
             <div class="section-heading">
               <h3>Πρόοδος αποταμίευσης</h3>
@@ -44,6 +57,7 @@
 
         <section id="add" class="view" aria-labelledby="add-title">
           <h2 id="add-title">Νέα συναλλαγή</h2>
+          <p id="formMessage" class="success-message" aria-live="polite"></p>
           <form id="transactionForm" class="card form-card">
             <label>Τύπος
               <select id="type" required>
@@ -55,7 +69,7 @@
               <input id="amount" type="number" min="0.01" step="0.01" placeholder="π.χ. 45.50" required />
             </label>
             <label>Κατηγορία
-              <input id="category" type="text" placeholder="π.χ. Μισθός, Σούπερ μάρκετ" required />
+              <select id="category" required></select>
             </label>
             <label>Σημείωση
               <input id="note" type="text" placeholder="Προαιρετική περιγραφή" />
@@ -63,13 +77,21 @@
             <label>Ημερομηνία
               <input id="date" type="date" required />
             </label>
-            <button type="submit" class="primary-button">Αποθήκευση</button>
+            <div class="form-actions">
+              <button id="formSubmit" type="submit" class="primary-button">Αποθήκευση</button>
+              <button id="cancelEdit" type="button" class="secondary-button" hidden>Ακύρωση επεξεργασίας</button>
+            </div>
           </form>
         </section>
 
         <section id="history" class="view" aria-labelledby="history-title">
-          <div class="section-heading">
+          <div class="section-heading stacked-heading">
             <h2 id="history-title">Ιστορικό</h2>
+            <div class="month-selector" aria-label="Επιλογή μήνα για το ιστορικό">
+              <button type="button" data-month-offset="-1" aria-label="Προηγούμενος μήνας">‹</button>
+              <strong id="historyMonthLabel">Ιούλιος 2026</strong>
+              <button type="button" data-month-offset="1" aria-label="Επόμενος μήνας">›</button>
+            </div>
             <select id="filter" aria-label="Φίλτρο συναλλαγών">
               <option value="all">Όλα</option>
               <option value="income">Έσοδα</option>
