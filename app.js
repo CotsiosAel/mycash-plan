@@ -1,4 +1,4 @@
-const appVersion = "2.2";
+const appVersion = "2.3";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -88,6 +88,7 @@ const elements = {
   friendlyMessage: document.querySelector("#friendlyMessage"),
   accountSummary: document.querySelector("#accountSummary"),
   upcomingSummary: document.querySelector("#upcomingSummary"),
+  upcomingMessage: document.querySelector("#upcomingMessage"),
   upcomingList: document.querySelector("#upcomingList"),
   categorySummary: document.querySelector("#categorySummary"),
   monthlyStats: document.querySelector("#monthlyStats"),
@@ -360,6 +361,7 @@ function normalizeTransactions(transactions) {
     note: transaction.note || "",
     date: transaction.date || new Date().toISOString().slice(0, 10),
     recurring: transaction.type === "transfer" ? false : Boolean(transaction.recurring),
+    recurringSourceId: transaction.recurringSourceId || transaction.sourceRecurringId || transaction.sourceId || transaction.parentRecurringId || transaction.generatedFromId || "",
   })) : [];
 }
 
@@ -685,7 +687,7 @@ function transactionAccountMatchKey(transaction) {
 
 function transactionsMatchRecurringOccurrence(recurringOccurrence, recordedTransaction) {
   if (!recordedTransaction || recordedTransaction.isVirtualRecurring) return false;
-  if (recordedTransaction.id === recurringOccurrence.id && !recurringOccurrence.isVirtualRecurring) return true;
+  if (recordedTransaction.id === recurringOccurrence.id) return false;
 
   const sourceId = transactionRecurringSourceId(recordedTransaction);
   if (sourceId && sourceId === recurringOccurrence.id) return true;
@@ -700,6 +702,43 @@ function transactionsMatchRecurringOccurrence(recurringOccurrence, recordedTrans
 
 function recordedTransactionExistsForRecurringOccurrence(recurringOccurrence) {
   return state.transactions.some((transaction) => transactionsMatchRecurringOccurrence(recurringOccurrence, transaction));
+}
+
+function upcomingTransactionKey(transaction) {
+  return `${transaction.id}|${transaction.displayDate}`;
+}
+
+function recordUpcomingRecurringTransaction(recurringOccurrence) {
+  if (!recurringOccurrence || recurringOccurrence.type === "transfer") return;
+
+  if (recordedTransactionExistsForRecurringOccurrence(recurringOccurrence)) {
+    renderUpcomingTransactions();
+    showUpcomingMessage("Η κίνηση έχει ήδη καταχωρηθεί.", true);
+    return;
+  }
+
+  state.transactions.push({
+    id: globalThis.crypto?.randomUUID?.() || String(Date.now()),
+    type: recurringOccurrence.type,
+    amount: Number(recurringOccurrence.amount) || 0,
+    category: recurringOccurrence.category,
+    accountId: transactionAccountId(recurringOccurrence),
+    fromAccountId: "",
+    toAccountId: "",
+    note: recurringOccurrence.note || "",
+    date: recurringOccurrence.displayDate,
+    recurring: false,
+    recurringSourceId: recurringOccurrence.id,
+  });
+  saveTransactions();
+  render();
+  showUpcomingMessage("Η προσεχής κίνηση καταχωρήθηκε.");
+}
+
+function showUpcomingMessage(message, isError = false) {
+  if (!elements.upcomingMessage) return;
+  elements.upcomingMessage.textContent = message;
+  elements.upcomingMessage.classList.toggle("error", isError);
 }
 
 function upcomingRecurringTransactionsForSelectedMonth() {
@@ -740,6 +779,7 @@ function upcomingAccountName(transaction) {
 
 function renderUpcomingTransactions() {
   const status = selectedMonthStatus();
+  showUpcomingMessage("");
   const upcoming = upcomingRecurringTransactionsForSelectedMonth();
   const upcomingIncome = sumByType(upcoming, "income");
   const upcomingExpenses = sumByType(upcoming, "expense");
@@ -790,11 +830,13 @@ function renderUpcomingTransactions() {
               ${dueSoon ? '<span class="due-soon-badge">Έρχεται σύντομα</span>' : ""}
             </div>
           </div>
-          <strong class="amount ${transaction.type}">${sign}${euro.format(transaction.amount)}</strong>
+          <div class="upcoming-item-actions">
+            <strong class="amount ${transaction.type}">${sign}${euro.format(transaction.amount)}</strong>
+            ${transaction.type !== "transfer" ? `<button class="record-upcoming-button" type="button" data-upcoming-key="${escapeHtml(upcomingTransactionKey(transaction))}">Καταχώρηση</button>` : ""}
+          </div>
         </article>`;
     }).join("")}
     ${extraCount > 0 ? `<p class="upcoming-more">+ ${extraCount} ακόμα</p>` : ""}`;
-  // TODO(v2.3): Add safe "Καταχώρηση" action after duplicate handling is designed for generated recurring instances.
 }
 
 function progressPercent(saved, goal) {
@@ -1460,6 +1502,19 @@ elements.transactionList.addEventListener("click", (event) => {
   if (state.editingId === deleteButton.dataset.id) resetTransactionForm();
   saveTransactions();
   render();
+});
+
+elements.upcomingList.addEventListener("click", (event) => {
+  const button = event.target.closest(".record-upcoming-button");
+  if (!button) return;
+  button.disabled = true;
+  const occurrence = upcomingRecurringTransactionsForSelectedMonth().find((transaction) => upcomingTransactionKey(transaction) === button.dataset.upcomingKey);
+  if (!occurrence) {
+    renderUpcomingTransactions();
+    showUpcomingMessage("Η κίνηση έχει ήδη καταχωρηθεί.", true);
+    return;
+  }
+  recordUpcomingRecurringTransaction(occurrence);
 });
 
 elements.filter.addEventListener("change", (event) => {
