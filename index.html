@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0f172a" />
     <meta name="description" content="MyCash Plan - προσωπικός οικονομικός προγραμματισμός σε ευρώ." />
-    <title>MyCash Plan 2.2</title>
+    <title>MyCash Plan 2.3</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230f172a'/%3E%3Cpath fill='%2334d399' d='M46 112c0-32 24-56 56-56 17 0 31 6 42 17l-17 17c-7-7-15-10-25-10-18 0-32 14-32 32s14 32 32 32c10 0 18-3 25-10l17 17c-11 11-25 17-42 17-32 0-56-24-56-56Z'/%3E%3Cpath fill='%23f8fafc' d='M42 37h108v19H42z'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="styles.css" />
@@ -15,7 +15,7 @@
       <header class="hero">
         <div>
           <p class="eyebrow">Προσωπικό ταμείο</p>
-          <h1>MyCash Plan <span class="version-badge">2.2</span></h1>
+          <h1>MyCash Plan <span class="version-badge">2.3</span></h1>
         </div>
         <div class="hero-actions">
           <button id="manualLockHeader" class="lock-now-button" type="button" hidden>Κλείδωμα τώρα</button>
@@ -53,6 +53,7 @@
               <h3>Προσεχείς κινήσεις</h3>
             </div>
             <div id="upcomingSummary" class="upcoming-summary"></div>
+            <p id="upcomingMessage" class="upcoming-message" aria-live="polite"></p>
             <div id="upcomingList" class="upcoming-list" aria-live="polite"></div>
           </article>
           <article class="card monthly-stats-card">
@@ -212,7 +213,7 @@
             </div>
             <div class="app-info-list">
               <strong>MyCash Plan</strong>
-              <span>Version 2.2</span>
+              <span>Version 2.3</span>
               <p class="muted">Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου.</p>
               <p class="muted">Κράτησε backup για να μη χάσεις τα δεδομένα σου.</p>
             </div>
