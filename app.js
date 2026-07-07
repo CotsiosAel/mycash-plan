@@ -592,13 +592,30 @@ function accountTransactionsThroughSelectedMonth() {
   });
 }
 
+function totalAvailableAccountBalance(accounts, balanceTransactions) {
+  return accounts.reduce((total, account) => total + accountBalance(account, balanceTransactions), 0);
+}
+
 function renderAccountSummary() {
   const accounts = activeAccounts();
   const balanceTransactions = accountTransactionsThroughSelectedMonth();
-  elements.accountSummary.innerHTML = accounts.length ? accounts.map((account) => {
+  if (!accounts.length) {
+    elements.accountSummary.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν ενεργοί λογαριασμοί.</p>';
+    return;
+  }
+
+  const accountRows = accounts.map((account) => {
     const balance = accountBalance(account, balanceTransactions);
     return `<div class="account-balance-row"><span>${escapeHtml(account.name)}</span><strong class="${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong></div>`;
-  }).join("") : '<p class="muted empty-copy">Δεν υπάρχουν ενεργοί λογαριασμοί.</p>';
+  }).join("");
+  const totalAvailableBalance = totalAvailableAccountBalance(accounts, balanceTransactions);
+
+  elements.accountSummary.innerHTML = `
+    ${accountRows}
+    <div class="account-balance-row account-balance-total">
+      <span>Συνολικό διαθέσιμο υπόλοιπο<small>Διαθέσιμα χρήματα σε ενεργούς λογαριασμούς, όχι κέρδος μήνα</small></span>
+      <strong class="${totalAvailableBalance < 0 ? "negative" : "positive"}">${euro.format(totalAvailableBalance)}</strong>
+    </div>`;
 }
 
 function progressPercent(saved, goal) {

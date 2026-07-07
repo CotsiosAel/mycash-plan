@@ -228,8 +228,11 @@ body.locked .app-shell { filter: blur(8px); pointer-events: none; user-select: n
 .account-summary-card .section-heading h3, .accounts-settings-card .section-heading h3, .accounts-settings-card p { margin-bottom: 0; }
 .account-balance-row, .account-list-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 13px; border: 1px solid rgba(15, 118, 110, .14); border-radius: 18px; background: rgba(248, 250, 252, .9); }
 .account-balance-row span, .account-list-item strong { font-weight: 950; }
+.account-balance-row small { display: block; margin-top: 4px; color: var(--muted); font-size: .78rem; font-weight: 800; line-height: 1.25; }
 .account-balance-row strong, .account-list-balance { letter-spacing: -.03em; }
 .account-balance-row strong.positive, .account-list-balance.positive { color: var(--income); }
+.account-balance-total { margin-top: 2px; border-color: rgba(15, 118, 110, .28); background: linear-gradient(135deg, rgba(236, 253, 245, .96), rgba(255,255,255,.94)); box-shadow: 0 14px 30px rgba(15, 118, 110, .12); }
+.account-balance-total strong { font-size: 1.16rem; }
 .account-balance-row strong.negative, .account-list-balance.negative { color: var(--expense); }
 .account-list-item { grid-template-columns: 1fr; }
 .account-list-item div { display: grid; gap: 4px; }
