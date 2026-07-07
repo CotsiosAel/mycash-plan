@@ -362,6 +362,7 @@ function normalizeTransactions(transactions) {
     date: transaction.date || new Date().toISOString().slice(0, 10),
     recurring: transaction.type === "transfer" ? false : Boolean(transaction.recurring),
     recurringSourceId: transaction.recurringSourceId || transaction.sourceRecurringId || transaction.sourceId || transaction.parentRecurringId || transaction.generatedFromId || "",
+    recurringOccurrenceDate: transaction.recurringOccurrenceDate || transaction.occurrenceDate || "",
   })) : [];
 }
 
@@ -687,12 +688,16 @@ function transactionAccountMatchKey(transaction) {
 
 function transactionsMatchRecurringOccurrence(recurringOccurrence, recordedTransaction) {
   if (!recordedTransaction || recordedTransaction.isVirtualRecurring) return false;
-  if (recordedTransaction.id === recurringOccurrence.id) return false;
+  const occurrenceDate = recurringOccurrence.recurringOccurrenceDate || recurringOccurrence.displayDate || recurringOccurrence.date || "";
+  if (recordedTransaction.id === recurringOccurrence.id && recordedTransaction.date === occurrenceDate) return true;
 
   const sourceId = transactionRecurringSourceId(recordedTransaction);
-  if (sourceId && sourceId === recurringOccurrence.id) return true;
+  const recordedOccurrenceDate = recordedTransaction.recurringOccurrenceDate || recordedTransaction.occurrenceDate || "";
+  if (sourceId && sourceId === recurringOccurrence.id && recordedOccurrenceDate && occurrenceDate) {
+    return recordedOccurrenceDate === occurrenceDate;
+  }
 
-  return recordedTransaction.date === recurringOccurrence.displayDate
+  return recordedTransaction.date === occurrenceDate
     && recordedTransaction.type === recurringOccurrence.type
     && Number(recordedTransaction.amount) === Number(recurringOccurrence.amount)
     && normalizeMatchText(recordedTransaction.category) === normalizeMatchText(recurringOccurrence.category)
@@ -729,6 +734,7 @@ function recordUpcomingRecurringTransaction(recurringOccurrence) {
     date: recurringOccurrence.displayDate,
     recurring: false,
     recurringSourceId: recurringOccurrence.id,
+    recurringOccurrenceDate: recurringOccurrence.displayDate,
   });
   saveTransactions();
   render();
