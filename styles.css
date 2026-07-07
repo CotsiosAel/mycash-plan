@@ -224,6 +224,7 @@ body.locked .app-shell { filter: blur(8px); pointer-events: none; user-select: n
 }
 
 .account-summary, .accounts-list, .account-form, .transfer-fields { display: grid; gap: 12px; }
+.transfer-fields[hidden] { display: none !important; }
 .account-summary-card .section-heading h3, .accounts-settings-card .section-heading h3, .accounts-settings-card p { margin-bottom: 0; }
 .account-balance-row, .account-list-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 13px; border: 1px solid rgba(15, 118, 110, .14); border-radius: 18px; background: rgba(248, 250, 252, .9); }
 .account-balance-row span, .account-list-item strong { font-weight: 950; }
