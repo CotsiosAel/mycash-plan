@@ -161,3 +161,21 @@ input:focus, select:focus { outline: 3px solid rgba(20, 184, 166, .22); border-c
 .lock-message.error { color: var(--expense); }
 body.locked .app-shell { filter: blur(8px); pointer-events: none; user-select: none; }
 @media (min-width: 520px) { .security-actions { grid-template-columns: repeat(3, 1fr); } }
+.monthly-stats-card { display: grid; gap: 16px; }
+.monthly-stats-card .section-heading h3 { margin-bottom: 0; }
+.monthly-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.monthly-stats .empty-copy { grid-column: 1 / -1; }
+.monthly-stat-item { padding: 13px; border: 1px solid rgba(15, 118, 110, .13); border-radius: 18px; background: linear-gradient(160deg, rgba(248, 250, 252, .94), rgba(236, 253, 245, .72)); }
+.monthly-stat-item span { display: block; margin-bottom: 6px; color: var(--muted); font-size: .76rem; font-weight: 850; line-height: 1.25; }
+.monthly-stat-item strong { display: block; color: var(--primary-dark); font-size: 1.02rem; font-weight: 950; letter-spacing: -.03em; overflow-wrap: anywhere; }
+.smart-insights { display: grid; gap: 8px; }
+.smart-insights p { margin: 0; padding: 12px 13px; border: 1px solid rgba(245, 158, 11, .22); border-radius: 18px; background: rgba(255, 251, 235, .78); color: #713f12; font-size: .92rem; font-weight: 850; line-height: 1.35; }
+.stats-category-breakdown { display: grid; gap: 12px; }
+.stats-category-breakdown h4 { margin: 2px 0 0; color: var(--ink); font-size: .95rem; letter-spacing: -.01em; }
+.stats-bar-row { display: grid; gap: 7px; }
+.stats-bar-top { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: .87rem; font-weight: 850; }
+.stats-bar-top span { color: var(--ink); }
+.stats-bar-top strong { color: var(--primary-dark); font-size: .87rem; text-align: right; }
+.stats-bar-track { height: 11px; overflow: hidden; border-radius: 999px; background: #e2e8f0; }
+.stats-bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--primary), #34d399, var(--gold)); transition: width .25s ease; }
+@media (min-width: 520px) { .monthly-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

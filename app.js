@@ -1,4 +1,4 @@
-const appVersion = "1.6";
+const appVersion = "1.7";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -56,6 +56,9 @@ const elements = {
   balanceTotal: document.querySelector("#balanceTotal"),
   friendlyMessage: document.querySelector("#friendlyMessage"),
   categorySummary: document.querySelector("#categorySummary"),
+  monthlyStats: document.querySelector("#monthlyStats"),
+  smartInsights: document.querySelector("#smartInsights"),
+  statsCategoryBreakdown: document.querySelector("#statsCategoryBreakdown"),
   budgetSummary: document.querySelector("#budgetSummary"),
   budgetInputs: document.querySelector("#budgetInputs"),
   savingsPercent: document.querySelector("#savingsPercent"),
@@ -402,6 +405,92 @@ function renderCategorySummary(monthly) {
     : '<p class="muted empty-copy">Δεν υπάρχουν έξοδα για αυτόν τον μήνα. Καλή αρχή!</p>';
 }
 
+function activeBudgetsWithSpending(monthly) {
+  const totals = expenseTotalsByCategory(monthly);
+  return expenseCategories
+    .map((category) => ({ category, budget: Number(state.budgets[category]) || 0, spent: totals[category] || 0 }))
+    .filter((item) => item.budget > 0);
+}
+
+function monthDayCount() {
+  return new Date(state.selectedMonth.getFullYear(), state.selectedMonth.getMonth() + 1, 0).getDate();
+}
+
+function monthlyStatsData(monthly) {
+  const income = sumByType(monthly, "income");
+  const expenses = sumByType(monthly, "expense");
+  const categoryTotals = expenseTotalsByCategory(monthly);
+  const sortedCategories = Object.entries(categoryTotals).sort(([, a], [, b]) => b - a);
+  const activeBudgets = activeBudgetsWithSpending(monthly);
+  return {
+    income,
+    expenses,
+    balance: income - expenses,
+    averageDailyExpense: expenses / monthDayCount(),
+    biggestExpenseCategory: sortedCategories[0]?.[0] || "—",
+    transactionCount: monthly.length,
+    exceededBudgetsCount: activeBudgets.filter(({ budget, spent }) => spent > budget).length,
+    sortedCategories,
+  };
+}
+
+function smartInsightMessages(stats) {
+  const messages = [];
+  if (!stats.expenses) messages.push("Δεν έχεις έξοδα για αυτόν τον μήνα. Καλή αρχή!");
+  else {
+    messages.push(`Η μεγαλύτερη κατηγορία εξόδων σου είναι ${stats.biggestExpenseCategory}.`);
+    messages.push(`Το μέσο ημερήσιο έξοδό σου είναι ${euro.format(stats.averageDailyExpense)}.`);
+  }
+
+  if (stats.exceededBudgetsCount > 0) {
+    messages.push(`Έχεις ξεπεράσει ${stats.exceededBudgetsCount} budget αυτόν τον μήνα.`);
+  }
+
+  if (stats.balance < 0) messages.push("Τα έξοδα ξεπερνούν τα έσοδα. Πρόσεξε τις επόμενες κινήσεις.");
+  else if (stats.balance > 0) messages.push("Κρατάς θετικό υπόλοιπο αυτόν τον μήνα.");
+
+  return messages.slice(0, 4);
+}
+
+function renderMonthlyStatistics(monthly) {
+  if (!monthly.length) {
+    elements.monthlyStats.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν αρκετά δεδομένα για στατιστικά αυτόν τον μήνα.</p>';
+    elements.smartInsights.innerHTML = "";
+    elements.statsCategoryBreakdown.innerHTML = "";
+    return;
+  }
+
+  const stats = monthlyStatsData(monthly);
+  const statItems = [
+    ["Σύνολο εσόδων", euro.format(stats.income)],
+    ["Σύνολο εξόδων", euro.format(stats.expenses)],
+    ["Υπόλοιπο", euro.format(stats.balance)],
+    ["Μέσο ημερήσιο έξοδο", euro.format(stats.averageDailyExpense)],
+    ["Μεγαλύτερη κατηγορία", stats.biggestExpenseCategory],
+    ["Συναλλαγές", String(stats.transactionCount)],
+    ["Budgets που ξεπεράστηκαν", String(stats.exceededBudgetsCount)],
+  ];
+
+  elements.monthlyStats.innerHTML = statItems.map(([label, value]) => `
+    <div class="monthly-stat-item">
+      <span>${escapeHtml(label)}</span>
+      <strong>${escapeHtml(value)}</strong>
+    </div>`).join("");
+
+  elements.smartInsights.innerHTML = smartInsightMessages(stats)
+    .map((message) => `<p>💡 ${escapeHtml(message)}</p>`).join("");
+
+  elements.statsCategoryBreakdown.innerHTML = stats.sortedCategories.length
+    ? `<h4>Ανάλυση εξόδων</h4>${stats.sortedCategories.map(([category, amount]) => {
+      const percentage = stats.expenses > 0 ? (amount / stats.expenses) * 100 : 0;
+      return `
+        <div class="stats-bar-row">
+          <div class="stats-bar-top"><span>${escapeHtml(category)}</span><strong>${euro.format(amount)} · ${Math.round(percentage)}%</strong></div>
+          <div class="stats-bar-track"><div class="stats-bar-fill" style="width: ${Math.max(percentage, 3)}%"></div></div>
+        </div>`;
+    }).join("")}`
+    : '<p class="muted empty-copy">Δεν υπάρχουν έξοδα για ανάλυση κατηγοριών.</p>';
+}
 
 function budgetStatus(percentage) {
   if (percentage >= 100) return { className: "danger", text: "Ξεπέρασες το budget" };
@@ -410,10 +499,7 @@ function budgetStatus(percentage) {
 }
 
 function renderBudgetSummary(monthly) {
-  const totals = expenseTotalsByCategory(monthly);
-  const activeBudgets = expenseCategories
-    .map((category) => ({ category, budget: Number(state.budgets[category]) || 0, spent: totals[category] || 0 }))
-    .filter((item) => item.budget > 0);
+  const activeBudgets = activeBudgetsWithSpending(monthly);
 
   elements.budgetSummary.innerHTML = activeBudgets.length
     ? activeBudgets.map(({ category, budget, spent }) => {
@@ -450,6 +536,7 @@ function renderDashboard() {
   elements.savingsText.textContent = state.goals.goalAmount > 0
     ? `${euro.format(state.goals.savedAmount)} από ${euro.format(state.goals.goalAmount)}`
     : "Όρισε στόχο για να ξεκινήσεις.";
+  renderMonthlyStatistics(monthly);
   renderCategorySummary(monthly);
   renderBudgetSummary(monthly);
 
