@@ -59,6 +59,9 @@ input, select { width: 100%; border: 1px solid #cbd5e1; border-radius: 16px; pad
 input:focus, select:focus { outline: 3px solid rgba(20, 184, 166, .22); border-color: var(--primary); }
 .primary-button { border: 0; border-radius: 18px; padding: 15px 18px; color: white; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); font: inherit; font-weight: 900; box-shadow: 0 12px 25px rgba(15, 118, 110, .25); }
 .secondary-button { border: 1px solid #cbd5e1; border-radius: 18px; padding: 14px 18px; color: var(--primary-dark); background: white; font: inherit; font-weight: 900; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 15px; border: 1px solid rgba(15, 118, 110, .16); border-radius: 18px; background: #f8fafc; color: var(--primary-dark); }
+.toggle-row input { width: 22px; height: 22px; accent-color: var(--primary); flex: 0 0 auto; }
+.toggle-row span { font-weight: 900; line-height: 1.25; }
 .form-actions { display: grid; gap: 10px; }
 .success-message { min-height: 1.35rem; margin-bottom: 10px; color: var(--income); font-weight: 800; }
 .category-summary { display: grid; gap: 10px; }
@@ -83,7 +86,8 @@ input:focus, select:focus { outline: 3px solid rgba(20, 184, 166, .22); border-c
 .transaction-item h4 { margin: 0; font-size: 1.05rem; line-height: 1.2; letter-spacing: -.02em; }
 .transaction-note, .transaction-meta { margin: 7px 0 0; color: var(--muted); font-size: .9rem; line-height: 1.35; }
 .transaction-note { color: #334155; }
-.type-badge { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; font-size: .72rem; font-weight: 950; }
+.type-badge, .recurring-badge { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; font-size: .72rem; font-weight: 950; }
+.recurring-badge { background: rgba(245, 158, 11, .15); color: #92400e; }
 .type-badge.income { background: rgba(5, 150, 105, .12); color: var(--income); }
 .type-badge.expense { background: rgba(220, 38, 38, .10); color: var(--expense); }
 .transaction-side { display: grid; gap: 10px; }
