@@ -113,6 +113,8 @@ const elements = {
   categoryMessage: document.querySelector("#categoryMessage"),
   incomeCategoryList: document.querySelector("#incomeCategoryList"),
   expenseCategoryList: document.querySelector("#expenseCategoryList"),
+  incomeCategoryPreview: document.querySelector("#incomeCategoryPreview"),
+  expenseCategoryPreview: document.querySelector("#expenseCategoryPreview"),
   accountName: document.querySelector("#accountName"),
   accountType: document.querySelector("#accountType"),
   accountStartingBalance: document.querySelector("#accountStartingBalance"),
@@ -1220,6 +1222,7 @@ async function setNewPin(pin) {
 }
 
 function renderCategorySettings() {
+  const categoryCountForType = (type) => (type === "expense" ? defaultExpenseCategories : defaultIncomeCategories).length + (state.customCategories[type] || []).length;
   const renderList = (type) => {
     const defaults = type === "expense" ? defaultExpenseCategories : defaultIncomeCategories;
     const custom = state.customCategories[type] || [];
@@ -1235,6 +1238,8 @@ function renderCategorySettings() {
   };
   elements.incomeCategoryList.innerHTML = renderList("income");
   elements.expenseCategoryList.innerHTML = renderList("expense");
+  elements.incomeCategoryPreview.textContent = `${categoryCountForType("income")} κατηγορίες`;
+  elements.expenseCategoryPreview.textContent = `${categoryCountForType("expense")} κατηγορίες`;
 }
 
 function renderAccounts() {
