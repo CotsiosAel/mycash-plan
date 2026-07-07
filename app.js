@@ -671,12 +671,44 @@ function selectedMonthStatus() {
   return "current";
 }
 
+function normalizeMatchText(value) {
+  return String(value || "").trim().toLocaleLowerCase("el-GR").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+}
+
+function transactionRecurringSourceId(transaction) {
+  return transaction.recurringSourceId || transaction.sourceRecurringId || transaction.sourceId || transaction.parentRecurringId || transaction.generatedFromId || "";
+}
+
+function transactionAccountMatchKey(transaction) {
+  return [transaction.accountId || "", transaction.fromAccountId || "", transaction.toAccountId || ""].join("|");
+}
+
+function transactionsMatchRecurringOccurrence(recurringOccurrence, recordedTransaction) {
+  if (!recordedTransaction || recordedTransaction.isVirtualRecurring) return false;
+  if (recordedTransaction.id === recurringOccurrence.id && !recurringOccurrence.isVirtualRecurring) return true;
+
+  const sourceId = transactionRecurringSourceId(recordedTransaction);
+  if (sourceId && sourceId === recurringOccurrence.id) return true;
+
+  return recordedTransaction.date === recurringOccurrence.displayDate
+    && recordedTransaction.type === recurringOccurrence.type
+    && Number(recordedTransaction.amount) === Number(recurringOccurrence.amount)
+    && normalizeMatchText(recordedTransaction.category) === normalizeMatchText(recurringOccurrence.category)
+    && normalizeMatchText(recordedTransaction.note) === normalizeMatchText(recurringOccurrence.note)
+    && transactionAccountMatchKey(recordedTransaction) === transactionAccountMatchKey(recurringOccurrence);
+}
+
+function recordedTransactionExistsForRecurringOccurrence(recurringOccurrence) {
+  return state.transactions.some((transaction) => transactionsMatchRecurringOccurrence(recurringOccurrence, transaction));
+}
+
 function upcomingRecurringTransactionsForSelectedMonth() {
   if (selectedMonthStatus() === "past") return [];
   const todayValue = formatDateInputValue(today);
   return selectedMonthTransactions()
     .filter((transaction) => transaction.recurring && transaction.displayDate)
     .filter((transaction) => selectedMonthStatus() === "future" || transaction.displayDate >= todayValue)
+    .filter((transaction) => !recordedTransactionExistsForRecurringOccurrence(transaction))
     .sort((a, b) => a.displayDate.localeCompare(b.displayDate) || a.category.localeCompare(b.category, "el"));
 }
 
@@ -714,7 +746,7 @@ function renderUpcomingTransactions() {
   const activeAccountBalance = totalAvailableAccountBalance(activeAccounts(), accountTransactionsThroughDate(today));
   const forecast = activeAccountBalance + upcomingIncome - upcomingExpenses;
 
-  elements.upcomingSummary.innerHTML = [
+  elements.upcomingSummary.innerHTML = `${[
     ["Αναμενόμενα έσοδα", euro.format(upcomingIncome), "income"],
     ["Αναμενόμενα έξοδα", euro.format(upcomingExpenses), "expense"],
     ["Εκτίμηση μετά τις προσεχείς κινήσεις", euro.format(forecast), forecast < 0 ? "expense" : "income"],
@@ -722,7 +754,8 @@ function renderUpcomingTransactions() {
     <div class="upcoming-summary-item ${className}">
       <span>${escapeHtml(label)}</span>
       <strong>${escapeHtml(value)}</strong>
-    </div>`).join("");
+    </div>`).join("")}
+    <p class="upcoming-helper muted">Εμφανίζονται μόνο κινήσεις που δεν έχουν καταχωρηθεί ακόμα.</p>`;
 
   if (status === "past") {
     elements.upcomingList.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν προσεχείς κινήσεις για παλιότερο μήνα.</p>';
