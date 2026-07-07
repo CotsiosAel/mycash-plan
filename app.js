@@ -32,6 +32,7 @@ const elements = {
   amount: document.querySelector("#amount"),
   note: document.querySelector("#note"),
   date: document.querySelector("#date"),
+  recurring: document.querySelector("#recurring"),
   formTitle: document.querySelector("#add-title"),
   formSubmit: document.querySelector("#formSubmit"),
   cancelEdit: document.querySelector("#cancelEdit"),
@@ -64,6 +65,7 @@ function normalizeTransactions(transactions) {
     category: transaction.category || "Άλλο",
     note: transaction.note || "",
     date: transaction.date || new Date().toISOString().slice(0, 10),
+    recurring: Boolean(transaction.recurring),
   })) : [];
 }
 
@@ -76,12 +78,45 @@ function saveGoals() {
 }
 
 function selectedMonthTransactions() {
-  const month = state.selectedMonth.getMonth();
-  const year = state.selectedMonth.getFullYear();
-  return state.transactions.filter((transaction) => {
-    const date = new Date(`${transaction.date}T00:00:00`);
-    return date.getMonth() === month && date.getFullYear() === year;
-  });
+  const selectedYear = state.selectedMonth.getFullYear();
+  const selectedMonth = state.selectedMonth.getMonth();
+  const selectedMonthStart = new Date(selectedYear, selectedMonth, 1);
+
+  return state.transactions.reduce((monthly, transaction) => {
+    const originalDate = new Date(`${transaction.date}T00:00:00`);
+    const isInSelectedMonth = originalDate.getMonth() === selectedMonth && originalDate.getFullYear() === selectedYear;
+
+    if (isInSelectedMonth) {
+      monthly.push({ ...transaction, displayDate: transaction.date });
+      return monthly;
+    }
+
+    if (!transaction.recurring) return monthly;
+
+    const startMonth = new Date(originalDate.getFullYear(), originalDate.getMonth(), 1);
+    if (startMonth > selectedMonthStart) return monthly;
+
+    monthly.push({
+      ...transaction,
+      displayDate: recurringDisplayDate(transaction.date, selectedYear, selectedMonth),
+      isVirtualRecurring: true,
+    });
+    return monthly;
+  }, []);
+}
+
+function recurringDisplayDate(startDate, year, month) {
+  const originalDate = new Date(`${startDate}T00:00:00`);
+  const day = originalDate.getDate();
+  const lastDayOfSelectedMonth = new Date(year, month + 1, 0).getDate();
+  return formatDateInputValue(new Date(year, month, Math.min(day, lastDayOfSelectedMonth)));
+}
+
+function formatDateInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function sumByType(transactions, type) {
@@ -155,13 +190,14 @@ function renderHistory() {
   renderMonthSelectors();
   const monthly = selectedMonthTransactions();
   const filtered = state.filter === "all" ? monthly : monthly.filter((transaction) => transaction.type === state.filter);
-  const income = sumByType(filtered, "income");
-  const expenses = sumByType(filtered, "expense");
+  const monthlyIncome = sumByType(monthly, "income");
+  const monthlyExpenses = sumByType(monthly, "expense");
+  const monthlyBalance = monthlyIncome - monthlyExpenses;
 
-  elements.historyIncomeTotal.textContent = euro.format(income);
-  elements.historyExpenseTotal.textContent = euro.format(expenses);
-  elements.historyBalanceTotal.textContent = euro.format(income - expenses);
-  elements.historyBalanceTotal.classList.toggle("negative", income - expenses < 0);
+  elements.historyIncomeTotal.textContent = euro.format(monthlyIncome);
+  elements.historyExpenseTotal.textContent = euro.format(monthlyExpenses);
+  elements.historyBalanceTotal.textContent = euro.format(monthlyBalance);
+  elements.historyBalanceTotal.classList.toggle("negative", monthlyBalance < 0);
 
   if (!filtered.length) {
     elements.transactionList.innerHTML = `
@@ -174,10 +210,10 @@ function renderHistory() {
 
   const grouped = filtered
     .map((transaction, index) => ({ ...transaction, originalIndex: index }))
-    .sort((a, b) => b.date.localeCompare(a.date) || b.originalIndex - a.originalIndex)
+    .sort((a, b) => b.displayDate.localeCompare(a.displayDate) || b.originalIndex - a.originalIndex)
     .reduce((groups, transaction) => {
-      groups[transaction.date] = groups[transaction.date] || [];
-      groups[transaction.date].push(transaction);
+      groups[transaction.displayDate] = groups[transaction.displayDate] || [];
+      groups[transaction.displayDate].push(transaction);
       return groups;
     }, {});
 
@@ -196,16 +232,18 @@ function transactionCard(transaction) {
   const sign = isIncome ? "+" : "-";
   const amount = `${sign}${euro.format(transaction.amount)}`;
   const note = transaction.note ? `<p class="transaction-note">${escapeHtml(transaction.note)}</p>` : "";
+  const recurringMeta = transaction.recurring ? " · Μηνιαίο" : "";
+  const recurringBadge = transaction.recurring ? '<span class="recurring-badge">Μηνιαίο</span>' : "";
 
   return `
     <article class="transaction-item ${transaction.type}">
       <div class="transaction-main">
         <div class="transaction-title-row">
           <h4>${escapeHtml(transaction.category)}</h4>
-          <span class="type-badge ${transaction.type}">${typeLabel}</span>
+          ${recurringBadge}<span class="type-badge ${transaction.type}">${typeLabel}</span>
         </div>
         ${note}
-        <p class="transaction-meta">${dateFormatter.format(new Date(`${transaction.date}T00:00:00`))} · ${typeLabel}</p>
+        <p class="transaction-meta">${dateFormatter.format(new Date(`${transaction.displayDate || transaction.date}T00:00:00`))} · ${typeLabel}${recurringMeta}</p>
       </div>
       <div class="transaction-side">
         <strong class="amount ${transaction.type}">${amount}</strong>
@@ -260,6 +298,7 @@ function resetTransactionForm(message = "") {
   elements.type.value = "income";
   updateCategoryOptions();
   elements.date.valueAsDate = new Date();
+  elements.recurring.checked = false;
   elements.formTitle.textContent = "Νέα συναλλαγή";
   elements.formSubmit.textContent = "Αποθήκευση";
   elements.cancelEdit.hidden = true;
@@ -276,6 +315,7 @@ function startEdit(transaction) {
   elements.amount.value = transaction.amount;
   elements.note.value = transaction.note;
   elements.date.value = transaction.date;
+  elements.recurring.checked = Boolean(transaction.recurring);
   elements.formMessage.textContent = "";
   switchView("add");
 }
@@ -310,6 +350,7 @@ elements.transactionForm.addEventListener("submit", (event) => {
     category: categoryForType(elements.type.value, elements.category.value.trim()),
     note: elements.note.value.trim(),
     date: elements.date.value,
+    recurring: elements.recurring.checked,
   };
 
   if (!transaction.amount || !transaction.category || !transaction.date) return;
@@ -333,7 +374,11 @@ elements.transactionList.addEventListener("click", (event) => {
     return;
   }
   if (!deleteButton) return;
-  if (!confirm("Είσαι σίγουρος ότι θέλεις να διαγράψεις αυτή τη συναλλαγή;")) return;
+  const transaction = state.transactions.find((item) => item.id === deleteButton.dataset.id);
+  const deleteMessage = transaction?.recurring
+    ? "Αυτή η συναλλαγή επαναλαμβάνεται κάθε μήνα. Θέλεις σίγουρα να τη διαγράψεις;"
+    : "Είσαι σίγουρος ότι θέλεις να διαγράψεις αυτή τη συναλλαγή;";
+  if (!confirm(deleteMessage)) return;
   state.transactions = state.transactions.filter((transaction) => transaction.id !== deleteButton.dataset.id);
   if (state.editingId === deleteButton.dataset.id) resetTransactionForm();
   saveTransactions();
