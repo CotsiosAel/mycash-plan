@@ -215,36 +215,10 @@
               <strong>MyCash Plan</strong>
               <span>Version 2.3</span>
               <p class="muted">Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου.</p>
-              <p class="muted">Κράτησε backup για να μη χάσεις τα δεδομένα σου.</p>
+              <p class="muted">Συγχρονισμός με λογαριασμό θα προστεθεί σε μελλοντική έκδοση.</p>
             </div>
             <button id="checkUpdate" type="button" class="secondary-button small-action-button">Έλεγχος ενημέρωσης</button>
             <p id="settingsMessage" class="settings-message" aria-live="polite"></p>
-          </article>
-          <article id="accountsSettingsCard" class="card accounts-settings-card">
-            <div class="section-heading">
-              <h3>Πορτοφόλια & Λογαριασμοί</h3>
-            </div>
-            <p class="muted">Οργάνωσε πού βρίσκονται τα χρήματά σου.</p>
-            <p id="accountMessage" class="account-message" aria-live="polite"></p>
-            <form id="accountForm" class="account-form">
-              <label>Όνομα λογαριασμού
-                <input id="accountName" type="text" placeholder="π.χ. Κύριος λογαριασμός, Revolut, Τράπεζα" autocomplete="off" />
-              </label>
-              <label>Τύπος
-                <select id="accountType">
-                  <option value="cash">Μετρητά</option>
-                  <option value="bank">Τράπεζα</option>
-                  <option value="card">Κάρτα</option>
-                  <option value="savings">Αποταμίευση</option>
-                  <option value="other">Άλλο</option>
-                </select>
-              </label>
-              <label>Αρχικό υπόλοιπο
-                <input id="accountStartingBalance" type="number" step="0.01" placeholder="Αρχικό υπόλοιπο" />
-              </label>
-              <button type="submit" class="primary-button">Προσθήκη λογαριασμού</button>
-            </form>
-            <div id="accountsList" class="accounts-list"></div>
           </article>
           <article class="card security-card">
             <div class="section-heading">
@@ -254,11 +228,39 @@
             <p id="securityMessage" class="security-message" aria-live="polite"></p>
             <div id="securityPanel" class="security-panel"></div>
           </article>
+          <article id="accountsSettingsCard" class="card accounts-settings-card">
+            <div class="section-heading">
+              <h3>Πορτοφόλια & Λογαριασμοί</h3>
+            </div>
+            <p class="muted">Οργάνωσε πού βρίσκονται τα χρήματά σου.</p>
+            <p id="accountMessage" class="account-message" aria-live="polite"></p>
+            <form id="accountForm" class="account-form compact-form">
+              <label>Όνομα λογαριασμού
+                <input id="accountName" type="text" placeholder="π.χ. Κύριος λογαριασμός, Revolut, Τράπεζα" autocomplete="off" />
+              </label>
+              <div class="compact-field-row">
+                <label>Τύπος
+                  <select id="accountType">
+                    <option value="cash">Μετρητά</option>
+                    <option value="bank">Τράπεζα</option>
+                    <option value="card">Κάρτα</option>
+                    <option value="savings">Αποταμίευση</option>
+                    <option value="other">Άλλο</option>
+                  </select>
+                </label>
+                <label>Αρχικό υπόλοιπο
+                  <input id="accountStartingBalance" type="number" step="0.01" placeholder="0,00" />
+                </label>
+              </div>
+              <button type="submit" class="primary-button">Προσθήκη λογαριασμού</button>
+            </form>
+            <div id="accountsList" class="accounts-list compact-accounts-list"></div>
+          </article>
           <article class="card backup-card">
             <div class="section-heading">
               <h3>Backup & Εξαγωγή δεδομένων</h3>
             </div>
-            <p class="muted">Κράτησε ένα backup για να μη χάσεις τα δεδομένα σου αν αλλάξεις συσκευή.</p>
+            <p class="muted">Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου. Κράτα backup αν αλλάξεις συσκευή ή browser.</p>
             <p id="backupMessage" class="backup-message" aria-live="polite"></p>
             <div class="backup-actions">
               <button id="downloadBackup" type="button" class="primary-button">Λήψη backup</button>
@@ -286,14 +288,20 @@
               <button type="submit" class="primary-button">Προσθήκη κατηγορίας</button>
             </form>
             <div class="category-lists">
-              <section>
-                <h4>Κατηγορίες εσόδων</h4>
+              <details class="category-details">
+                <summary>
+                  <span>Κατηγορίες εσόδων</span>
+                  <small id="incomeCategoryPreview">Άνοιγμα λίστας</small>
+                </summary>
                 <ul id="incomeCategoryList" class="category-list"></ul>
-              </section>
-              <section>
-                <h4>Κατηγορίες εξόδων</h4>
+              </details>
+              <details class="category-details">
+                <summary>
+                  <span>Κατηγορίες εξόδων</span>
+                  <small id="expenseCategoryPreview">Άνοιγμα λίστας</small>
+                </summary>
                 <ul id="expenseCategoryList" class="category-list"></ul>
-              </section>
+              </details>
             </div>
           </article>
           <article class="card danger-zone-card">
