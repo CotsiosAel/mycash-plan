@@ -1,2 +1,24 @@
-# mycash-plan
-A simple personal money tracker PWA for income, expenses and savings goals.
+# MyCash Plan
+
+Το **MyCash Plan** είναι ένα mobile-first PWA για προσωπική παρακολούθηση χρημάτων στα ελληνικά, φτιαγμένο αποκλειστικά με vanilla HTML, CSS και JavaScript.
+
+## Δυνατότητες
+
+- Πίνακας ελέγχου με έσοδα μήνα, έξοδα μήνα, υπόλοιπο, πρόοδο αποταμίευσης και φιλικό μήνυμα.
+- Προσθήκη συναλλαγής ως έσοδο ή έξοδο με ποσό, κατηγορία, σημείωση και ημερομηνία.
+- Ιστορικό συναλλαγών με φίλτρο για όλα, έσοδα ή έξοδα και δυνατότητα διαγραφής.
+- Στόχος αποταμίευσης με τρέχον αποταμιευμένο ποσό και ποσοστό προόδου.
+- Αποθήκευση όλων των δεδομένων στο `localStorage` της συσκευής.
+- PWA υποστήριξη με manifest και service worker για εγκατάσταση σε κινητή αρχική οθόνη.
+
+## Εκτέλεση
+
+Ανοίξτε το `index.html` ή ανεβάστε τα αρχεία σε GitHub Pages / Vercel. Δεν χρειάζονται dependencies, build step ή backend.
+
+## Αρχεία
+
+- `index.html` - δομή της εφαρμογής.
+- `styles.css` - mobile-first premium finance εμφάνιση.
+- `app.js` - λογική συναλλαγών, στόχων, φίλτρων και localStorage.
+- `manifest.json` - μεταδεδομένα εγκατάστασης PWA.
+- `service-worker.js` - offline cache βασικών αρχείων.

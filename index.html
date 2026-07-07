@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="el">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="description" content="MyCash Plan - προσωπικός οικονομικός προγραμματισμός σε ευρώ." />
+    <title>MyCash Plan</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230f172a'/%3E%3Cpath fill='%2334d399' d='M46 112c0-32 24-56 56-56 17 0 31 6 42 17l-17 17c-7-7-15-10-25-10-18 0-32 14-32 32s14 32 32 32c10 0 18-3 25-10l17 17c-11 11-25 17-42 17-32 0-56-24-56-56Z'/%3E%3Cpath fill='%23f8fafc' d='M42 37h108v19H42z'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Προσωπικό ταμείο</p>
+          <h1>MyCash Plan</h1>
+        </div>
+        <div class="hero-badge" aria-label="Νόμισμα ευρώ">€</div>
+      </header>
+
+      <main>
+        <section id="dashboard" class="view active" aria-labelledby="dashboard-title">
+          <h2 id="dashboard-title">Πίνακας ελέγχου</h2>
+          <div class="summary-card premium-card">
+            <p id="friendlyMessage">Ας οργανώσουμε τα χρήματά σου με ηρεμία.</p>
+            <strong id="balanceTotal">0,00 €</strong>
+            <span>Υπόλοιπο μήνα</span>
+          </div>
+          <div class="stats-grid">
+            <article class="stat-card income"><span>Έσοδα μήνα</span><strong id="incomeTotal">0,00 €</strong></article>
+            <article class="stat-card expense"><span>Έξοδα μήνα</span><strong id="expenseTotal">0,00 €</strong></article>
+          </div>
+          <article class="card">
+            <div class="section-heading">
+              <h3>Πρόοδος αποταμίευσης</h3>
+              <span id="savingsPercent">0%</span>
+            </div>
+            <div class="progress-track"><div id="savingsBar" class="progress-bar"></div></div>
+            <p id="savingsText" class="muted">Όρισε στόχο για να ξεκινήσεις.</p>
+          </article>
+        </section>
+
+        <section id="add" class="view" aria-labelledby="add-title">
+          <h2 id="add-title">Νέα συναλλαγή</h2>
+          <form id="transactionForm" class="card form-card">
+            <label>Τύπος
+              <select id="type" required>
+                <option value="income">Έσοδο</option>
+                <option value="expense">Έξοδο</option>
+              </select>
+            </label>
+            <label>Ποσό (€)
+              <input id="amount" type="number" min="0.01" step="0.01" placeholder="π.χ. 45.50" required />
+            </label>
+            <label>Κατηγορία
+              <input id="category" type="text" placeholder="π.χ. Μισθός, Σούπερ μάρκετ" required />
+            </label>
+            <label>Σημείωση
+              <input id="note" type="text" placeholder="Προαιρετική περιγραφή" />
+            </label>
+            <label>Ημερομηνία
+              <input id="date" type="date" required />
+            </label>
+            <button type="submit" class="primary-button">Αποθήκευση</button>
+          </form>
+        </section>
+
+        <section id="history" class="view" aria-labelledby="history-title">
+          <div class="section-heading">
+            <h2 id="history-title">Ιστορικό</h2>
+            <select id="filter" aria-label="Φίλτρο συναλλαγών">
+              <option value="all">Όλα</option>
+              <option value="income">Έσοδα</option>
+              <option value="expense">Έξοδα</option>
+            </select>
+          </div>
+          <div id="transactionList" class="transaction-list"></div>
+        </section>
+
+        <section id="goals" class="view" aria-labelledby="goals-title">
+          <h2 id="goals-title">Στόχοι</h2>
+          <form id="goalForm" class="card form-card">
+            <label>Στόχος αποταμίευσης (€)
+              <input id="goalAmount" type="number" min="0" step="0.01" placeholder="π.χ. 1000" />
+            </label>
+            <label>Τρέχον αποταμιευμένο ποσό (€)
+              <input id="savedAmount" type="number" min="0" step="0.01" placeholder="π.χ. 250" />
+            </label>
+            <button type="submit" class="primary-button">Ενημέρωση στόχου</button>
+          </form>
+          <article class="card goal-result">
+            <span id="goalPercent">0%</span>
+            <p id="goalText">Δεν έχει οριστεί στόχος ακόμη.</p>
+          </article>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
+        <button class="nav-button active" data-view="dashboard">🏠<span>Αρχική</span></button>
+        <button class="nav-button" data-view="add">➕<span>Προσθήκη</span></button>
+        <button class="nav-button" data-view="history">📜<span>Ιστορικό</span></button>
+        <button class="nav-button" data-view="goals">🎯<span>Στόχοι</span></button>
+      </nav>
+    </div>
+    <script src="app.js" defer></script>
+  </body>
+</html>
