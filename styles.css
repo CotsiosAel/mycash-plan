@@ -33,7 +33,7 @@ h1 { margin-bottom: 0; font-size: clamp(2rem, 9vw, 3rem); letter-spacing: -0.05e
 main { padding-top: 22px; }
 .view { display: none; animation: rise .25s ease; }
 .view.active { display: block; }
-#settings.view.active { padding-bottom: calc(34px + var(--safe-area-bottom)); }
+#settings.view.active { padding-bottom: calc(96px + var(--safe-area-bottom)); }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .card, .stat-card, .summary-card { background: var(--card); border: 1px solid rgba(148, 163, 184, 0.22); border-radius: 26px; box-shadow: var(--shadow); }
 .premium-card { padding: 24px; background: linear-gradient(160deg, rgba(255,255,255,.98), rgba(236,253,245,.92)); }

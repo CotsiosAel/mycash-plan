@@ -1,4 +1,4 @@
-const appVersion = "2.3";
+const appVersion = "2.3.1";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
