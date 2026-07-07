@@ -1,3 +1,5 @@
+const appVersion = "1.5";
+
 const storageKeys = {
   transactions: "mycash-plan-transactions",
   goals: "mycash-plan-goals",
@@ -60,6 +62,10 @@ const elements = {
   savedAmount: document.querySelector("#savedAmount"),
   goalPercent: document.querySelector("#goalPercent"),
   goalText: document.querySelector("#goalText"),
+  downloadBackup: document.querySelector("#downloadBackup"),
+  exportCsv: document.querySelector("#exportCsv"),
+  restoreBackup: document.querySelector("#restoreBackup"),
+  backupMessage: document.querySelector("#backupMessage"),
 };
 
 function normalizeTransactions(transactions) {
@@ -92,6 +98,117 @@ function saveBudgets() {
 
 function saveGoals() {
   localStorage.setItem(storageKeys.goals, JSON.stringify(state.goals));
+}
+
+function todayFileStamp() {
+  return formatDateInputValue(new Date());
+}
+
+function downloadFile(content, fileName, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function showBackupMessage(message, isError = false) {
+  elements.backupMessage.textContent = message;
+  elements.backupMessage.classList.toggle("error", isError);
+}
+
+function createBackupPayload() {
+  return {
+    app: "MyCash Plan",
+    version: appVersion,
+    exportDate: new Date().toISOString(),
+    transactions: state.transactions,
+    goals: state.goals,
+    budgets: state.budgets,
+  };
+}
+
+function exportBackup() {
+  const content = JSON.stringify(createBackupPayload(), null, 2);
+  downloadFile(content, `mycash-plan-backup-${todayFileStamp()}.json`, "application/json;charset=utf-8");
+  showBackupMessage("Το backup δημιουργήθηκε επιτυχώς.");
+}
+
+function escapeCsvValue(value) {
+  const text = String(value ?? "");
+  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function exportTransactionsCsv() {
+  const header = ["Date", "Type", "Category", "Note", "Amount", "Recurring"];
+  const rows = state.transactions.map((transaction) => [
+    transaction.date,
+    transaction.type,
+    transaction.category,
+    transaction.note,
+    Number(transaction.amount).toFixed(2),
+    transaction.recurring ? "Yes" : "No",
+  ]);
+  const csv = [header, ...rows].map((row) => row.map(escapeCsvValue).join(",")).join("\r\n");
+  downloadFile(`\ufeff${csv}`, `mycash-plan-transactions-${todayFileStamp()}.csv`, "text/csv;charset=utf-8");
+  showBackupMessage("Το CSV δημιουργήθηκε επιτυχώς.");
+}
+
+function isValidBackupPayload(payload) {
+  return payload
+    && typeof payload === "object"
+    && Array.isArray(payload.transactions)
+    && payload.goals
+    && typeof payload.goals === "object"
+    && payload.budgets
+    && typeof payload.budgets === "object";
+}
+
+function restoreBackupPayload(payload) {
+  if (!isValidBackupPayload(payload)) {
+    showBackupMessage("Το αρχείο backup δεν είναι έγκυρο.", true);
+    return;
+  }
+
+  if (!confirm("Η επαναφορά θα αντικαταστήσει τα τωρινά δεδομένα. Συνέχεια;")) return;
+
+  state.transactions = normalizeTransactions(payload.transactions);
+  state.goals = {
+    goalAmount: Number(payload.goals.goalAmount) || 0,
+    savedAmount: Number(payload.goals.savedAmount) || 0,
+  };
+  state.budgets = normalizeBudgets(payload.budgets);
+  state.editingId = null;
+
+  saveTransactions();
+  saveGoals();
+  saveBudgets();
+  resetTransactionForm();
+  render();
+  showBackupMessage("Το backup επαναφέρθηκε επιτυχώς.");
+}
+
+function restoreBackupFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    try {
+      restoreBackupPayload(JSON.parse(reader.result));
+    } catch (error) {
+      showBackupMessage("Το αρχείο backup δεν είναι έγκυρο.", true);
+    } finally {
+      elements.restoreBackup.value = "";
+    }
+  });
+  reader.addEventListener("error", () => {
+    showBackupMessage("Το αρχείο backup δεν είναι έγκυρο.", true);
+    elements.restoreBackup.value = "";
+  });
+  reader.readAsText(file);
 }
 
 function selectedMonthTransactions() {
@@ -402,6 +519,9 @@ document.querySelectorAll("[data-month-offset]").forEach((button) => {
 elements.navButtons.forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
 elements.type.addEventListener("change", () => updateCategoryOptions());
 elements.cancelEdit.addEventListener("click", () => resetTransactionForm());
+elements.downloadBackup.addEventListener("click", exportBackup);
+elements.exportCsv.addEventListener("click", exportTransactionsCsv);
+elements.restoreBackup.addEventListener("change", (event) => restoreBackupFile(event.target.files[0]));
 
 elements.transactionForm.addEventListener("submit", (event) => {
   event.preventDefault();

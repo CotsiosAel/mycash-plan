@@ -130,3 +130,11 @@ input:focus, select:focus { outline: 3px solid rgba(20, 184, 166, .22); border-c
 .budget-input-row span { color: var(--ink); font-weight: 950; }
 .budget-form h3, .budget-form p { margin-bottom: 0; }
 @media (min-width: 520px) { .budget-input-row { grid-template-columns: 1fr 160px; align-items: center; } }
+.backup-card { display: grid; gap: 12px; }
+.backup-card .section-heading h3, .backup-card p { margin-bottom: 0; }
+.backup-actions { display: grid; gap: 10px; }
+.restore-button { display: grid; place-items: center; text-align: center; cursor: pointer; }
+.backup-message { min-height: 1.25rem; margin: 0; color: var(--income); font-weight: 900; }
+.backup-message.error { color: var(--expense); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (min-width: 520px) { .backup-actions { grid-template-columns: repeat(3, 1fr); } }
