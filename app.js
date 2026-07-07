@@ -192,11 +192,24 @@ function render() {
   renderGoals();
 }
 
+function categoriesForType(type) {
+  return type === "expense" ? expenseCategories : incomeCategories;
+}
+
+function validCategoryForType(type, category) {
+  return categoriesForType(type).includes(category);
+}
+
+function categoryForType(type, preferredCategory = "") {
+  const categories = categoriesForType(type);
+  return validCategoryForType(type, preferredCategory) ? preferredCategory : categories[0];
+}
+
 function updateCategoryOptions(selectedValue = elements.category.value) {
-  const categories = elements.type.value === "expense" ? [...expenseCategories] : [...incomeCategories];
-  if (selectedValue && !categories.includes(selectedValue)) categories.push(selectedValue);
+  const categories = categoriesForType(elements.type.value);
+  const selectedCategory = categoryForType(elements.type.value, selectedValue);
   elements.category.innerHTML = categories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
-  elements.category.value = categories.includes(selectedValue) ? selectedValue : categories[0];
+  elements.category.value = selectedCategory;
 }
 
 function resetTransactionForm(message = "") {
@@ -219,7 +232,6 @@ function startEdit(transaction) {
   elements.type.value = transaction.type;
   updateCategoryOptions(transaction.category);
   elements.amount.value = transaction.amount;
-  elements.category.value = transaction.category;
   elements.note.value = transaction.note;
   elements.date.value = transaction.date;
   elements.formMessage.textContent = "";
@@ -253,7 +265,7 @@ elements.transactionForm.addEventListener("submit", (event) => {
     id: state.editingId || (globalThis.crypto?.randomUUID?.() || String(Date.now())),
     type: elements.type.value,
     amount: Number(elements.amount.value),
-    category: elements.category.value.trim(),
+    category: categoryForType(elements.type.value, elements.category.value.trim()),
     note: elements.note.value.trim(),
     date: elements.date.value,
   };
