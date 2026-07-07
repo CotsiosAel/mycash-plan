@@ -18,6 +18,7 @@ const state = {
 
 const euro = new Intl.NumberFormat("el-GR", { style: "currency", currency: "EUR" });
 const dateFormatter = new Intl.DateTimeFormat("el-GR", { dateStyle: "medium" });
+const historyDateFormatter = new Intl.DateTimeFormat("el-GR", { day: "numeric", month: "short", year: "numeric" });
 const monthFormatter = new Intl.DateTimeFormat("el-GR", { month: "long", year: "numeric" });
 
 const elements = {
@@ -37,6 +38,9 @@ const elements = {
   formMessage: document.querySelector("#formMessage"),
   dashboardMonthLabel: document.querySelector("#dashboardMonthLabel"),
   historyMonthLabel: document.querySelector("#historyMonthLabel"),
+  historyIncomeTotal: document.querySelector("#historyIncomeTotal"),
+  historyExpenseTotal: document.querySelector("#historyExpenseTotal"),
+  historyBalanceTotal: document.querySelector("#historyBalanceTotal"),
   incomeTotal: document.querySelector("#incomeTotal"),
   expenseTotal: document.querySelector("#expenseTotal"),
   balanceTotal: document.querySelector("#balanceTotal"),
@@ -151,28 +155,66 @@ function renderHistory() {
   renderMonthSelectors();
   const monthly = selectedMonthTransactions();
   const filtered = state.filter === "all" ? monthly : monthly.filter((transaction) => transaction.type === state.filter);
+  const income = sumByType(filtered, "income");
+  const expenses = sumByType(filtered, "expense");
+
+  elements.historyIncomeTotal.textContent = euro.format(income);
+  elements.historyExpenseTotal.textContent = euro.format(expenses);
+  elements.historyBalanceTotal.textContent = euro.format(income - expenses);
+  elements.historyBalanceTotal.classList.toggle("negative", income - expenses < 0);
 
   if (!filtered.length) {
-    elements.transactionList.innerHTML = '<div class="card empty-state">Δεν υπάρχουν συναλλαγές για τον επιλεγμένο μήνα.</div>';
+    elements.transactionList.innerHTML = `
+      <div class="card empty-state history-empty">
+        <strong>Δεν υπάρχουν συναλλαγές για αυτόν τον μήνα.</strong>
+        <span>Πρόσθεσε έσοδα ή έξοδα για να ξεκινήσεις.</span>
+      </div>`;
     return;
   }
 
-  elements.transactionList.innerHTML = filtered.slice().sort((a, b) => b.date.localeCompare(a.date)).map((transaction) => {
-    const sign = transaction.type === "income" ? "+" : "-";
-    const note = transaction.note ? ` • ${transaction.note}` : "";
-    return `
-      <article class="transaction-item">
-        <div>
-          <h3>${escapeHtml(transaction.category)}</h3>
-          <p>${dateFormatter.format(new Date(`${transaction.date}T00:00:00`))}${escapeHtml(note)}</p>
+  const grouped = filtered
+    .map((transaction, index) => ({ ...transaction, originalIndex: index }))
+    .sort((a, b) => b.date.localeCompare(a.date) || b.originalIndex - a.originalIndex)
+    .reduce((groups, transaction) => {
+      groups[transaction.date] = groups[transaction.date] || [];
+      groups[transaction.date].push(transaction);
+      return groups;
+    }, {});
+
+  elements.transactionList.innerHTML = Object.entries(grouped).map(([date, transactions]) => `
+    <section class="transaction-date-group" aria-label="Συναλλαγές ${historyDateFormatter.format(new Date(`${date}T00:00:00`))}">
+      <h3 class="date-heading">${historyDateFormatter.format(new Date(`${date}T00:00:00`))}</h3>
+      <div class="date-transactions">
+        ${transactions.map((transaction) => transactionCard(transaction)).join("")}
+      </div>
+    </section>`).join("");
+}
+
+function transactionCard(transaction) {
+  const isIncome = transaction.type === "income";
+  const typeLabel = isIncome ? "Έσοδο" : "Έξοδο";
+  const sign = isIncome ? "+" : "-";
+  const amount = `${sign}${euro.format(transaction.amount)}`;
+  const note = transaction.note ? `<p class="transaction-note">${escapeHtml(transaction.note)}</p>` : "";
+
+  return `
+    <article class="transaction-item ${transaction.type}">
+      <div class="transaction-main">
+        <div class="transaction-title-row">
+          <h4>${escapeHtml(transaction.category)}</h4>
+          <span class="type-badge ${transaction.type}">${typeLabel}</span>
         </div>
+        ${note}
+        <p class="transaction-meta">${dateFormatter.format(new Date(`${transaction.date}T00:00:00`))} · ${typeLabel}</p>
+      </div>
+      <div class="transaction-side">
+        <strong class="amount ${transaction.type}">${amount}</strong>
         <div class="transaction-actions">
-          <strong class="amount ${transaction.type}">${sign}${euro.format(transaction.amount)}</strong>
-          <button class="edit-button" data-id="${transaction.id}" type="button">Επεξεργασία</button>
-          <button class="delete-button" data-id="${transaction.id}" type="button">Διαγραφή</button>
+          <button class="edit-button" data-id="${escapeHtml(transaction.id)}" type="button">Επεξεργασία</button>
+          <button class="delete-button" data-id="${escapeHtml(transaction.id)}" type="button">Διαγραφή</button>
         </div>
-      </article>`;
-  }).join("");
+      </div>
+    </article>`;
 }
 
 function renderGoals() {
@@ -291,6 +333,7 @@ elements.transactionList.addEventListener("click", (event) => {
     return;
   }
   if (!deleteButton) return;
+  if (!confirm("Είσαι σίγουρος ότι θέλεις να διαγράψεις αυτή τη συναλλαγή;")) return;
   state.transactions = state.transactions.filter((transaction) => transaction.id !== deleteButton.dataset.id);
   if (state.editingId === deleteButton.dataset.id) resetTransactionForm();
   saveTransactions();
