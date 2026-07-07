@@ -231,13 +231,16 @@ body.locked .app-shell { filter: blur(8px); pointer-events: none; user-select: n
 .account-balance-row small { display: block; margin-top: 4px; color: var(--muted); font-size: .78rem; font-weight: 800; line-height: 1.25; }
 .account-balance-row strong, .account-list-balance { letter-spacing: -.03em; }
 .account-balance-row strong.positive, .account-list-balance.positive { color: var(--income); }
-.account-balance-total { margin-top: 2px; border-color: rgba(15, 118, 110, .28); background: linear-gradient(135deg, rgba(236, 253, 245, .96), rgba(255,255,255,.94)); box-shadow: 0 14px 30px rgba(15, 118, 110, .12); }
-.account-balance-total strong { font-size: 1.16rem; }
+.account-balance-total { margin-top: 6px; padding: 16px; border: 2px solid rgba(15, 118, 110, .34); background: linear-gradient(135deg, rgba(204, 251, 241, .98), rgba(255,255,255,.98)); box-shadow: 0 16px 34px rgba(15, 118, 110, .18); }
+.account-balance-total span { color: var(--primary-dark); font-size: 1.02rem; }
+.account-balance-total strong { font-size: 1.28rem; }
 .account-balance-row strong.negative, .account-list-balance.negative { color: var(--expense); }
 .account-list-item { grid-template-columns: 1fr; }
 .account-list-item div { display: grid; gap: 4px; }
 .account-list-item span { color: var(--muted); font-size: .86rem; font-weight: 800; }
-.account-list-item.archived { opacity: .72; }
+.account-list-item.archived { opacity: .78; border-style: dashed; }
+.archived-account-badge { display: inline-flex; width: fit-content; margin-top: 5px; padding: 5px 9px; border-radius: 999px; background: rgba(100, 116, 139, .14); color: #475569; font-size: .72rem; font-weight: 950; }
+.account-duplicate-warning { margin: 0; padding: 12px 13px; border: 1px solid rgba(245, 158, 11, .34); border-radius: 18px; background: rgba(255, 251, 235, .92); color: #92400e; font-size: .9rem; font-weight: 900; line-height: 1.35; }
 .delete-account-button { border: 0; border-radius: 14px; padding: 10px 12px; color: #991b1b; background: #fee2e2; font: inherit; font-size: .84rem; font-weight: 900; }
 .account-message { min-height: 1.25rem; margin: 0; color: var(--income); font-weight: 900; }
 .account-message.error { color: var(--expense); }

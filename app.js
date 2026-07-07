@@ -12,6 +12,7 @@ const storageKeys = {
 };
 
 const defaultAccountName = "Μετρητά";
+const duplicateAccountWarning = "Βρέθηκαν παρόμοιοι λογαριασμοί. Μπορείς να αρχειοθετήσεις αυτόν που δεν χρησιμοποιείς.";
 const accountTypeLabels = { cash: "Μετρητά", bank: "Τράπεζα", card: "Κάρτα", savings: "Αποταμίευση", other: "Άλλο" };
 
 const defaultExpenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
@@ -149,6 +150,31 @@ function normalizeAccounts(accounts) {
 
 function saveAccounts() {
   localStorage.setItem(storageKeys.accounts, JSON.stringify(state.accounts));
+}
+
+function normalizedAccountName(name) {
+  return String(name || "")
+    .trim()
+    .toLocaleLowerCase("el-GR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function accountNameExists(name) {
+  const normalizedName = normalizedAccountName(name);
+  return state.accounts.some((account) => normalizedAccountName(account.name) === normalizedName);
+}
+
+function duplicateAccountNameGroups() {
+  const groups = state.accounts.reduce((map, account) => {
+    const key = normalizedAccountName(account.name);
+    if (!key) return map;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(account);
+    return map;
+  }, new Map());
+  return [...groups.values()].filter((group) => group.length > 1);
 }
 
 function defaultAccount() {
@@ -613,7 +639,7 @@ function renderAccountSummary() {
   elements.accountSummary.innerHTML = `
     ${accountRows}
     <div class="account-balance-row account-balance-total">
-      <span>Συνολικό διαθέσιμο υπόλοιπο<small>Διαθέσιμα χρήματα σε ενεργούς λογαριασμούς, όχι κέρδος μήνα</small></span>
+      <span>Συνολικό διαθέσιμο υπόλοιπο<small>Δεν μετρά ως έσοδο μήνα.</small></span>
       <strong class="${totalAvailableBalance < 0 ? "negative" : "positive"}">${euro.format(totalAvailableBalance)}</strong>
     </div>`;
 }
@@ -1010,11 +1036,16 @@ function renderCategorySettings() {
 }
 
 function renderAccounts() {
-  elements.accountsList.innerHTML = state.accounts.map((account) => {
+  const duplicateWarning = duplicateAccountNameGroups().length
+    ? `<p class="account-duplicate-warning" role="alert">${duplicateAccountWarning}</p>`
+    : "";
+  const accountRows = state.accounts.map((account) => {
     const balance = accountBalance(account);
     const used = state.transactions.some((transaction) => transactionAccountId(transaction) === account.id || transaction.fromAccountId === account.id || transaction.toAccountId === account.id);
-    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(account.name)}</strong><span>${escapeHtml(accountTypeLabels[account.type] || accountTypeLabels.other)}${account.archived ? " · Αρχειοθετημένος" : ""}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? "Αρχειοθέτηση" : "Διαγραφή"}</button></div>`;
+    const archivedBadge = account.archived ? '<span class="archived-account-badge">Αρχειοθετημένος</span>' : "";
+    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(account.name)}</strong><span>${escapeHtml(accountTypeLabels[account.type] || accountTypeLabels.other)}${archivedBadge}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? "Αρχειοθέτηση" : "Διαγραφή"}</button></div>`;
   }).join("");
+  elements.accountsList.innerHTML = `${duplicateWarning}${accountRows}`;
 }
 
 function renderGoals() {
@@ -1177,8 +1208,9 @@ document.querySelector("#categorySettingsCard").addEventListener("click", (event
 
 elements.accountForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const name = elements.accountName.value.trim();
+  const name = elements.accountName.value.trim().replace(/\s+/g, " ");
   if (!name) return showAccountMessage("Συμπλήρωσε όνομα λογαριασμού.", true);
+  if (accountNameExists(name)) return showAccountMessage("Υπάρχει ήδη λογαριασμός με αυτό το όνομα.", true);
   state.accounts.push({ id: `acc_${Date.now()}`, name, type: elements.accountType.value, startingBalance: Number(elements.accountStartingBalance.value) || 0, archived: false });
   saveAccounts();
   elements.accountForm.reset();
