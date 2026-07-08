@@ -1,4 +1,4 @@
-const appVersion = "2.3.1";
+const appVersion = "2.3.3";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -870,13 +870,39 @@ function renderMonthSelectors() {
   elements.historyMonthLabel.textContent = label;
 }
 
+function normalizedCategoryName(category) {
+  return String(category || "")
+    .trim()
+    .toLocaleLowerCase("el-GR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+function matchingExpenseCategory(category) {
+  const normalized = normalizedCategoryName(category);
+  return allExpenseCategoryRows().find((row) => normalizedCategoryName(row) === normalized) || String(category || "").trim();
+}
+
 function expenseTotalsByCategory(monthly) {
   return monthly
     .filter((transaction) => transaction.type === "expense")
     .reduce((summary, transaction) => {
-      summary[transaction.category] = (summary[transaction.category] || 0) + transaction.amount;
+      const category = matchingExpenseCategory(transaction.category);
+      summary[category] = (summary[category] || 0) + transaction.amount;
       return summary;
     }, {});
+}
+
+function budgetForCategory(category) {
+  const normalized = normalizedCategoryName(category);
+  const budgetCategory = Object.keys(state.budgets || {}).find((key) => normalizedCategoryName(key) === normalized);
+  return budgetCategory ? Number(state.budgets[budgetCategory]) || 0 : 0;
+}
+
+function alertEuro(amount) {
+  const rounded = Math.round((Number(amount) || 0) * 100) / 100;
+  return `€${Number.isInteger(rounded) ? rounded : rounded.toLocaleString("el-GR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function transactionsForMonth(dateValue) {
@@ -901,20 +927,21 @@ function transactionsForMonth(dateValue) {
 
 function budgetAlertForTransaction(transaction) {
   if (transaction.type !== "expense") return null;
-  const budget = Number(state.budgets?.[transaction.category]) || 0;
+  const category = matchingExpenseCategory(transaction.category);
+  const budget = budgetForCategory(category);
   if (budget <= 0) return null;
 
-  const spent = expenseTotalsByCategory(transactionsForMonth(transaction.date))[transaction.category] || 0;
+  const spent = expenseTotalsByCategory(transactionsForMonth(transaction.date))[category] || 0;
   if (spent > budget) {
     return {
       level: "danger",
-      message: `Ξεπέρασες το όριο για ${transaction.category} κατά ${euro.format(spent - budget)}.`,
+      message: `Ξεπέρασες το όριο για ${category} κατά ${alertEuro(spent - budget)}.`,
     };
   }
   if (spent >= budget * 0.8) {
     return {
       level: "warning",
-      message: `Πλησιάζεις το όριο για ${transaction.category}. Έχεις ξοδέψει ${euro.format(spent)} από ${euro.format(budget)}.`,
+      message: `Πλησιάζεις το όριο για ${category}. Έχεις ξοδέψει ${alertEuro(spent)} από ${alertEuro(budget)}.`,
     };
   }
   return null;
