@@ -9,16 +9,51 @@ const storageKeys = {
   customCategories: "mycash-plan-custom-categories",
   onboardingSeen: "mycash-plan-onboarding-seen",
   accounts: "mycash-plan-accounts",
+  language: "mycash-plan-language",
 };
 
-const defaultAccountName = "Κύριος λογαριασμός";
+const defaultAccountName = "Main account";
 const legacyDefaultAccountName = "Μετρητά";
 const defaultAccountId = "acc_default_cash";
-const duplicateAccountWarning = "Βρέθηκαν παρόμοιοι λογαριασμοί. Μπορείς να αρχειοθετήσεις αυτόν που δεν χρησιμοποιείς.";
-const accountTypeLabels = { cash: "Μετρητά", bank: "Τράπεζα", card: "Κάρτα", savings: "Αποταμίευση", other: "Άλλο" };
 
-const defaultExpenseCategories = ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"];
-const defaultIncomeCategories = ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"];
+const translations = {
+  en: {
+    appDescription: "MyCash Plan - personal financial planning in euros.", personalCash: "Personal cash flow", lockNow: "Lock now", mainNavigation: "Main navigation", dashboard: "Dashboard", home: "Home", add: "Add", history: "History", goals: "Goals", settings: "Settings",
+    selectDashboardMonth: "Select dashboard month", selectHistoryMonth: "Select history month", previousMonth: "Previous month", nextMonth: "Next month", monthlyBalance: "Monthly balance", monthIncome: "Monthly income", monthExpenses: "Monthly expenses", accountBalances: "Account balances", upcomingTransactions: "Upcoming transactions", monthlyStats: "Monthly statistics", expensesByCategory: "Expenses by category", monthlyBudgets: "Monthly budgets", savingsProgress: "Savings progress", setGoalStart: "Set a goal to get started.", friendlyDefault: "Let's organize your money calmly.", noActiveAccounts: "There are no active accounts.", totalAvailableBalance: "Total available balance", notMonthlyIncome: "Does not count as monthly income.", expectedIncome: "Expected income", expectedExpenses: "Expected expenses", forecastAfterUpcoming: "Forecast after upcoming transactions", upcomingHelper: "Only transactions that have not been recorded yet are shown.", noUpcomingPast: "There are no upcoming transactions for a past month.", noUpcomingMonth: "There are no upcoming transactions for this month.", monthly: "Monthly", dueSoon: "Due soon", record: "Record", more: "more", alreadyRecorded: "This transaction has already been recorded.", upcomingRecorded: "The upcoming transaction was recorded.",
+    newTransaction: "New transaction", editTransaction: "Edit transaction", type: "Type", income: "Income", expense: "Expense", transfer: "Transfer", amount: "Amount (€)", category: "Category", account: "Account", fromAccount: "From account", toAccount: "To account", note: "Note", optionalDescription: "Optional description", date: "Date", recurringMonthly: "Repeats every month", save: "Save", saveChanges: "Save changes", cancelEdit: "Cancel edit", transactionAdded: "Transaction added successfully.", changesSaved: "Changes saved successfully.", edit: "Edit", delete: "Delete", confirmDeleteRecurring: "This transaction repeats every month. Are you sure you want to delete it?", confirmDeleteTransaction: "Are you sure you want to delete this transaction?",
+    historyMonthSummary: "Monthly history summary", advancedFilters: "Advanced history filters", searchTransactions: "Search transactions", searchTransactionsPlaceholder: "Search transactions...", transactionTypeFilter: "Transaction type filter", categoryFilter: "Transaction category filter", accountFilter: "Account filter", recurringFilter: "Monthly transaction filter", all: "All", allCategories: "All categories", allAccounts: "All accounts", recurring: "Monthly", oneTime: "One-time", clearFilters: "Clear filters", balance: "Balance", noTransactionsMonth: "There are no transactions for this month.", addIncomeExpenseStart: "Add income or expenses to get started.", noFilteredTransactions: "No transactions found with these filters.", tryDifferentSearch: "Try a different search or clear the filters.", transactions: "Transactions",
+    categoryBudgets: "Budgets by category", setMonthlyLimit: "Set a monthly expense limit for each category.", saveBudgets: "Save budgets", savingsGoal: "Savings goal (€)", currentSaved: "Current saved amount (€)", updateGoal: "Update goal", noGoal: "No goal has been set yet.", savedOfGoal: "You have saved {saved} of {goal}.", budgetsSavedHint: "Set budgets from Goals to track your limits.", withinBudget: "Within budget", nearLimit: "Near limit", overBudget: "Over budget", spentOf: "{spent} of {budget}",
+    appInfo: "App information", version: "Version", localData: "Your data is stored locally on your device.", syncFuture: "Account sync will be added in a future release.", checkUpdate: "Check for updates", security: "App security", pinHelp: "Set a PIN to protect your financial information.", walletsAccounts: "Wallets & Accounts", organizeMoney: "Organize where your money is.", accountName: "Account name", accountNamePlaceholder: "e.g. Main account, Revolut, Bank", accountType: "Type", cash: "Cash", bank: "Bank", card: "Card", savings: "Savings", other: "Other", startingBalance: "Starting balance", addAccount: "Add account", backupExport: "Backup & data export", backupHelp: "Your data is stored locally on your device. Keep a backup if you change device or browser.", downloadBackup: "Download backup", exportCsv: "Export CSV", restoreBackup: "Restore from backup", categories: "Categories", customCategoriesHelp: "Create your own categories for income and expenses.", categoryType: "Category type", categoryName: "Category name", categoryNamePlaceholder: "e.g. Gym, Delivery, Fuel", addCategory: "Add category", incomeCategories: "Income categories", expenseCategories: "Expense categories", openList: "Open list", dataManagement: "Data management", deleteDataHelp: "Delete transactions, goals, budgets and custom categories from this device.", clearAllData: "Delete all data", language: "Language", english: "English", greek: "Ελληνικά", languageSaved: "Language saved.", dataCleared: "Data was deleted.", updateChecked: "Update check completed.", updateCheckFailed: "Could not check for updates.", backupCreated: "Backup was created successfully.", csvCreated: "CSV was created successfully.", invalidBackup: "The backup file is not valid.", backupRestored: "Backup restored successfully.",
+    welcome: "Welcome to MyCash Plan", onboardingText1: "Track income, expenses, budgets and savings goals.", onboardingText2: "Your data stays on your device. Keep a backup from Settings.", getStarted: "Get started", enterPin: "Enter PIN", unlock: "Unlock", wrongPin: "Wrong PIN. Try again.", default: "Default", archived: "Archived", rename: "Rename", archive: "Archive", appLocked: "PIN is active", enablePin: "Enable PIN", confirmPin: "Confirm PIN", changePin: "Change PIN", disablePin: "Disable PIN", currentPin: "Current PIN", newPin: "New PIN", confirmNewPin: "Confirm new PIN", saveNewPin: "Save new PIN",
+    defaultExpenseCategories: ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"], defaultIncomeCategories: ["Salary", "Business", "Gift", "Sale", "Other"], duplicateAccountWarning: "Similar accounts were found. You can archive the one you do not use.", defaultAccountName: "Main account", transferCategory: "Transfer", noExpensesMonth: "There are no expenses for this month. Good start!", noStats: "There is not enough data for this month's statistics.", biggestCategory: "Biggest category", totalIncome: "Total income", totalExpenses: "Total expenses", averageDailyExpense: "Average daily expense", exceededBudgets: "Exceeded budgets", whereExpensesWent: "Where expenses went", statsHelper: "Percentage of total monthly expenses.", noCategoryAnalysis: "There are no expenses for category analysis.", startFirstTransaction: "Start by adding your first income or expense.", positiveBalance: "Great! You are keeping a positive balance this month.", negativeBalance: "Warning: expenses exceed income. Small changes help.", evenBalance: "Income and expenses are balanced this month.", transactionSaved: "Transaction saved successfully.",
+  },
+  el: {}
+};
+translations.el = {
+  ...translations.en,
+  appDescription: "MyCash Plan - προσωπικός οικονομικός προγραμματισμός σε ευρώ.", personalCash: "Προσωπικό ταμείο", lockNow: "Κλείδωμα τώρα", mainNavigation: "Κύρια πλοήγηση", dashboard: "Πίνακας ελέγχου", home: "Αρχική", add: "Προσθήκη", history: "Ιστορικό", goals: "Στόχοι", settings: "Ρυθμίσεις",
+  selectDashboardMonth: "Επιλογή μήνα για τον πίνακα ελέγχου", selectHistoryMonth: "Επιλογή μήνα για το ιστορικό", previousMonth: "Προηγούμενος μήνας", nextMonth: "Επόμενος μήνας", monthlyBalance: "Υπόλοιπο μήνα", monthIncome: "Έσοδα μήνα", monthExpenses: "Έξοδα μήνα", accountBalances: "Υπόλοιπα λογαριασμών", upcomingTransactions: "Προσεχείς κινήσεις", monthlyStats: "Στατιστικά μήνα", expensesByCategory: "Έξοδα ανά κατηγορία", monthlyBudgets: "Budgets μήνα", savingsProgress: "Πρόοδος αποταμίευσης", setGoalStart: "Όρισε στόχο για να ξεκινήσεις.", friendlyDefault: "Ας οργανώσουμε τα χρήματά σου με ηρεμία.",
+  newTransaction: "Νέα συναλλαγή", editTransaction: "Επεξεργασία συναλλαγής", type: "Τύπος", income: "Έσοδο", expense: "Έξοδο", transfer: "Μεταφορά", amount: "Ποσό (€)", category: "Κατηγορία", account: "Λογαριασμός", fromAccount: "Από λογαριασμό", toAccount: "Προς λογαριασμό", note: "Σημείωση", optionalDescription: "Προαιρετική περιγραφή", date: "Ημερομηνία", recurringMonthly: "Επαναλαμβάνεται κάθε μήνα", save: "Αποθήκευση", saveChanges: "Αποθήκευση αλλαγών", cancelEdit: "Ακύρωση επεξεργασίας", transactionAdded: "Η συναλλαγή προστέθηκε επιτυχώς.", changesSaved: "Οι αλλαγές αποθηκεύτηκαν επιτυχώς.", edit: "Επεξεργασία", delete: "Διαγραφή",
+  all: "Όλα", allCategories: "Όλες οι κατηγορίες", allAccounts: "Όλοι οι λογαριασμοί", recurring: "Μηνιαίες", oneTime: "Μη μηνιαίες", clearFilters: "Καθαρισμός φίλτρων", noTransactionsMonth: "Δεν υπάρχουν συναλλαγές για αυτόν τον μήνα.", addIncomeExpenseStart: "Πρόσθεσε έσοδα ή έξοδα για να ξεκινήσεις.", noFilteredTransactions: "Δεν βρέθηκαν συναλλαγές με αυτά τα φίλτρα.", tryDifferentSearch: "Δοκίμασε διαφορετική αναζήτηση ή καθάρισε τα φίλτρα.", searchTransactionsPlaceholder: "Αναζήτηση συναλλαγών...", balance: "Υπόλοιπο",
+  categoryBudgets: "Budgets ανά κατηγορία", setMonthlyLimit: "Όρισε μηνιαίο όριο εξόδων για κάθε κατηγορία.", saveBudgets: "Αποθήκευση budgets", savingsGoal: "Στόχος αποταμίευσης (€)", currentSaved: "Τρέχον αποταμιευμένο ποσό (€)", updateGoal: "Ενημέρωση στόχου", noGoal: "Δεν έχει οριστεί στόχος ακόμη.",
+  appInfo: "Πληροφορίες εφαρμογής", localData: "Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου.", syncFuture: "Συγχρονισμός με λογαριασμό θα προστεθεί σε μελλοντική έκδοση.", checkUpdate: "Έλεγχος ενημέρωσης", security: "Ασφάλεια εφαρμογής", pinHelp: "Βάλε PIN για να προστατεύεις τα οικονομικά σου στοιχεία.", walletsAccounts: "Πορτοφόλια & Λογαριασμοί", organizeMoney: "Οργάνωσε πού βρίσκονται τα χρήματά σου.", accountName: "Όνομα λογαριασμού", accountNamePlaceholder: "π.χ. Κύριος λογαριασμός, Revolut, Τράπεζα", cash: "Μετρητά", bank: "Τράπεζα", card: "Κάρτα", savings: "Αποταμίευση", other: "Άλλο", startingBalance: "Αρχικό υπόλοιπο", addAccount: "Προσθήκη λογαριασμού", backupExport: "Backup & Εξαγωγή δεδομένων", downloadBackup: "Λήψη backup", exportCsv: "Εξαγωγή CSV", restoreBackup: "Επαναφορά από backup", categories: "Κατηγορίες", addCategory: "Προσθήκη κατηγορίας", incomeCategories: "Κατηγορίες εσόδων", expenseCategories: "Κατηγορίες εξόδων", dataManagement: "Διαχείριση δεδομένων", clearAllData: "Διαγραφή όλων των δεδομένων", language: "Γλώσσα", languageSaved: "Η γλώσσα αποθηκεύτηκε.", dataCleared: "Τα δεδομένα διαγράφηκαν.", updateChecked: "Έγινε έλεγχος ενημέρωσης.", updateCheckFailed: "Δεν ήταν δυνατός ο έλεγχος ενημέρωσης.", backupCreated: "Το backup δημιουργήθηκε επιτυχώς.", csvCreated: "Το CSV δημιουργήθηκε επιτυχώς.", invalidBackup: "Το αρχείο backup δεν είναι έγκυρο.", backupRestored: "Το backup επαναφέρθηκε επιτυχώς.",
+  defaultExpenseCategories: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"], defaultIncomeCategories: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"], duplicateAccountWarning: "Βρέθηκαν παρόμοιοι λογαριασμοί. Μπορείς να αρχειοθετήσεις αυτόν που δεν χρησιμοποιείς.", defaultAccountName: "Κύριος λογαριασμός", transferCategory: "Μεταφορά", noExpensesMonth: "Δεν υπάρχουν έξοδα για αυτόν τον μήνα. Καλή αρχή!", noStats: "Δεν υπάρχουν αρκετά δεδομένα για στατιστικά αυτόν τον μήνα.", biggestCategory: "Μεγαλύτερη κατηγορία", totalIncome: "Σύνολο εσόδων", totalExpenses: "Σύνολο εξόδων", averageDailyExpense: "Μέσο ημερήσιο έξοδο", exceededBudgets: "Budgets που ξεπεράστηκαν", whereExpensesWent: "Πού πήγαν τα έξοδα", statsHelper: "Ποσοστό επί των συνολικών εξόδων του μήνα.", noCategoryAnalysis: "Δεν υπάρχουν έξοδα για ανάλυση κατηγοριών.", startFirstTransaction: "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.", positiveBalance: "Υπέροχα! Αυτόν τον μήνα κρατάς θετικό υπόλοιπο.", negativeBalance: "Προσοχή: τα έξοδα ξεπερνούν τα έσοδα. Μικρές αλλαγές βοηθούν.", evenBalance: "Τα έσοδα και τα έξοδα είναι ισορροπημένα αυτόν τον μήνα.", transactionSaved: "Η συναλλαγή αποθηκεύτηκε επιτυχώς.",
+};
+
+let activeLanguage = localStorage.getItem(storageKeys.language) || "en";
+function currentLanguage() { return translations[activeLanguage] ? activeLanguage : "en"; }
+function t(key, params = {}) {
+  const value = translations[currentLanguage()]?.[key] ?? translations.en[key] ?? key;
+  if (Array.isArray(value)) return value;
+  return String(value).replace(/\{(\w+)\}/g, (_, name) => params[name] ?? "");
+}
+function locale() { return currentLanguage() === "el" ? "el-GR" : "en-US"; }
+function localizedDefaultExpenseCategories() { return t("defaultExpenseCategories"); }
+function localizedDefaultIncomeCategories() { return t("defaultIncomeCategories"); }
+function accountTypeLabelsMap() { return { cash: t("cash"), bank: t("bank"), card: t("card"), savings: t("savings"), other: t("other") }; }
+const accountTypeKeys = { cash: "cash", bank: "bank", card: "card", savings: "savings", other: "other" };
+const defaultExpenseCategories = ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"];
+const defaultIncomeCategories = ["Salary", "Business", "Gift", "Sale", "Other"];
 
 
 const today = new Date();
@@ -38,14 +73,15 @@ const state = {
   editingId: null,
   security: normalizeSecurity(JSON.parse(localStorage.getItem(storageKeys.security) || "{}")),
   hiddenAt: null,
+  language: currentLanguage(),
 };
 state.budgets = normalizeBudgets(state.budgets);
 if (!localStorage.getItem(storageKeys.accounts)) saveAccounts();
 
-const euro = new Intl.NumberFormat("el-GR", { style: "currency", currency: "EUR" });
-const dateFormatter = new Intl.DateTimeFormat("el-GR", { dateStyle: "medium" });
-const historyDateFormatter = new Intl.DateTimeFormat("el-GR", { day: "numeric", month: "short", year: "numeric" });
-const monthFormatter = new Intl.DateTimeFormat("el-GR", { month: "long", year: "numeric" });
+const euro = { format: (value) => new Intl.NumberFormat(locale(), { style: "currency", currency: "EUR" }).format(value) };
+const dateFormatter = { format: (value) => new Intl.DateTimeFormat(locale(), { dateStyle: "medium" }).format(value) };
+const historyDateFormatter = { format: (value) => new Intl.DateTimeFormat(locale(), { day: "numeric", month: "short", year: "numeric" }).format(value) };
+const monthFormatter = { format: (value) => new Intl.DateTimeFormat(locale(), { month: "long", year: "numeric" }).format(value) };
 
 const elements = {
   views: document.querySelectorAll(".view"),
@@ -133,8 +169,54 @@ const elements = {
   unlockForm: document.querySelector("#unlockForm"),
   unlockPin: document.querySelector("#unlockPin"),
   lockMessage: document.querySelector("#lockMessage"),
+  languageSelect: document.querySelector("#languageSelect"),
 };
 
+
+
+function setText(selector, key) {
+  const element = document.querySelector(selector);
+  if (element) element.textContent = t(key);
+}
+function setAttr(selector, attr, key) {
+  const element = document.querySelector(selector);
+  if (element) element.setAttribute(attr, t(key));
+}
+function applyStaticTranslations() {
+  document.documentElement.lang = currentLanguage();
+  document.querySelector('meta[name="description"]')?.setAttribute("content", t("appDescription"));
+  setText(".eyebrow", "personalCash");
+  if (elements.manualLockHeader) elements.manualLockHeader.textContent = t("lockNow");
+  document.querySelector(".bottom-nav")?.setAttribute("aria-label", t("mainNavigation"));
+  ["dashboard", "add", "history", "goals", "settings"].forEach((view, index) => {
+    const nav = elements.navButtons[index]?.querySelector("span");
+    if (nav) nav.textContent = t(view === "dashboard" ? "home" : view);
+  });
+  setText("#dashboard-title", "dashboard"); setText("#add-title", state.editingId ? "editTransaction" : "newTransaction"); setText("#history-title", "history"); setText("#goals-title", "goals"); setText("#settings-title", "settings");
+  setText("#friendlyMessage", "friendlyDefault");
+  document.querySelectorAll('[data-month-offset="-1"]').forEach((button) => button.setAttribute("aria-label", t("previousMonth")));
+  document.querySelectorAll('[data-month-offset="1"]').forEach((button) => button.setAttribute("aria-label", t("nextMonth")));
+  setAttr("#dashboard .month-selector", "aria-label", "selectDashboardMonth"); setAttr("#history .month-selector", "aria-label", "selectHistoryMonth");
+  const staticPairs = [
+    [".summary-card span", "monthlyBalance"], [".stat-card.income span", "monthIncome"], [".stat-card.expense span", "monthExpenses"],
+    [".account-summary-card h3", "accountBalances"], [".upcoming-card h3", "upcomingTransactions"], [".monthly-stats-card h3", "monthlyStats"],
+    ["#dashboard article:nth-of-type(4) h3", "expensesByCategory"], ["#dashboard article:nth-of-type(5) h3", "monthlyBudgets"], ["#dashboard article:nth-of-type(6) h3", "savingsProgress"],
+    ["#historySummary div:nth-child(1) span", "income"], ["#historySummary div:nth-child(2) span", "expense"], ["#historySummary div:nth-child(3) span", "balance"],
+    [".language-card h3", "language"], [".app-info-card h3", "appInfo"], [".security-card h3", "security"], [".accounts-settings-card h3", "walletsAccounts"], [".backup-card h3", "backupExport"], [".category-settings-card h3", "categories"], [".danger-zone-card h3", "dataManagement"]
+  ];
+  staticPairs.forEach(([selector, key]) => setText(selector, key));
+  if (elements.languageSelect) elements.languageSelect.value = currentLanguage();
+  if (elements.type) { const previousType = elements.type.value || "income"; elements.type.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option><option value="transfer">${t("transfer")}</option>`; elements.type.value = previousType; }
+  setAttr("#note", "placeholder", "optionalDescription"); setAttr("#historySearch", "placeholder", "searchTransactionsPlaceholder");
+}
+function changeLanguage(language) {
+  activeLanguage = translations[language] ? language : "en";
+  state.language = activeLanguage;
+  localStorage.setItem(storageKeys.language, activeLanguage);
+  applyStaticTranslations();
+  render();
+  showSettingsMessage(t("languageSaved"));
+}
 
 function normalizeAccounts(accounts) {
   const seen = new Set();
@@ -146,13 +228,13 @@ function normalizeAccounts(accounts) {
     list.push({
       id,
       name,
-      type: accountTypeLabels[account?.type] ? account.type : "other",
+      type: accountTypeKeys[account?.type] ? account.type : "other",
       startingBalance: Number(account?.startingBalance) || 0,
       archived: Boolean(account?.archived),
     });
     return list;
   }, []);
-  if (!normalized.length) normalized.push({ id: defaultAccountId, name: defaultAccountName, type: "cash", startingBalance: 0, archived: false });
+  if (!normalized.length) normalized.push({ id: defaultAccountId, name: t("defaultAccountName"), type: "cash", startingBalance: 0, archived: false });
   return normalized;
 }
 
@@ -191,16 +273,16 @@ function isLegacyDefaultAccount(account) {
 }
 
 function displayAccountName(account) {
-  return isLegacyDefaultAccount(account) ? defaultAccountName : account?.name || defaultAccountName;
+  return isLegacyDefaultAccount(account) ? t("defaultAccountName") : account?.name || t("defaultAccountName");
 }
 
 function accountTypeLabel(account) {
-  return accountTypeLabels[account?.type] || accountTypeLabels.other;
+  return accountTypeLabelsMap()[account?.type] || accountTypeLabelsMap().other;
 }
 
 function defaultAccount() {
   return state.accounts.find((account) => account.id === defaultAccountId)
-    || state.accounts.find((account) => account.name === defaultAccountName || isLegacyDefaultAccount(account))
+    || state.accounts.find((account) => account.name === t("defaultAccountName") || isLegacyDefaultAccount(account))
     || state.accounts[0];
 }
 
@@ -240,7 +322,7 @@ function saveCustomCategories() {
 }
 
 function allCategoriesForType(type) {
-  const defaults = type === "expense" ? defaultExpenseCategories : defaultIncomeCategories;
+  const defaults = type === "expense" ? localizedDefaultExpenseCategories() : localizedDefaultIncomeCategories();
   const custom = state?.customCategories?.[type] || [];
   return [...new Set([...defaults, ...custom])];
 }
@@ -357,7 +439,7 @@ function normalizeTransactions(transactions) {
     id: transaction.id || `legacy-${index}-${transaction.date || Date.now()}`,
     type: ["income", "expense", "transfer"].includes(transaction.type) ? transaction.type : "income",
     amount: Number(transaction.amount) || 0,
-    category: transaction.category || (transaction.type === "transfer" ? "Μεταφορά" : "Άλλο"),
+    category: transaction.category || (transaction.type === "transfer" ? t("transferCategory") : t("other")),
     accountId: transaction.accountId || "",
     fromAccountId: transaction.fromAccountId || "",
     toAccountId: transaction.toAccountId || "",
@@ -447,7 +529,7 @@ function clearAllUserData() {
   resetTransactionForm();
   render();
   applyLockState();
-  showSettingsMessage("Τα δεδομένα διαγράφηκαν.");
+  showSettingsMessage(t("dataCleared"));
 }
 
 async function checkForUpdate() {
@@ -455,7 +537,7 @@ async function checkForUpdate() {
     const registration = await navigator.serviceWorker.getRegistration();
     if (registration) await registration.update();
   }
-  showSettingsMessage("Έγινε έλεγχος ενημέρωσης.");
+  showSettingsMessage(t("updateChecked"));
 }
 
 function createBackupPayload() {
@@ -475,7 +557,7 @@ function createBackupPayload() {
 function exportBackup() {
   const content = JSON.stringify(createBackupPayload(), null, 2);
   downloadFile(content, `mycash-plan-backup-${todayFileStamp()}.json`, "application/json;charset=utf-8");
-  showBackupMessage("Το backup δημιουργήθηκε επιτυχώς.");
+  showBackupMessage(t("backupCreated"));
 }
 
 function escapeCsvValue(value) {
@@ -496,7 +578,7 @@ function exportTransactionsCsv() {
   ]);
   const csv = [header, ...rows].map((row) => row.map(escapeCsvValue).join(",")).join("\r\n");
   downloadFile(`\ufeff${csv}`, `mycash-plan-transactions-${todayFileStamp()}.csv`, "text/csv;charset=utf-8");
-  showBackupMessage("Το CSV δημιουργήθηκε επιτυχώς.");
+  showBackupMessage(t("csvCreated"));
 }
 
 function isValidBackupPayload(payload) {
@@ -511,7 +593,7 @@ function isValidBackupPayload(payload) {
 
 function restoreBackupPayload(payload) {
   if (!isValidBackupPayload(payload)) {
-    showBackupMessage("Το αρχείο backup δεν είναι έγκυρο.", true);
+    showBackupMessage(t("invalidBackup"), true);
     return;
   }
 
@@ -540,7 +622,7 @@ function restoreBackupPayload(payload) {
   resetTransactionForm();
   render();
   applyLockState();
-  showBackupMessage("Το backup επαναφέρθηκε επιτυχώς.");
+  showBackupMessage(t("backupRestored"));
 }
 
 function restoreBackupFile(file) {
@@ -550,13 +632,13 @@ function restoreBackupFile(file) {
     try {
       restoreBackupPayload(JSON.parse(reader.result));
     } catch (error) {
-      showBackupMessage("Το αρχείο backup δεν είναι έγκυρο.", true);
+      showBackupMessage(t("invalidBackup"), true);
     } finally {
       elements.restoreBackup.value = "";
     }
   });
   reader.addEventListener("error", () => {
-    showBackupMessage("Το αρχείο backup δεν είναι έγκυρο.", true);
+    showBackupMessage(t("invalidBackup"), true);
     elements.restoreBackup.value = "";
   });
   reader.readAsText(file);
@@ -662,7 +744,7 @@ function renderAccountSummary() {
   const accounts = activeAccounts();
   const balanceTransactions = accountTransactionsThroughSelectedMonth();
   if (!accounts.length) {
-    elements.accountSummary.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν ενεργοί λογαριασμοί.</p>';
+    elements.accountSummary.innerHTML = `<p class="muted empty-copy">${t("noActiveAccounts")}</p>`;
     return;
   }
 
@@ -675,7 +757,7 @@ function renderAccountSummary() {
   elements.accountSummary.innerHTML = `
     ${accountRows}
     <div class="account-balance-row account-balance-total">
-      <span>Συνολικό διαθέσιμο υπόλοιπο<small>Δεν μετρά ως έσοδο μήνα.</small></span>
+      <span>${t("totalAvailableBalance")}<small>${t("notMonthlyIncome")}</small></span>
       <strong class="${totalAvailableBalance < 0 ? "negative" : "positive"}">${euro.format(totalAvailableBalance)}</strong>
     </div>`;
 }
@@ -732,7 +814,7 @@ function recordUpcomingRecurringTransaction(recurringOccurrence) {
 
   if (recordedTransactionExistsForRecurringOccurrence(recurringOccurrence)) {
     renderUpcomingTransactions();
-    showUpcomingMessage("Η κίνηση έχει ήδη καταχωρηθεί.", true);
+    showUpcomingMessage(t("alreadyRecorded"), true);
     return;
   }
 
@@ -752,7 +834,7 @@ function recordUpcomingRecurringTransaction(recurringOccurrence) {
   });
   saveTransactions();
   render();
-  showUpcomingMessage("Η προσεχής κίνηση καταχωρήθηκε.");
+  showUpcomingMessage(t("upcomingRecorded"));
 }
 
 function showUpcomingMessage(message, isError = false) {
@@ -788,7 +870,7 @@ function accountTransactionsThroughDate(endDate) {
 }
 
 function typeLabelForTransaction(type) {
-  if (type === "transfer") return "Μεταφορά";
+  if (type === "transfer") return t("transferCategory");
   return type === "income" ? "Έσοδο" : "Έξοδο";
 }
 
@@ -807,23 +889,23 @@ function renderUpcomingTransactions() {
   const forecast = activeAccountBalance + upcomingIncome - upcomingExpenses;
 
   elements.upcomingSummary.innerHTML = `${[
-    ["Αναμενόμενα έσοδα", euro.format(upcomingIncome), "income"],
-    ["Αναμενόμενα έξοδα", euro.format(upcomingExpenses), "expense"],
-    ["Εκτίμηση μετά τις προσεχείς κινήσεις", euro.format(forecast), forecast < 0 ? "expense" : "income"],
+    [t("expectedIncome"), euro.format(upcomingIncome), "income"],
+    [t("expectedExpenses"), euro.format(upcomingExpenses), "expense"],
+    [t("forecastAfterUpcoming"), euro.format(forecast), forecast < 0 ? "expense" : "income"],
   ].map(([label, value, className]) => `
     <div class="upcoming-summary-item ${className}">
       <span>${escapeHtml(label)}</span>
       <strong>${escapeHtml(value)}</strong>
     </div>`).join("")}
-    <p class="upcoming-helper muted">Εμφανίζονται μόνο κινήσεις που δεν έχουν καταχωρηθεί ακόμα.</p>`;
+    <p class="upcoming-helper muted">${t("upcomingHelper")}</p>`;
 
   if (status === "past") {
-    elements.upcomingList.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν προσεχείς κινήσεις για παλιότερο μήνα.</p>';
+    elements.upcomingList.innerHTML = `<p class="muted empty-copy">${t("noUpcomingPast")}</p>`;
     return;
   }
 
   if (!upcoming.length) {
-    elements.upcomingList.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν προσεχείς κινήσεις για αυτόν τον μήνα.</p>';
+    elements.upcomingList.innerHTML = `<p class="muted empty-copy">${t("noUpcomingMonth")}</p>`;
     return;
   }
 
@@ -978,7 +1060,7 @@ function renderCategorySummary(monthly) {
 
   elements.categorySummary.innerHTML = sorted.length
     ? sorted.map(([category, total]) => `<div class="category-row"><span>${escapeHtml(category)}</span><strong>${euro.format(total)}</strong></div>`).join("")
-    : '<p class="muted empty-copy">Δεν υπάρχουν έξοδα για αυτόν τον μήνα. Καλή αρχή!</p>';
+    : `<p class="muted empty-copy">${t("noExpensesMonth")}</p>`;
 }
 
 function activeBudgetsWithSpending(monthly) {
@@ -1030,7 +1112,7 @@ function smartInsightMessages(stats) {
 
 function renderMonthlyStatistics(monthly) {
   if (!monthly.length) {
-    elements.monthlyStats.innerHTML = '<p class="muted empty-copy">Δεν υπάρχουν αρκετά δεδομένα για στατιστικά αυτόν τον μήνα.</p>';
+    elements.monthlyStats.innerHTML = `<p class="muted empty-copy">${t("noStats")}</p>`;
     elements.smartInsights.innerHTML = "";
     elements.statsCategoryBreakdown.innerHTML = "";
     return;
@@ -1038,13 +1120,13 @@ function renderMonthlyStatistics(monthly) {
 
   const stats = monthlyStatsData(monthly);
   const statItems = [
-    ["Σύνολο εσόδων", euro.format(stats.income)],
-    ["Σύνολο εξόδων", euro.format(stats.expenses)],
-    ["Υπόλοιπο", euro.format(stats.balance)],
-    ["Μέσο ημερήσιο έξοδο", euro.format(stats.averageDailyExpense)],
-    ["Μεγαλύτερη κατηγορία", stats.biggestExpenseCategory],
-    ["Συναλλαγές", String(stats.transactionCount)],
-    ["Budgets που ξεπεράστηκαν", String(stats.exceededBudgetsCount)],
+    [t("totalIncome"), euro.format(stats.income)],
+    [t("totalExpenses"), euro.format(stats.expenses)],
+    [t("balance"), euro.format(stats.balance)],
+    [t("averageDailyExpense"), euro.format(stats.averageDailyExpense)],
+    [t("biggestCategory"), stats.biggestExpenseCategory],
+    [t("transactions"), String(stats.transactionCount)],
+    [t("exceededBudgets"), String(stats.exceededBudgetsCount)],
   ];
 
   elements.monthlyStats.innerHTML = statItems.map(([label, value]) => `
@@ -1057,7 +1139,7 @@ function renderMonthlyStatistics(monthly) {
     .map((message) => `<p>💡 ${escapeHtml(message)}</p>`).join("");
 
   elements.statsCategoryBreakdown.innerHTML = stats.sortedCategories.length
-    ? `<h4>Πού πήγαν τα έξοδα</h4><p class="muted stats-helper">Ποσοστό επί των συνολικών εξόδων του μήνα.</p>${stats.sortedCategories.map(([category, amount]) => {
+    ? `<h4>${t("whereExpensesWent")}</h4><p class="muted stats-helper">${t("statsHelper")}</p>${stats.sortedCategories.map(([category, amount]) => {
       const percentage = stats.expenses > 0 ? (amount / stats.expenses) * 100 : 0;
       return `
         <div class="stats-bar-row">
@@ -1065,13 +1147,13 @@ function renderMonthlyStatistics(monthly) {
           <div class="stats-bar-track"><div class="stats-bar-fill" style="width: ${Math.max(percentage, 3)}%"></div></div>
         </div>`;
     }).join("")}`
-    : '<p class="muted empty-copy">Δεν υπάρχουν έξοδα για ανάλυση κατηγοριών.</p>';
+    : `<p class="muted empty-copy">${t("noCategoryAnalysis")}</p>`;
 }
 
 function budgetStatus(percentage) {
-  if (percentage >= 100) return { className: "danger", text: "Ξεπέρασες το budget" };
-  if (percentage >= 80) return { className: "warning", text: "Πλησιάζεις το όριο" };
-  return { className: "positive", text: "Εντός budget" };
+  if (percentage >= 100) return { className: "danger", text: t("overBudget") };
+  if (percentage >= 80) return { className: "warning", text: t("nearLimit") };
+  return { className: "positive", text: t("withinBudget") };
 }
 
 function renderBudgetSummary(monthly) {
@@ -1088,12 +1170,12 @@ function renderBudgetSummary(monthly) {
             <strong>${escapeHtml(category)}</strong>
             <span>${percentage}%</span>
           </div>
-          <div class="budget-amounts">${euro.format(spent)} από ${euro.format(budget)}</div>
+          <div class="budget-amounts">${t("spentOf", { spent: euro.format(spent), budget: euro.format(budget) })}</div>
           <div class="progress-track budget-track"><div class="progress-bar budget-bar" style="width: ${Math.min(percentage, 100)}%"></div></div>
           <p>${status.text}</p>
         </article>`;
     }).join("")
-    : '<p class="muted empty-copy">Όρισε budgets από τους Στόχους για να παρακολουθείς τα όριά σου.</p>';
+    : `<p class="muted empty-copy">${t("budgetsSavedHint")}</p>`;
 }
 
 function renderDashboard() {
@@ -1110,8 +1192,8 @@ function renderDashboard() {
   elements.savingsPercent.textContent = `${percent}%`;
   elements.savingsBar.style.width = `${percent}%`;
   elements.savingsText.textContent = state.goals.goalAmount > 0
-    ? `${euro.format(state.goals.savedAmount)} από ${euro.format(state.goals.goalAmount)}`
-    : "Όρισε στόχο για να ξεκινήσεις.";
+    ? t("spentOf", { spent: euro.format(state.goals.savedAmount), budget: euro.format(state.goals.goalAmount) })
+    : t("setGoalStart");
   renderMonthlyStatistics(monthly);
   renderCategorySummary(monthly);
   renderBudgetSummary(monthly);
@@ -1119,13 +1201,13 @@ function renderDashboard() {
   renderUpcomingTransactions();
 
   if (!monthly.length) {
-    elements.friendlyMessage.textContent = "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.";
+    elements.friendlyMessage.textContent = t("startFirstTransaction");
   } else if (balance > 0) {
-    elements.friendlyMessage.textContent = "Υπέροχα! Αυτόν τον μήνα κρατάς θετικό υπόλοιπο.";
+    elements.friendlyMessage.textContent = t("positiveBalance");
   } else if (balance < 0) {
-    elements.friendlyMessage.textContent = "Προσοχή: τα έξοδα ξεπερνούν τα έσοδα. Μικρές αλλαγές βοηθούν.";
+    elements.friendlyMessage.textContent = t("negativeBalance");
   } else {
-    elements.friendlyMessage.textContent = "Τα έσοδα και τα έξοδα είναι ισορροπημένα αυτόν τον μήνα.";
+    elements.friendlyMessage.textContent = t("evenBalance");
   }
 }
 
@@ -1133,12 +1215,12 @@ function syncHistoryFilterControls(monthly = selectedMonthTransactions()) {
   const historyCategories = allHistoryCategories(monthly);
   elements.filter.value = state.filter;
   elements.categoryFilter.innerHTML = [
-    '<option value="all">Όλες οι κατηγορίες</option>',
+    `<option value="all">${t("allCategories")}</option>`,
     ...historyCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`),
   ].join("");
   elements.categoryFilter.value = historyCategories.includes(state.categoryFilter) ? state.categoryFilter : "all";
   state.categoryFilter = elements.categoryFilter.value;
-  elements.accountFilter.innerHTML = ['<option value="all">Όλοι οι λογαριασμοί</option>', ...state.accounts.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(displayAccountName(account))}</option>`)].join("");
+  elements.accountFilter.innerHTML = [`<option value="all">${t("allAccounts")}</option>`, ...state.accounts.map((account) => `<option value="${escapeHtml(account.id)}">${escapeHtml(displayAccountName(account))}</option>`)].join("");
   elements.accountFilter.value = state.accountFilter === "all" || state.accounts.some((account) => account.id === state.accountFilter) ? state.accountFilter : "all";
   state.accountFilter = elements.accountFilter.value;
   elements.recurringFilter.value = state.recurringFilter;
@@ -1150,7 +1232,7 @@ function normalizeSearchText(value) {
 }
 
 function transactionSearchText(transaction) {
-  const typeLabel = transaction.type === "income" ? "Έσοδο Έσοδα income" : "Έξοδο Έξοδα expense";
+  const typeLabel = transaction.type === "income" ? `${t("income")} income` : `${t("expense")} expense`;
   const sign = transaction.type === "income" ? "+" : "-";
   return [
     transaction.category,
@@ -1228,7 +1310,7 @@ function renderHistory() {
 function transactionCard(transaction) {
   const isIncome = transaction.type === "income";
   const isTransfer = transaction.type === "transfer";
-  const typeLabel = isTransfer ? "Μεταφορά" : (isIncome ? "Έσοδο" : "Έξοδο");
+  const typeLabel = isTransfer ? t("transferCategory") : (isIncome ? t("income") : t("expense"));
   const sign = isTransfer ? "" : (isIncome ? "+" : "-");
   const amount = `${sign}${euro.format(transaction.amount)}`;
   const note = transaction.note ? `<p class="transaction-note">${escapeHtml(transaction.note)}</p>` : "";
@@ -1318,7 +1400,7 @@ async function setNewPin(pin) {
 function renderCategorySettings() {
   const categoryCountForType = (type) => (type === "expense" ? defaultExpenseCategories : defaultIncomeCategories).length + (state.customCategories[type] || []).length;
   const renderList = (type) => {
-    const defaults = type === "expense" ? defaultExpenseCategories : defaultIncomeCategories;
+    const defaults = type === "expense" ? localizedDefaultExpenseCategories() : localizedDefaultIncomeCategories();
     const custom = state.customCategories[type] || [];
     const rows = [
       ...defaults.map((category) => ({ category, fixed: true })),
@@ -1344,7 +1426,7 @@ function renderAccounts() {
     const balance = accountBalance(account);
     const used = state.transactions.some((transaction) => transactionAccountId(transaction) === account.id || transaction.fromAccountId === account.id || transaction.toAccountId === account.id);
     const archivedBadge = account.archived ? '<span class="archived-account-badge">Αρχειοθετημένος</span>' : "";
-    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(displayAccountName(account))}</strong><span>${escapeHtml(accountTypeLabel(account))}${archivedBadge}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="edit-account-button" data-account-id="${escapeHtml(account.id)}" type="button">Μετονομασία</button><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? "Αρχειοθέτηση" : "Διαγραφή"}</button></div>`;
+    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(displayAccountName(account))}</strong><span>${escapeHtml(accountTypeLabel(account))}${archivedBadge}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="edit-account-button" data-account-id="${escapeHtml(account.id)}" type="button">Μετονομασία</button><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? "Αρχειοθέτηση" : t("delete")}</button></div>`;
   }).join("");
   elements.accountsList.innerHTML = `${duplicateWarning}${accountRows}`;
 }
@@ -1433,16 +1515,16 @@ function resetTransactionForm(message = "") {
   elements.date.valueAsDate = new Date();
   elements.recurring.checked = false;
   updateAccountOptions();
-  elements.formTitle.textContent = "Νέα συναλλαγή";
-  elements.formSubmit.textContent = "Αποθήκευση";
+  elements.formTitle.textContent = t("newTransaction");
+  elements.formSubmit.textContent = t("save");
   elements.cancelEdit.hidden = true;
   elements.formMessage.textContent = message;
 }
 
 function startEdit(transaction) {
   state.editingId = transaction.id;
-  elements.formTitle.textContent = "Επεξεργασία συναλλαγής";
-  elements.formSubmit.textContent = "Αποθήκευση αλλαγών";
+  elements.formTitle.textContent = t("editTransaction");
+  elements.formSubmit.textContent = t("saveChanges");
   elements.cancelEdit.hidden = false;
   elements.type.value = transaction.type;
   syncAddTransactionForm(transaction.category);
@@ -1481,9 +1563,10 @@ elements.cancelEdit.addEventListener("click", () => resetTransactionForm());
 elements.downloadBackup.addEventListener("click", exportBackup);
 elements.exportCsv.addEventListener("click", exportTransactionsCsv);
 elements.restoreBackup.addEventListener("change", (event) => restoreBackupFile(event.target.files[0]));
-elements.checkUpdate.addEventListener("click", () => checkForUpdate().catch(() => showSettingsMessage("Δεν ήταν δυνατός ο έλεγχος ενημέρωσης.", true)));
+elements.checkUpdate.addEventListener("click", () => checkForUpdate().catch(() => showSettingsMessage(t("updateCheckFailed"), true)));
 elements.clearAllData.addEventListener("click", clearAllUserData);
 elements.finishOnboarding.addEventListener("click", finishOnboarding);
+elements.languageSelect?.addEventListener("change", (event) => changeLanguage(event.target.value));
 
 elements.categoryForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -1573,7 +1656,7 @@ elements.transactionForm.addEventListener("submit", (event) => {
     id: state.editingId || (globalThis.crypto?.randomUUID?.() || String(Date.now())),
     type: elements.type.value,
     amount: Number(elements.amount.value),
-    category: isTransfer ? "Μεταφορά" : categoryForType(elements.type.value, elements.category.value.trim()),
+    category: isTransfer ? t("transferCategory") : categoryForType(elements.type.value, elements.category.value.trim()),
     accountId: isTransfer ? "" : elements.account.value,
     fromAccountId: isTransfer ? elements.fromAccount.value : "",
     toAccountId: isTransfer ? elements.toAccount.value : "",
@@ -1586,10 +1669,10 @@ elements.transactionForm.addEventListener("submit", (event) => {
   if (isTransfer && (!transaction.fromAccountId || !transaction.toAccountId || transaction.fromAccountId === transaction.toAccountId)) return;
   if (state.editingId) {
     state.transactions = state.transactions.map((item) => item.id === state.editingId ? transaction : item);
-    resetTransactionForm("Οι αλλαγές αποθηκεύτηκαν επιτυχώς.");
+    resetTransactionForm(t("changesSaved"));
   } else {
     state.transactions.push(transaction);
-    resetTransactionForm("Η συναλλαγή προστέθηκε επιτυχώς.");
+    resetTransactionForm(t("transactionAdded"));
   }
   const budgetAlert = budgetAlertForTransaction(transaction);
   saveTransactions();
@@ -1624,7 +1707,7 @@ elements.upcomingList.addEventListener("click", (event) => {
   const occurrence = upcomingRecurringTransactionsForSelectedMonth().find((transaction) => upcomingTransactionKey(transaction) === button.dataset.upcomingKey);
   if (!occurrence) {
     renderUpcomingTransactions();
-    showUpcomingMessage("Η κίνηση έχει ήδη καταχωρηθεί.", true);
+    showUpcomingMessage(t("alreadyRecorded"), true);
     return;
   }
   recordUpcomingRecurringTransaction(occurrence);
@@ -1694,7 +1777,7 @@ elements.unlockForm.addEventListener("submit", async (event) => {
     return;
   }
   elements.unlockPin.value = "";
-  elements.lockMessage.textContent = "Λάθος PIN. Δοκίμασε ξανά.";
+  elements.lockMessage.textContent = t("wrongPin");
   elements.lockMessage.classList.add("error");
 });
 
@@ -1753,6 +1836,7 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
 }
 
+applyStaticTranslations();
 resetTransactionForm();
 render();
 applyLockState();
