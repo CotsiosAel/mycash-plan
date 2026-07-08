@@ -20,7 +20,7 @@ const translations = {
   en: {
     appDescription: "MyCash Plan - personal financial planning in euros.", personalCash: "Personal cash flow", lockNow: "Lock now", mainNavigation: "Main navigation", dashboard: "Dashboard", home: "Home", add: "Add", history: "History", goals: "Goals", settings: "Settings",
     selectDashboardMonth: "Select dashboard month", selectHistoryMonth: "Select history month", previousMonth: "Previous month", nextMonth: "Next month", monthlyBalance: "Monthly balance", monthIncome: "Monthly income", monthExpenses: "Monthly expenses", accountBalances: "Account balances", upcomingTransactions: "Upcoming transactions", monthlyStats: "Monthly statistics", expensesByCategory: "Expenses by category", monthlyBudgets: "Monthly budgets", savingsProgress: "Savings progress", setGoalStart: "Set a goal to get started.", friendlyDefault: "Let's organize your money calmly.", noActiveAccounts: "There are no active accounts.", totalAvailableBalance: "Total available balance", notMonthlyIncome: "Does not count as monthly income.", expectedIncome: "Expected income", expectedExpenses: "Expected expenses", forecastAfterUpcoming: "Forecast after upcoming transactions", upcomingHelper: "Only transactions that have not been recorded yet are shown.", noUpcomingPast: "There are no upcoming transactions for a past month.", noUpcomingMonth: "There are no upcoming transactions for this month.", monthly: "Monthly", dueSoon: "Due soon", record: "Record", more: "more", alreadyRecorded: "This transaction has already been recorded.", upcomingRecorded: "The upcoming transaction was recorded.", defaultBadge: "Default", categoriesCount: "{count} categories", archived: "Archived", rename: "Rename", archive: "Archive", dueDateDetails: "{name} — {amount} — {date}",
-    newTransaction: "New transaction", editTransaction: "Edit transaction", type: "Type", income: "Income", expense: "Expense", transfer: "Transfer", amount: "Amount (€)", category: "Category", account: "Account", fromAccount: "From account", toAccount: "To account", note: "Note", optionalDescription: "Optional description", date: "Date", recurringMonthly: "Repeats every month", save: "Save", saveChanges: "Save changes", cancelEdit: "Cancel edit", transactionAdded: "Transaction added successfully.", changesSaved: "Changes saved successfully.", edit: "Edit", delete: "Delete", confirmDeleteRecurring: "This transaction repeats every month. Are you sure you want to delete it?", confirmDeleteTransaction: "Are you sure you want to delete this transaction?",
+    newTransaction: "New transaction", editTransaction: "Edit transaction", type: "Type", income: "Income", expense: "Expense", transfer: "Transfer", amount: "Amount (€)", category: "Category", account: "Account", fromAccount: "From account", toAccount: "To account", note: "Note", optionalDescription: "Optional description", date: "Date", recurringMonthly: "Repeats monthly", save: "Save", saveChanges: "Save changes", cancelEdit: "Cancel edit", transactionAdded: "Transaction added successfully.", changesSaved: "Changes saved successfully.", edit: "Edit", delete: "Delete", confirmDeleteRecurring: "This transaction repeats every month. Are you sure you want to delete it?", confirmDeleteTransaction: "Are you sure you want to delete this transaction?",
     historyMonthSummary: "Monthly history summary", advancedFilters: "Advanced history filters", searchTransactions: "Search transactions", searchTransactionsPlaceholder: "Search transactions...", transactionTypeFilter: "Transaction type filter", categoryFilter: "Transaction category filter", accountFilter: "Account filter", recurringFilter: "Monthly transaction filter", all: "All", allCategories: "All categories", allAccounts: "All accounts", recurring: "Monthly", oneTime: "One-time", clearFilters: "Clear filters", balance: "Balance", noTransactionsMonth: "There are no transactions for this month.", addIncomeExpenseStart: "Add income or expenses to get started.", noFilteredTransactions: "No transactions found with these filters.", tryDifferentSearch: "Try a different search or clear the filters.", transactions: "Transactions",
     categoryBudgets: "Budgets by category", setMonthlyLimit: "Set a monthly expense limit for each category.", saveBudgets: "Save budgets", savingsGoal: "Savings goal (€)", currentSaved: "Current saved amount (€)", updateGoal: "Update goal", noGoal: "No goal has been set yet.", savedOfGoal: "You have saved {saved} of {goal}.", budgetsSavedHint: "Set budgets from Goals to track your limits.", withinBudget: "Within budget", nearLimit: "Near limit", overBudget: "Over budget", spentOf: "{spent} of {budget}",
     appInfo: "App information", version: "Version", localData: "Your data is stored locally on your device.", syncFuture: "Account sync will be added in a future release.", checkUpdate: "Check for updates", security: "App security", pinHelp: "Set a PIN to protect your financial information.", walletsAccounts: "Wallets & Accounts", organizeMoney: "Organize where your money is.", accountName: "Account name", accountNamePlaceholder: "e.g. Main account, Revolut, Bank", accountType: "Type", cash: "Cash", bank: "Bank", card: "Card", savings: "Savings", other: "Other", startingBalance: "Starting balance", addAccount: "Add account", backupExport: "Backup & data export", backupHelp: "Your data is stored locally on your device. Keep a backup if you change device or browser.", downloadBackup: "Download backup", exportCsv: "Export CSV", restoreBackup: "Restore from backup", categories: "Categories", customCategoriesHelp: "Create your own categories for income and expenses.", categoryType: "Category type", categoryName: "Category name", categoryNamePlaceholder: "e.g. Gym, Delivery, Fuel", addCategory: "Add category", incomeCategories: "Income categories", expenseCategories: "Expense categories", openList: "Open list", dataManagement: "Data management", deleteDataHelp: "Delete transactions, goals, budgets and custom categories from this device.", clearAllData: "Delete all data", language: "Language", english: "English", greek: "Ελληνικά", languageSaved: "Language saved.", dataCleared: "Data was deleted.", updateChecked: "Update check completed.", updateCheckFailed: "Could not check for updates.", backupCreated: "Backup was created successfully.", csvCreated: "CSV was created successfully.", invalidBackup: "The backup file is not valid.", backupRestored: "Backup restored successfully.",
@@ -183,6 +183,17 @@ function setLabelText(selector, key) {
   if (!label) return;
   const textNode = Array.from(label.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
   if (textNode) textNode.textContent = `${t(key)} `;
+  else label.prepend(document.createTextNode(`${t(key)} `));
+}
+function setControlLabelText(controlId, key) {
+  const control = document.getElementById(controlId);
+  const label = control?.closest("label");
+  if (label) setLabelTextForElement(label, key);
+}
+function setLabelTextForElement(label, key) {
+  const textNode = Array.from(label.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
+  if (textNode) textNode.textContent = `${t(key)} `;
+  else label.prepend(document.createTextNode(`${t(key)} `));
 }
 function setAttr(selector, attr, key) {
   const element = document.querySelector(selector);
@@ -217,14 +228,14 @@ function applyStaticTranslations() {
     elements.languageSelect.querySelector('option[value="el"]').textContent = t("greek");
   }
   if (elements.type) { const previousType = elements.type.value || "income"; elements.type.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option><option value="transfer">${t("transfer")}</option>`; elements.type.value = previousType; }
-  const labelPairs = [
-    ["label:has(#type)", "type"], ["label:has(#amount)", "amount"], ["#categoryLabel", "category"], ["#accountLabel", "account"],
-    ["label:has(#fromAccount)", "fromAccount"], ["label:has(#toAccount)", "toAccount"], ["label:has(#note)", "note"], ["label:has(#date)", "date"],
-    [".toggle-row span", "recurringMonthly"], ["label:has(#goalAmount)", "savingsGoal"], ["label:has(#savedAmount)", "currentSaved"],
-    ["label:has(#accountName)", "accountName"], ["label:has(#accountType)", "accountType"], ["label:has(#accountStartingBalance)", "startingBalance"],
-    ["label:has(#categoryType)", "categoryType"], ["label:has(#categoryName)", "categoryName"],
-  ];
+  const labelPairs = [["#categoryLabel", "category"], ["#accountLabel", "account"], [".toggle-row span", "recurringMonthly"]];
   labelPairs.forEach(([selector, key]) => setLabelText(selector, key));
+  [
+    ["type", "type"], ["amount", "amount"], ["fromAccount", "fromAccount"], ["toAccount", "toAccount"],
+    ["note", "note"], ["date", "date"], ["goalAmount", "savingsGoal"], ["savedAmount", "currentSaved"],
+    ["accountName", "accountName"], ["accountType", "accountType"], ["accountStartingBalance", "startingBalance"],
+    ["categoryType", "categoryType"], ["categoryName", "categoryName"],
+  ].forEach(([controlId, key]) => setControlLabelText(controlId, key));
   if (elements.categoryType) { const previousType = elements.categoryType.value || "income"; elements.categoryType.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option>`; elements.categoryType.value = previousType; }
   if (elements.accountType) { const previousType = elements.accountType.value || "cash"; elements.accountType.innerHTML = Object.entries(accountTypeLabelsMap()).map(([value, label]) => `<option value="${value}">${label}</option>`).join(""); elements.accountType.value = previousType; }
   setText("#formSubmit", state.editingId ? "saveChanges" : "save"); setText("#cancelEdit", "cancelEdit"); setText("#budgetForm .section-heading h3", "categoryBudgets"); setText("#budgetForm .muted", "setMonthlyLimit"); setText("#budgetForm button", "saveBudgets"); setText("#goalForm button", "updateGoal"); setText("#checkUpdate", "checkUpdate"); setText("#accountForm button", "addAccount"); setText("#categoryForm button", "addCategory"); setText("#downloadBackup", "downloadBackup"); setText("#exportCsv", "exportCsv"); setText(".restore-button", "restoreBackup"); setText("#clearAllData", "clearAllData");
@@ -817,7 +828,7 @@ function transactionAccountMatchKey(transaction) {
 function transactionsMatchRecurringOccurrence(recurringOccurrence, recordedTransaction) {
   if (!recordedTransaction || recordedTransaction.isVirtualRecurring) return false;
   const occurrenceDate = recurringOccurrence.recurringOccurrenceDate || recurringOccurrence.displayDate || recurringOccurrence.date || "";
-  if (recordedTransaction.id === recurringOccurrence.id && recordedTransaction.date === occurrenceDate) return true;
+  if (recordedTransaction.id === recurringOccurrence.id) return false;
 
   const sourceId = transactionRecurringSourceId(recordedTransaction);
   const recordedOccurrenceDate = recordedTransaction.recurringOccurrenceDate || recordedTransaction.occurrenceDate || "";
