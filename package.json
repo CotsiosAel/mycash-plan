@@ -1,0 +1,19 @@
+{
+  "name": "mycash-plan",
+  "version": "2.3.4",
+  "private": true,
+  "description": "MyCash Plan Android packaging with Capacitor for the existing static PWA.",
+  "scripts": {
+    "android:prepare": "node scripts/prepare-android-web.js",
+    "android:add": "npm run android:prepare && npx cap add android",
+    "android:sync": "npm run android:prepare && npx cap sync android",
+    "android:open": "npm run android:sync && npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest"
+  }
+}
