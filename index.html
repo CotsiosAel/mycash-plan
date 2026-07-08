@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0f172a" />
-    <meta name="description" content="MyCash Plan - προσωπικός οικονομικός προγραμματισμός σε ευρώ." />
+    <meta name="description" content="MyCash Plan - personal financial planning in euros." data-i18n-content="appDescription" />
     <title>MyCash Plan 2.3.3</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%230f172a'/%3E%3Cpath fill='%2334d399' d='M46 112c0-32 24-56 56-56 17 0 31 6 42 17l-17 17c-7-7-15-10-25-10-18 0-32 14-32 32s14 32 32 32c10 0 18-3 25-10l17 17c-11 11-25 17-42 17-32 0-56-24-56-56Z'/%3E%3Cpath fill='%23f8fafc' d='M42 37h108v19H42z'/%3E%3C/svg%3E" />
@@ -14,43 +14,43 @@
     <div class="app-shell">
       <header class="hero">
         <div>
-          <p class="eyebrow">Προσωπικό ταμείο</p>
+          <p class="eyebrow" data-i18n="personalCash">Personal cash flow</p>
           <h1>MyCash Plan <span class="version-badge">2.3.4</span></h1>
         </div>
         <div class="hero-actions">
-          <button id="manualLockHeader" class="lock-now-button" type="button" hidden>Κλείδωμα τώρα</button>
-          <div class="hero-badge" aria-label="Νόμισμα ευρώ">€</div>
+          <button id="manualLockHeader" class="lock-now-button" type="button" hidden data-i18n="lockNow">Lock now</button>
+          <div class="hero-badge" aria-label="Euro currency">€</div>
         </div>
       </header>
 
       <main>
         <section id="dashboard" class="view active" aria-labelledby="dashboard-title">
           <div class="section-heading stacked-heading">
-            <h2 id="dashboard-title">Πίνακας ελέγχου</h2>
-            <div class="month-selector" aria-label="Επιλογή μήνα για τον πίνακα ελέγχου">
-              <button type="button" data-month-offset="-1" aria-label="Προηγούμενος μήνας">‹</button>
-              <strong id="dashboardMonthLabel">Ιούλιος 2026</strong>
-              <button type="button" data-month-offset="1" aria-label="Επόμενος μήνας">›</button>
+            <h2 id="dashboard-title" data-i18n="dashboard">Dashboard</h2>
+            <div class="month-selector" data-i18n-aria-label="selectDashboardMonth" aria-label="Select dashboard month">
+              <button type="button" data-month-offset="-1" data-i18n-aria-label="previousMonth" aria-label="Previous month">‹</button>
+              <strong id="dashboardMonthLabel">July 2026</strong>
+              <button type="button" data-month-offset="1" data-i18n-aria-label="nextMonth" aria-label="Next month">›</button>
             </div>
           </div>
           <div class="summary-card premium-card">
-            <p id="friendlyMessage">Ας οργανώσουμε τα χρήματά σου με ηρεμία.</p>
+            <p id="friendlyMessage" data-i18n="friendlyDefault">Let's organize your money calmly.</p>
             <strong id="balanceTotal">0,00 €</strong>
-            <span>Υπόλοιπο μήνα</span>
+            <span data-i18n="monthlyBalance">Monthly balance</span>
           </div>
           <div class="stats-grid">
-            <article class="stat-card income"><span>Έσοδα μήνα</span><strong id="incomeTotal">0,00 €</strong></article>
-            <article class="stat-card expense"><span>Έξοδα μήνα</span><strong id="expenseTotal">0,00 €</strong></article>
+            <article class="stat-card income"><span data-i18n="monthIncome">Monthly income</span><strong id="incomeTotal">0,00 €</strong></article>
+            <article class="stat-card expense"><span data-i18n="monthExpenses">Monthly expenses</span><strong id="expenseTotal">0,00 €</strong></article>
           </div>
           <article class="card account-summary-card">
             <div class="section-heading">
-              <h3>Υπόλοιπα λογαριασμών</h3>
+              <h3 data-i18n="accountBalances">Account balances</h3>
             </div>
             <div id="accountSummary" class="account-summary"></div>
           </article>
           <article class="card upcoming-card">
             <div class="section-heading">
-              <h3>Προσεχείς κινήσεις</h3>
+              <h3 data-i18n="upcomingTransactions">Upcoming transactions</h3>
             </div>
             <div id="upcomingSummary" class="upcoming-summary"></div>
             <p id="upcomingMessage" class="upcoming-message" aria-live="polite"></p>
@@ -58,7 +58,7 @@
           </article>
           <article class="card monthly-stats-card">
             <div class="section-heading">
-              <h3>Στατιστικά μήνα</h3>
+              <h3 data-i18n="monthlyStats">Monthly statistics</h3>
             </div>
             <div id="monthlyStats" class="monthly-stats"></div>
             <div id="smartInsights" class="smart-insights" aria-live="polite"></div>
@@ -66,191 +66,191 @@
           </article>
           <article class="card">
             <div class="section-heading">
-              <h3>Έξοδα ανά κατηγορία</h3>
+              <h3 data-i18n="expensesByCategory">Expenses by category</h3>
             </div>
             <div id="categorySummary" class="category-summary"></div>
           </article>
           <article class="card">
             <div class="section-heading">
-              <h3>Budgets μήνα</h3>
+              <h3 data-i18n="monthlyBudgets">Monthly budgets</h3>
             </div>
             <div id="budgetSummary" class="budget-summary"></div>
           </article>
           <article class="card">
             <div class="section-heading">
-              <h3>Πρόοδος αποταμίευσης</h3>
+              <h3 data-i18n="savingsProgress">Savings progress</h3>
               <span id="savingsPercent">0%</span>
             </div>
             <div class="progress-track"><div id="savingsBar" class="progress-bar"></div></div>
-            <p id="savingsText" class="muted">Όρισε στόχο για να ξεκινήσεις.</p>
+            <p id="savingsText" class="muted" data-i18n="setGoalStart">Set a goal to get started.</p>
           </article>
         </section>
 
         <section id="add" class="view" aria-labelledby="add-title">
-          <h2 id="add-title">New transaction</h2>
+          <h2 id="add-title" data-i18n="newTransaction">New transaction</h2>
           <p id="formMessage" class="success-message" aria-live="polite"></p>
           <form id="transactionForm" class="card form-card">
-            <label>Type
+            <label data-i18n-label="type">Type
               <select id="type" required>
                 <option value="income">Income</option>
                 <option value="expense">Expense</option>
                 <option value="transfer">Transfer</option>
               </select>
             </label>
-            <label>Amount (€)
+            <label data-i18n-label="amount">Amount (€)
               <input id="amount" type="number" min="0.01" step="0.01" placeholder="e.g. 45.50" required />
             </label>
-            <label id="categoryLabel">Category
+            <label id="categoryLabel" data-i18n-label="category">Category
               <select id="category" required></select>
             </label>
-            <label id="accountLabel">Account
+            <label id="accountLabel" data-i18n-label="account">Account
               <select id="account" required></select>
             </label>
             <div id="transferFields" class="transfer-fields" hidden>
-              <label>From account
+              <label data-i18n-label="fromAccount">From account
                 <select id="fromAccount"></select>
               </label>
-              <label>To account
+              <label data-i18n-label="toAccount">To account
                 <select id="toAccount"></select>
               </label>
             </div>
-            <label>Note
-              <input id="note" type="text" placeholder="Optional description" />
+            <label data-i18n-label="note">Note
+              <input id="note" type="text" placeholder="Optional description" data-i18n-placeholder="optionalDescription" />
             </label>
-            <label>Date
+            <label data-i18n-label="date">Date
               <input id="date" type="date" required />
             </label>
             <label class="toggle-row">
               <input id="recurring" type="checkbox" />
-              <span>Repeats monthly</span>
+              <span data-i18n="recurringMonthly">Repeats monthly</span>
             </label>
             <div class="form-actions">
-              <button id="formSubmit" type="submit" class="primary-button">Save</button>
-              <button id="cancelEdit" type="button" class="secondary-button" hidden>Cancel edit</button>
+              <button id="formSubmit" type="submit" class="primary-button" data-i18n="save">Save</button>
+              <button id="cancelEdit" type="button" class="secondary-button" hidden data-i18n="cancelEdit">Cancel edit</button>
             </div>
           </form>
         </section>
 
         <section id="history" class="view" aria-labelledby="history-title">
           <div class="section-heading stacked-heading">
-            <h2 id="history-title">Ιστορικό</h2>
-            <div class="month-selector" aria-label="Επιλογή μήνα για το ιστορικό">
-              <button type="button" data-month-offset="-1" aria-label="Προηγούμενος μήνας">‹</button>
-              <strong id="historyMonthLabel">Ιούλιος 2026</strong>
-              <button type="button" data-month-offset="1" aria-label="Επόμενος μήνας">›</button>
+            <h2 id="history-title" data-i18n="history">History</h2>
+            <div class="month-selector" data-i18n-aria-label="selectHistoryMonth" aria-label="Select history month">
+              <button type="button" data-month-offset="-1" data-i18n-aria-label="previousMonth" aria-label="Previous month">‹</button>
+              <strong id="historyMonthLabel">July 2026</strong>
+              <button type="button" data-month-offset="1" data-i18n-aria-label="nextMonth" aria-label="Next month">›</button>
             </div>
-            <div id="historySummary" class="history-summary" aria-label="Σύνοψη ιστορικού μήνα">
-              <div><span>Έσοδα</span><strong id="historyIncomeTotal">0,00 €</strong></div>
-              <div><span>Έξοδα</span><strong id="historyExpenseTotal">0,00 €</strong></div>
-              <div><span>Υπόλοιπο</span><strong id="historyBalanceTotal">0,00 €</strong></div>
+            <div id="historySummary" class="history-summary" data-i18n-aria-label="historyMonthSummary" aria-label="Monthly history summary">
+              <div><span data-i18n="income">Income</span><strong id="historyIncomeTotal">0,00 €</strong></div>
+              <div><span data-i18n="expense">Expense</span><strong id="historyExpenseTotal">0,00 €</strong></div>
+              <div><span data-i18n="balance">Balance</span><strong id="historyBalanceTotal">0,00 €</strong></div>
             </div>
-            <div class="history-filters" aria-label="Σύνθετα φίλτρα ιστορικού">
+            <div class="history-filters" data-i18n-aria-label="advancedFilters" aria-label="Advanced history filters">
               <label class="history-search-label" for="historySearch">
-                <span class="visually-hidden">Αναζήτηση συναλλαγών</span>
-                <input id="historySearch" type="search" placeholder="Αναζήτηση συναλλαγών..." autocomplete="off" />
+                <span class="visually-hidden" data-i18n="searchTransactions">Search transactions</span>
+                <input id="historySearch" type="search" placeholder="Search transactions..." data-i18n-placeholder="searchTransactionsPlaceholder" autocomplete="off" />
               </label>
               <div class="history-filter-grid">
-                <div class="filter-tabs" aria-label="Φίλτρο τύπου συναλλαγών">
-                  <select id="filter" aria-label="Φίλτρο τύπου συναλλαγών">
-                    <option value="all">Όλα</option>
-                    <option value="income">Έσοδα</option>
-                    <option value="expense">Έξοδα</option>
+                <div class="filter-tabs" data-i18n-aria-label="transactionTypeFilter" aria-label="Transaction type filter">
+                  <select id="filter" data-i18n-aria-label="transactionTypeFilter" aria-label="Transaction type filter">
+                    <option value="all" data-i18n="all">All</option>
+                    <option value="income" data-i18n="income">Income</option>
+                    <option value="expense" data-i18n="expense">Expense</option>
                   </select>
                 </div>
-                <div class="filter-tabs" aria-label="Φίλτρο κατηγορίας συναλλαγών">
-                  <select id="categoryFilter" aria-label="Φίλτρο κατηγορίας συναλλαγών">
-                    <option value="all">Όλες οι κατηγορίες</option>
+                <div class="filter-tabs" data-i18n-aria-label="categoryFilter" aria-label="Transaction category filter">
+                  <select id="categoryFilter" data-i18n-aria-label="categoryFilter" aria-label="Transaction category filter">
+                    <option value="all" data-i18n="allCategories">All categories</option>
                   </select>
                 </div>
-                <div class="filter-tabs" aria-label="Φίλτρο λογαριασμού">
-                  <select id="accountFilter" aria-label="Φίλτρο λογαριασμού">
-                    <option value="all">Όλοι οι λογαριασμοί</option>
+                <div class="filter-tabs" data-i18n-aria-label="accountFilter" aria-label="Account filter">
+                  <select id="accountFilter" data-i18n-aria-label="accountFilter" aria-label="Account filter">
+                    <option value="all" data-i18n="allAccounts">All accounts</option>
                   </select>
                 </div>
-                <div class="filter-tabs" aria-label="Φίλτρο μηνιαίων συναλλαγών">
-                  <select id="recurringFilter" aria-label="Φίλτρο μηνιαίων συναλλαγών">
-                    <option value="all">Όλες</option>
-                    <option value="recurring">Μηνιαίες</option>
-                    <option value="one-time">Μη μηνιαίες</option>
+                <div class="filter-tabs" data-i18n-aria-label="recurringFilter" aria-label="Monthly transaction filter">
+                  <select id="recurringFilter" data-i18n-aria-label="recurringFilter" aria-label="Monthly transaction filter">
+                    <option value="all" data-i18n="all">All</option>
+                    <option value="recurring" data-i18n="recurring">Monthly</option>
+                    <option value="one-time" data-i18n="oneTime">One-time</option>
                   </select>
                 </div>
               </div>
-              <button id="clearHistoryFilters" class="clear-filters-button" type="button">Καθαρισμός φίλτρων</button>
+              <button id="clearHistoryFilters" class="clear-filters-button" type="button" data-i18n="clearFilters">Clear filters</button>
             </div>
           </div>
           <div id="transactionList" class="transaction-list"></div>
         </section>
 
         <section id="goals" class="view" aria-labelledby="goals-title">
-          <h2 id="goals-title">Στόχοι</h2>
+          <h2 id="goals-title" data-i18n="goals">Goals</h2>
           <form id="budgetForm" class="card form-card budget-form">
             <div class="section-heading">
-              <h3>Budgets ανά κατηγορία</h3>
+              <h3 data-i18n="categoryBudgets">Budgets by category</h3>
             </div>
-            <p class="muted">Set a monthly expense limit for each category.</p>
+            <p class="muted" data-i18n="setMonthlyLimit">Set a monthly expense limit for each category.</p>
             <div id="budgetInputs" class="budget-inputs"></div>
-            <button type="submit" class="primary-button">Save budgets</button>
+            <button type="submit" class="primary-button" data-i18n="saveBudgets">Save budgets</button>
           </form>
           <form id="goalForm" class="card form-card">
-            <label>Savings goal (€)
-              <input id="goalAmount" type="number" min="0" step="0.01" placeholder="π.χ. 1000" />
+            <label data-i18n-label="savingsGoal">Savings goal (€)
+              <input id="goalAmount" type="number" min="0" step="0.01" placeholder="e.g. 1000" />
             </label>
-            <label>Current saved amount (€)
-              <input id="savedAmount" type="number" min="0" step="0.01" placeholder="π.χ. 250" />
+            <label data-i18n-label="currentSaved">Current saved amount (€)
+              <input id="savedAmount" type="number" min="0" step="0.01" placeholder="e.g. 250" />
             </label>
-            <button type="submit" class="primary-button">Update goal</button>
+            <button type="submit" class="primary-button" data-i18n="updateGoal">Update goal</button>
           </form>
           <article class="card goal-result">
             <span id="goalPercent">0%</span>
-            <p id="goalText">Δεν έχει οριστεί στόχος ακόμη.</p>
+            <p id="goalText" data-i18n="noGoal">No goal has been set yet.</p>
           </article>
         </section>
         <section id="settings" class="view" aria-labelledby="settings-title">
-          <h2 id="settings-title">Ρυθμίσεις</h2>
+          <h2 id="settings-title" data-i18n="settings">Settings</h2>
           <article class="card language-card">
             <div class="section-heading">
-              <h3>Language</h3>
+              <h3 data-i18n="language">Language</h3>
             </div>
-            <label>Language
+            <label data-i18n-label="language">Language
               <select id="languageSelect">
-                <option value="en">English</option>
-                <option value="el">Ελληνικά</option>
+                <option value="en" data-i18n="english">English</option>
+                <option value="el" data-i18n="greek">Greek</option>
               </select>
             </label>
           </article>
           <article class="card app-info-card">
             <div class="section-heading">
-              <h3>Πληροφορίες εφαρμογής</h3>
+              <h3 data-i18n="appInfo">App information</h3>
             </div>
             <div class="app-info-list">
               <strong>MyCash Plan</strong>
-              <span>Version 2.3.3</span>
-              <p class="muted">Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου.</p>
-              <p class="muted">Συγχρονισμός με λογαριασμό θα προστεθεί σε μελλοντική έκδοση.</p>
+              <span><span data-i18n="version">Version</span> 2.3.4</span>
+              <p class="muted" data-i18n="localData">Your data is stored locally on your device.</p>
+              <p class="muted" data-i18n="syncFuture">Account sync will be added in a future release.</p>
             </div>
-            <button id="checkUpdate" type="button" class="secondary-button small-action-button">Έλεγχος ενημέρωσης</button>
+            <button id="checkUpdate" type="button" class="secondary-button small-action-button" data-i18n="checkUpdate">Check for updates</button>
             <p id="settingsMessage" class="settings-message" aria-live="polite"></p>
           </article>
           <article class="card security-card">
             <div class="section-heading">
-              <h3>Ασφάλεια εφαρμογής</h3>
+              <h3 data-i18n="security">App security</h3>
             </div>
-            <p class="muted">Βάλε PIN για να προστατεύεις τα οικονομικά σου στοιχεία.</p>
+            <p class="muted" data-i18n="pinHelp">Set a PIN to protect your financial information.</p>
             <p id="securityMessage" class="security-message" aria-live="polite"></p>
             <div id="securityPanel" class="security-panel"></div>
           </article>
           <article id="accountsSettingsCard" class="card accounts-settings-card">
             <div class="section-heading">
-              <h3>Πορτοφόλια & Λογαριασμοί</h3>
+              <h3 data-i18n="walletsAccounts">Wallets & Accounts</h3>
             </div>
-            <p class="muted">Οργάνωσε πού βρίσκονται τα χρήματά σου.</p>
+            <p class="muted" data-i18n="organizeMoney">Organize where your money is.</p>
             <p id="accountMessage" class="account-message" aria-live="polite"></p>
             <form id="accountForm" class="account-form compact-form">
-              <label>Όνομα λογαριασμού
+              <label data-i18n-label="accountName">Account name
                 <input id="accountName" type="text" placeholder="e.g. Main account, Revolut, Bank" autocomplete="off" />
               </label>
               <div class="compact-field-row">
-                <label>Type
+                <label data-i18n-label="type">Type
                   <select id="accountType">
                     <option value="cash">Cash</option>
                     <option value="bank">Bank</option>
@@ -259,57 +259,57 @@
                     <option value="other">Other</option>
                   </select>
                 </label>
-                <label>Αρχικό υπόλοιπο
+                <label data-i18n-label="startingBalance">Starting balance
                   <input id="accountStartingBalance" type="number" step="0.01" placeholder="0,00" />
                 </label>
               </div>
-              <button type="submit" class="primary-button">Προσθήκη λογαριασμού</button>
+              <button type="submit" class="primary-button" data-i18n="addAccount">Add account</button>
             </form>
             <div id="accountsList" class="accounts-list compact-accounts-list"></div>
           </article>
           <article class="card backup-card">
             <div class="section-heading">
-              <h3>Backup & Εξαγωγή δεδομένων</h3>
+              <h3 data-i18n="backupExport">Backup & data export</h3>
             </div>
-            <p class="muted">Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου. Κράτα backup αν αλλάξεις συσκευή ή browser.</p>
+            <p class="muted" data-i18n="backupHelp">Your data is stored locally on your device. Keep a backup if you change device or browser.</p>
             <p id="backupMessage" class="backup-message" aria-live="polite"></p>
             <div class="backup-actions">
-              <button id="downloadBackup" type="button" class="primary-button">Λήψη backup</button>
-              <button id="exportCsv" type="button" class="secondary-button">Εξαγωγή CSV</button>
-              <label class="restore-button secondary-button" for="restoreBackup">Επαναφορά από backup</label>
+              <button id="downloadBackup" type="button" class="primary-button" data-i18n="downloadBackup">Download backup</button>
+              <button id="exportCsv" type="button" class="secondary-button" data-i18n="exportCsv">Export CSV</button>
+              <label class="restore-button secondary-button" for="restoreBackup" data-i18n="restoreBackup">Restore from backup</label>
               <input id="restoreBackup" class="visually-hidden" type="file" accept="application/json,.json" />
             </div>
           </article>
           <article id="categorySettingsCard" class="card category-settings-card">
             <div class="section-heading">
-              <h3>Κατηγορίες</h3>
+              <h3 data-i18n="categories">Categories</h3>
             </div>
-            <p class="muted">Φτιάξε δικές σου κατηγορίες για έσοδα και έξοδα.</p>
+            <p class="muted" data-i18n="customCategoriesHelp">Create your own categories for income and expenses.</p>
             <p id="categoryMessage" class="category-message" aria-live="polite"></p>
             <form id="categoryForm" class="category-form">
-              <label>Category type
+              <label data-i18n-label="categoryType">Category type
                 <select id="categoryType" required>
                   <option value="income">Income</option>
                   <option value="expense">Expense</option>
                 </select>
               </label>
-              <label>Category name
-                <input id="categoryName" type="text" placeholder="π.χ. Gym, Delivery, Καύσιμα" autocomplete="off" />
+              <label data-i18n-label="categoryName">Category name
+                <input id="categoryName" type="text" placeholder="e.g. Gym, Delivery, Fuel" data-i18n-placeholder="categoryNamePlaceholder" autocomplete="off" />
               </label>
-              <button type="submit" class="primary-button">Προσθήκη κατηγορίας</button>
+              <button type="submit" class="primary-button" data-i18n="addCategory">Add category</button>
             </form>
             <div class="category-lists">
               <details class="category-details">
                 <summary>
-                  <span>Κατηγορίες εσόδων</span>
-                  <small id="incomeCategoryPreview">Άνοιγμα λίστας</small>
+                  <span data-i18n="incomeCategories">Income categories</span>
+                  <small id="incomeCategoryPreview" data-i18n="openList">Open list</small>
                 </summary>
                 <ul id="incomeCategoryList" class="category-list"></ul>
               </details>
               <details class="category-details">
                 <summary>
-                  <span>Κατηγορίες εξόδων</span>
-                  <small id="expenseCategoryPreview">Άνοιγμα λίστας</small>
+                  <span data-i18n="expenseCategories">Expense categories</span>
+                  <small id="expenseCategoryPreview" data-i18n="openList">Open list</small>
                 </summary>
                 <ul id="expenseCategoryList" class="category-list"></ul>
               </details>
@@ -317,42 +317,42 @@
           </article>
           <article class="card danger-zone-card">
             <div class="section-heading">
-              <h3>Διαχείριση δεδομένων</h3>
+              <h3 data-i18n="dataManagement">Data management</h3>
             </div>
-            <p class="muted">Διαγραφή συναλλαγών, στόχων, budgets και custom κατηγοριών από τη συσκευή.</p>
-            <button id="clearAllData" type="button" class="danger-button">Διαγραφή όλων των δεδομένων</button>
+            <p class="muted" data-i18n="deleteDataHelp">Delete transactions, goals, budgets and custom categories from this device.</p>
+            <button id="clearAllData" type="button" class="danger-button" data-i18n="clearAllData">Delete all data</button>
           </article>
         </section>
       </main>
 
-      <nav class="bottom-nav" aria-label="Κύρια πλοήγηση">
-        <button class="nav-button active" data-view="dashboard">🏠<span>Αρχική</span></button>
-        <button class="nav-button" data-view="add">➕<span>Προσθήκη</span></button>
-        <button class="nav-button" data-view="history">📜<span>Ιστορικό</span></button>
-        <button class="nav-button" data-view="goals">🎯<span>Στόχοι</span></button>
-        <button class="nav-button" data-view="settings">⚙️<span>Ρυθμίσεις</span></button>
+      <nav class="bottom-nav" data-i18n-aria-label="mainNavigation" aria-label="Main navigation">
+        <button class="nav-button active" data-view="dashboard">🏠<span data-i18n="home">Home</span></button>
+        <button class="nav-button" data-view="add">➕<span data-i18n="add">Add</span></button>
+        <button class="nav-button" data-view="history">📜<span data-i18n="history">History</span></button>
+        <button class="nav-button" data-view="goals">🎯<span data-i18n="goals">Goals</span></button>
+        <button class="nav-button" data-view="settings">⚙️<span data-i18n="settings">Settings</span></button>
       </nav>
     </div>
     <div id="budgetAlertToast" class="budget-alert-toast" role="alert" aria-live="assertive" hidden></div>
     <div id="onboardingOverlay" class="onboarding-overlay" hidden>
       <div class="onboarding-card" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
         <div class="onboarding-icon">€</div>
-        <h2 id="onboardingTitle">Καλώς ήρθες στο MyCash Plan</h2>
-        <p>Κατέγραψε έσοδα, έξοδα, budgets και στόχους αποταμίευσης.</p>
-        <p>Τα δεδομένα μένουν στη συσκευή σου. Κράτησε backup από τις Ρυθμίσεις.</p>
-        <button id="finishOnboarding" type="button" class="primary-button">Ξεκινάμε</button>
+        <h2 id="onboardingTitle" data-i18n="welcome">Welcome to MyCash Plan</h2>
+        <p data-i18n="onboardingText1">Track income, expenses, budgets and savings goals.</p>
+        <p data-i18n="onboardingText2">Your data stays on your device. Keep a backup from Settings.</p>
+        <button id="finishOnboarding" type="button" class="primary-button" data-i18n="getStarted">Get started</button>
       </div>
     </div>
     <div id="lockOverlay" class="lock-overlay" hidden>
       <div class="lock-card" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
         <div class="lock-icon">€</div>
         <p class="eyebrow">MyCash Plan</p>
-        <h2 id="lockTitle">Πληκτρολόγησε PIN</h2>
+        <h2 id="lockTitle" data-i18n="enterPin">Enter PIN</h2>
         <p id="lockMessage" class="lock-message" aria-live="polite"></p>
         <form id="unlockForm" class="lock-form">
           <label class="visually-hidden" for="unlockPin">PIN</label>
           <input id="unlockPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" pattern="[0-9]*" placeholder="••••" />
-          <button type="submit" class="primary-button">Ξεκλείδωμα</button>
+          <button type="submit" class="primary-button" data-i18n="unlock">Unlock</button>
         </form>
       </div>
     </div>

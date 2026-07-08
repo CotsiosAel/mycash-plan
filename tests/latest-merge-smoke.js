@@ -13,7 +13,7 @@ function assert(condition, message) {
   }
 }
 
-assert(/<article class="card language-card">[\s\S]*<select id="languageSelect">[\s\S]*<option value="en">English<\/option>[\s\S]*<option value="el">Ελληνικά<\/option>/i.test(html), 'Settings must render a visible English/Greek language selector');
+assert(/<article class="card language-card">[\s\S]*<select id="languageSelect">[\s\S]*<option value="en" data-i18n="english">English<\/option>[\s\S]*<option value="el" data-i18n="greek">Greek<\/option>/i.test(html), 'Settings must render a visible English/Greek language selector');
 assert(/language:\s*"mycash-plan-language"/.test(js), 'language storage key is missing');
 assert(/localStorage\.setItem\(storageKeys\.language, activeLanguage\)/.test(js), 'selected language must be saved to localStorage');
 assert(/function isEffectiveTransactionDate\(dateValue\)/.test(js), 'shared effective transaction date helper is missing');

@@ -25,7 +25,7 @@ const translations = {
     categoryBudgets: "Budgets by category", setMonthlyLimit: "Set a monthly expense limit for each category.", saveBudgets: "Save budgets", savingsGoal: "Savings goal (€)", currentSaved: "Current saved amount (€)", updateGoal: "Update goal", noGoal: "No goal has been set yet.", savedOfGoal: "You have saved {saved} of {goal}.", budgetsSavedHint: "Set budgets from Goals to track your limits.", withinBudget: "Within budget", nearLimit: "Near limit", overBudget: "Over budget", spentOf: "{spent} of {budget}",
     appInfo: "App information", version: "Version", localData: "Your data is stored locally on your device.", syncFuture: "Account sync will be added in a future release.", checkUpdate: "Check for updates", security: "App security", pinHelp: "Set a PIN to protect your financial information.", walletsAccounts: "Wallets & Accounts", organizeMoney: "Organize where your money is.", accountName: "Account name", accountNamePlaceholder: "e.g. Main account, Revolut, Bank", accountType: "Type", cash: "Cash", bank: "Bank", card: "Card", savings: "Savings", other: "Other", startingBalance: "Starting balance", addAccount: "Add account", backupExport: "Backup & data export", backupHelp: "Your data is stored locally on your device. Keep a backup if you change device or browser.", downloadBackup: "Download backup", exportCsv: "Export CSV", restoreBackup: "Restore from backup", categories: "Categories", customCategoriesHelp: "Create your own categories for income and expenses.", categoryType: "Category type", categoryName: "Category name", categoryNamePlaceholder: "e.g. Gym, Delivery, Fuel", addCategory: "Add category", incomeCategories: "Income categories", expenseCategories: "Expense categories", openList: "Open list", dataManagement: "Data management", deleteDataHelp: "Delete transactions, goals, budgets and custom categories from this device.", clearAllData: "Delete all data", language: "Language", english: "English", greek: "Ελληνικά", languageSaved: "Language saved.", dataCleared: "Data was deleted.", updateChecked: "Update check completed.", updateCheckFailed: "Could not check for updates.", backupCreated: "Backup was created successfully.", csvCreated: "CSV was created successfully.", invalidBackup: "The backup file is not valid.", backupRestored: "Backup restored successfully.",
     welcome: "Welcome to MyCash Plan", onboardingText1: "Track income, expenses, budgets and savings goals.", onboardingText2: "Your data stays on your device. Keep a backup from Settings.", getStarted: "Get started", enterPin: "Enter PIN", unlock: "Unlock", wrongPin: "Wrong PIN. Try again.", default: "Default", archived: "Archived", rename: "Rename", archive: "Archive", appLocked: "PIN is active", enablePin: "Enable PIN", confirmPin: "Confirm PIN", changePin: "Change PIN", disablePin: "Disable PIN", currentPin: "Current PIN", newPin: "New PIN", confirmNewPin: "Confirm new PIN", saveNewPin: "Save new PIN",
-    defaultExpenseCategories: ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"], defaultIncomeCategories: ["Salary", "Business", "Gift", "Sale", "Other"], duplicateAccountWarning: "Similar accounts were found. You can archive the one you do not use.", defaultAccountName: "Main account", transferCategory: "Transfer", noExpensesMonth: "There are no expenses for this month. Good start!", noStats: "There is not enough data for this month's statistics.", biggestCategory: "Biggest category", totalIncome: "Total income", totalExpenses: "Total expenses", averageDailyExpense: "Average daily expense", exceededBudgets: "Exceeded budgets", whereExpensesWent: "Where expenses went", statsHelper: "Percentage of total monthly expenses.", noCategoryAnalysis: "There are no expenses for category analysis.", startFirstTransaction: "Start by adding your first income or expense.", positiveBalance: "Great! You are keeping a positive balance this month.", negativeBalance: "Warning: expenses exceed income. Small changes help.", evenBalance: "Income and expenses are balanced this month.", transactionSaved: "Transaction saved successfully.", noExpenseInsight: "You have no expenses this month. Good start!", biggestCategoryInsight: "Your biggest expense category is {category}.", averageDailyExpenseInsight: "Your average daily expense is {amount}.", exceededBudgetsInsight: "You have exceeded {count} budget this month.", exceededBudgetsInsightPlural: "You have exceeded {count} budgets this month.", negativeBalanceInsight: "Expenses exceed income. Watch your next moves.", positiveBalanceInsight: "You are keeping a positive balance this month.", confirmClearData: "Are you sure you want to delete all data? This action cannot be undone.", confirmRemovePin: "Do you also want to remove the PIN?", confirmRestoreBackup: "Restore will replace your current data. Continue?", budgetExceededAlert: "You exceeded the limit for {category} by {amount}.", budgetNearAlert: "You are near the limit for {category}. You have spent {spent} of {budget}.", pinActive: "PIN is active", enablePin: "Enable PIN", currentPin: "Current PIN", newPin: "New PIN", confirmPin: "Confirm PIN", confirmNewPin: "Confirm new PIN", saveNewPin: "Save new PIN", disablePin: "Disable PIN", pinRequired: "PIN must be exactly 4 digits.", pinMismatch: "PINs do not match.", newPinMismatch: "New PINs do not match.", pinEnabled: "PIN was enabled successfully.", wrongCurrentPin: "The current PIN is not correct.", pinChanged: "PIN changed successfully.", pinDisabled: "PIN disabled successfully.", categoryNameRequired: "Enter a category name.", categoryExists: "This category already exists.", categoryAdded: "Category added.", confirmDeleteCategory: "Are you sure you want to delete this category?", confirmDeleteCategoryWithTransactions: "There are transactions in this category. If you delete it, old transactions will remain as they are.", categoryDeleted: "Category deleted.", accountNameRequired: "Enter an account name.", accountExists: "An account with this name already exists.", accountAdded: "Account added.", promptNewAccountName: "New account name", accountRenamed: "Account renamed.", needsActiveAccount: "At least one active account is required.", confirmArchiveAccountWithTransactions: "There are transactions in this account. It will be archived and old transactions will remain.", accountArchived: "Account archived.", accountDeleted: "Account deleted.", lockNowSecurity: "Lock now", confirmDeleteTransaction: "Are you sure you want to delete this transaction?", confirmDeleteRecurring: "This transaction repeats every month. Are you sure you want to delete it?",
+    defaultCategoryHome: "Home", defaultCategoryFood: "Food", defaultCategoryCoffee: "Coffee", defaultCategorySupermarket: "Supermarket", defaultCategoryTransport: "Transport", defaultCategoryBills: "Bills", defaultCategoryEntertainment: "Entertainment", defaultCategoryHealth: "Health", defaultCategoryChild: "Child", defaultCategoryPet: "Pet", defaultCategorySalary: "Salary", defaultCategoryBusiness: "Business", defaultCategoryGift: "Gift", defaultCategorySale: "Sale", defaultExpenseCategories: ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"], defaultIncomeCategories: ["Salary", "Business", "Gift", "Sale", "Other"], duplicateAccountWarning: "Similar accounts were found. You can archive the one you do not use.", defaultAccountName: "Main account", transferCategory: "Transfer", noExpensesMonth: "There are no expenses for this month. Good start!", noStats: "There is not enough data for this month's statistics.", biggestCategory: "Biggest category", totalIncome: "Total income", totalExpenses: "Total expenses", averageDailyExpense: "Average daily expense", exceededBudgets: "Exceeded budgets", whereExpensesWent: "Where expenses went", statsHelper: "Percentage of total monthly expenses.", noCategoryAnalysis: "There are no expenses for category analysis.", startFirstTransaction: "Start by adding your first income or expense.", positiveBalance: "Great! You are keeping a positive balance this month.", negativeBalance: "Warning: expenses exceed income. Small changes help.", evenBalance: "Income and expenses are balanced this month.", transactionSaved: "Transaction saved successfully.", noExpenseInsight: "You have no expenses this month. Good start!", biggestCategoryInsight: "Your biggest expense category is {category}.", averageDailyExpenseInsight: "Your average daily expense is {amount}.", exceededBudgetsInsight: "You have exceeded {count} budget this month.", exceededBudgetsInsightPlural: "You have exceeded {count} budgets this month.", negativeBalanceInsight: "Expenses exceed income. Watch your next moves.", positiveBalanceInsight: "You are keeping a positive balance this month.", confirmClearData: "Are you sure you want to delete all data? This action cannot be undone.", confirmRemovePin: "Do you also want to remove the PIN?", confirmRestoreBackup: "Restore will replace your current data. Continue?", budgetExceededAlert: "You exceeded the limit for {category} by {amount}.", budgetNearAlert: "You are near the limit for {category}. You have spent {spent} of {budget}.", pinActive: "PIN is active", enablePin: "Enable PIN", currentPin: "Current PIN", newPin: "New PIN", confirmPin: "Confirm PIN", confirmNewPin: "Confirm new PIN", saveNewPin: "Save new PIN", disablePin: "Disable PIN", pinRequired: "PIN must be exactly 4 digits.", pinMismatch: "PINs do not match.", newPinMismatch: "New PINs do not match.", pinEnabled: "PIN was enabled successfully.", wrongCurrentPin: "The current PIN is not correct.", pinChanged: "PIN changed successfully.", pinDisabled: "PIN disabled successfully.", categoryNameRequired: "Enter a category name.", categoryExists: "This category already exists.", categoryAdded: "Category added.", confirmDeleteCategory: "Are you sure you want to delete this category?", confirmDeleteCategoryWithTransactions: "There are transactions in this category. If you delete it, old transactions will remain as they are.", categoryDeleted: "Category deleted.", accountNameRequired: "Enter an account name.", accountExists: "An account with this name already exists.", accountAdded: "Account added.", promptNewAccountName: "New account name", accountRenamed: "Account renamed.", needsActiveAccount: "At least one active account is required.", confirmArchiveAccountWithTransactions: "There are transactions in this account. It will be archived and old transactions will remain.", accountArchived: "Account archived.", accountDeleted: "Account deleted.", lockNowSecurity: "Lock now", confirmDeleteTransaction: "Are you sure you want to delete this transaction?", confirmDeleteRecurring: "This transaction repeats every month. Are you sure you want to delete it?",
   },
   el: {}
 };
@@ -37,7 +37,7 @@ translations.el = {
   all: "Όλα", allCategories: "Όλες οι κατηγορίες", allAccounts: "Όλοι οι λογαριασμοί", recurring: "Μηνιαίες", oneTime: "Μη μηνιαίες", clearFilters: "Καθαρισμός φίλτρων", noTransactionsMonth: "Δεν υπάρχουν συναλλαγές για αυτόν τον μήνα.", addIncomeExpenseStart: "Πρόσθεσε έσοδα ή έξοδα για να ξεκινήσεις.", noFilteredTransactions: "Δεν βρέθηκαν συναλλαγές με αυτά τα φίλτρα.", tryDifferentSearch: "Δοκίμασε διαφορετική αναζήτηση ή καθάρισε τα φίλτρα.", searchTransactionsPlaceholder: "Αναζήτηση συναλλαγών...", balance: "Υπόλοιπο",
   categoryBudgets: "Budgets ανά κατηγορία", setMonthlyLimit: "Όρισε μηνιαίο όριο εξόδων για κάθε κατηγορία.", saveBudgets: "Αποθήκευση budgets", savingsGoal: "Στόχος αποταμίευσης (€)", currentSaved: "Τρέχον αποταμιευμένο ποσό (€)", updateGoal: "Ενημέρωση στόχου", noGoal: "Δεν έχει οριστεί στόχος ακόμη.",
   appInfo: "Πληροφορίες εφαρμογής", localData: "Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου.", syncFuture: "Συγχρονισμός με λογαριασμό θα προστεθεί σε μελλοντική έκδοση.", checkUpdate: "Έλεγχος ενημέρωσης", security: "Ασφάλεια εφαρμογής", pinHelp: "Βάλε PIN για να προστατεύεις τα οικονομικά σου στοιχεία.", walletsAccounts: "Πορτοφόλια & Λογαριασμοί", organizeMoney: "Οργάνωσε πού βρίσκονται τα χρήματά σου.", accountName: "Όνομα λογαριασμού", accountNamePlaceholder: "π.χ. Κύριος λογαριασμός, Revolut, Τράπεζα", cash: "Μετρητά", bank: "Τράπεζα", card: "Κάρτα", savings: "Αποταμίευση", other: "Άλλο", startingBalance: "Αρχικό υπόλοιπο", addAccount: "Προσθήκη λογαριασμού", backupExport: "Backup & Εξαγωγή δεδομένων", downloadBackup: "Λήψη backup", exportCsv: "Εξαγωγή CSV", restoreBackup: "Επαναφορά από backup", categories: "Κατηγορίες", addCategory: "Προσθήκη κατηγορίας", incomeCategories: "Κατηγορίες εσόδων", expenseCategories: "Κατηγορίες εξόδων", dataManagement: "Διαχείριση δεδομένων", clearAllData: "Διαγραφή όλων των δεδομένων", language: "Γλώσσα", languageSaved: "Η γλώσσα αποθηκεύτηκε.", dataCleared: "Τα δεδομένα διαγράφηκαν.", updateChecked: "Έγινε έλεγχος ενημέρωσης.", updateCheckFailed: "Δεν ήταν δυνατός ο έλεγχος ενημέρωσης.", backupCreated: "Το backup δημιουργήθηκε επιτυχώς.", csvCreated: "Το CSV δημιουργήθηκε επιτυχώς.", invalidBackup: "Το αρχείο backup δεν είναι έγκυρο.", backupRestored: "Το backup επαναφέρθηκε επιτυχώς.",
-  defaultExpenseCategories: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"], defaultIncomeCategories: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"], duplicateAccountWarning: "Βρέθηκαν παρόμοιοι λογαριασμοί. Μπορείς να αρχειοθετήσεις αυτόν που δεν χρησιμοποιείς.", defaultAccountName: "Κύριος λογαριασμός", transferCategory: "Μεταφορά", noExpensesMonth: "Δεν υπάρχουν έξοδα για αυτόν τον μήνα. Καλή αρχή!", noStats: "Δεν υπάρχουν αρκετά δεδομένα για στατιστικά αυτόν τον μήνα.", biggestCategory: "Μεγαλύτερη κατηγορία", totalIncome: "Σύνολο εσόδων", totalExpenses: "Σύνολο εξόδων", averageDailyExpense: "Μέσο ημερήσιο έξοδο", exceededBudgets: "Budgets που ξεπεράστηκαν", whereExpensesWent: "Πού πήγαν τα έξοδα", statsHelper: "Ποσοστό επί των συνολικών εξόδων του μήνα.", noCategoryAnalysis: "Δεν υπάρχουν έξοδα για ανάλυση κατηγοριών.", startFirstTransaction: "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.", positiveBalance: "Υπέροχα! Αυτόν τον μήνα κρατάς θετικό υπόλοιπο.", negativeBalance: "Προσοχή: τα έξοδα ξεπερνούν τα έσοδα. Μικρές αλλαγές βοηθούν.", evenBalance: "Τα έσοδα και τα έξοδα είναι ισορροπημένα αυτόν τον μήνα.", transactionSaved: "Η συναλλαγή αποθηκεύτηκε επιτυχώς.", noExpenseInsight: "Δεν έχεις έξοδα για αυτόν τον μήνα. Καλή αρχή!", biggestCategoryInsight: "Η μεγαλύτερη κατηγορία εξόδων σου είναι {category}.", averageDailyExpenseInsight: "Το μέσο ημερήσιο έξοδό σου είναι {amount}.", exceededBudgetsInsight: "Έχεις ξεπεράσει {count} budget αυτόν τον μήνα.", exceededBudgetsInsightPlural: "Έχεις ξεπεράσει {count} budgets αυτόν τον μήνα.", negativeBalanceInsight: "Τα έξοδα ξεπερνούν τα έσοδα. Πρόσεξε τις επόμενες κινήσεις.", positiveBalanceInsight: "Κρατάς θετικό υπόλοιπο αυτόν τον μήνα.", confirmClearData: "Θέλεις σίγουρα να διαγράψεις όλα τα δεδομένα; Αυτή η ενέργεια δεν αναιρείται.", confirmRemovePin: "Θέλεις να αφαιρεθεί και το PIN;", confirmRestoreBackup: "Η επαναφορά θα αντικαταστήσει τα τωρινά δεδομένα. Συνέχεια;", budgetExceededAlert: "Ξεπέρασες το όριο για {category} κατά {amount}.", budgetNearAlert: "Πλησιάζεις το όριο για {category}. Έχεις ξοδέψει {spent} από {budget}.", pinActive: "Το PIN είναι ενεργό", enablePin: "Ενεργοποίηση PIN", currentPin: "Τρέχον PIN", newPin: "Νέο PIN", confirmPin: "Επιβεβαίωση PIN", confirmNewPin: "Επιβεβαίωση νέου PIN", saveNewPin: "Αποθήκευση νέου PIN", disablePin: "Απενεργοποίηση PIN", pinRequired: "Το PIN πρέπει να έχει ακριβώς 4 ψηφία.", pinMismatch: "Τα PIN δεν ταιριάζουν.", newPinMismatch: "Τα νέα PIN δεν ταιριάζουν.", pinEnabled: "Το PIN ενεργοποιήθηκε επιτυχώς.", wrongCurrentPin: "Το τρέχον PIN δεν είναι σωστό.", pinChanged: "Το PIN άλλαξε επιτυχώς.", pinDisabled: "Το PIN απενεργοποιήθηκε επιτυχώς.", categoryNameRequired: "Συμπλήρωσε όνομα κατηγορίας.", categoryExists: "Αυτή η κατηγορία υπάρχει ήδη.", categoryAdded: "Η κατηγορία προστέθηκε.", confirmDeleteCategory: "Θέλεις σίγουρα να διαγράψεις αυτή την κατηγορία;", confirmDeleteCategoryWithTransactions: "Υπάρχουν συναλλαγές με αυτή την κατηγορία. Αν τη διαγράψεις, οι παλιές συναλλαγές θα παραμείνουν όπως είναι.", categoryDeleted: "Η κατηγορία διαγράφηκε.", accountNameRequired: "Συμπλήρωσε όνομα λογαριασμού.", accountExists: "Υπάρχει ήδη λογαριασμός με αυτό το όνομα.", accountAdded: "Ο λογαριασμός προστέθηκε.", promptNewAccountName: "Νέο όνομα λογαριασμού", accountRenamed: "Ο λογαριασμός μετονομάστηκε.", needsActiveAccount: "Χρειάζεται τουλάχιστον ένας ενεργός λογαριασμός.", confirmArchiveAccountWithTransactions: "Υπάρχουν συναλλαγές σε αυτόν τον λογαριασμό. Θα γίνει αρχειοθέτηση και οι παλιές συναλλαγές θα παραμείνουν.", accountArchived: "Ο λογαριασμός αρχειοθετήθηκε.", accountDeleted: "Ο λογαριασμός διαγράφηκε.", lockNowSecurity: "Κλείδωμα τώρα",
+  defaultCategoryHome: "Σπίτι", defaultCategoryFood: "Φαγητό", defaultCategoryCoffee: "Καφές", defaultCategorySupermarket: "Supermarket", defaultCategoryTransport: "Μεταφορές", defaultCategoryBills: "Λογαριασμοί", defaultCategoryEntertainment: "Ψυχαγωγία", defaultCategoryHealth: "Υγεία", defaultCategoryChild: "Παιδί", defaultCategoryPet: "Κατοικίδιο", defaultCategorySalary: "Μισθός", defaultCategoryBusiness: "Επιχείρηση", defaultCategoryGift: "Δώρο", defaultCategorySale: "Πώληση", defaultExpenseCategories: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"], defaultIncomeCategories: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"], duplicateAccountWarning: "Βρέθηκαν παρόμοιοι λογαριασμοί. Μπορείς να αρχειοθετήσεις αυτόν που δεν χρησιμοποιείς.", defaultAccountName: "Κύριος λογαριασμός", transferCategory: "Μεταφορά", noExpensesMonth: "Δεν υπάρχουν έξοδα για αυτόν τον μήνα. Καλή αρχή!", noStats: "Δεν υπάρχουν αρκετά δεδομένα για στατιστικά αυτόν τον μήνα.", biggestCategory: "Μεγαλύτερη κατηγορία", totalIncome: "Σύνολο εσόδων", totalExpenses: "Σύνολο εξόδων", averageDailyExpense: "Μέσο ημερήσιο έξοδο", exceededBudgets: "Budgets που ξεπεράστηκαν", whereExpensesWent: "Πού πήγαν τα έξοδα", statsHelper: "Ποσοστό επί των συνολικών εξόδων του μήνα.", noCategoryAnalysis: "Δεν υπάρχουν έξοδα για ανάλυση κατηγοριών.", startFirstTransaction: "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.", positiveBalance: "Υπέροχα! Αυτόν τον μήνα κρατάς θετικό υπόλοιπο.", negativeBalance: "Προσοχή: τα έξοδα ξεπερνούν τα έσοδα. Μικρές αλλαγές βοηθούν.", evenBalance: "Τα έσοδα και τα έξοδα είναι ισορροπημένα αυτόν τον μήνα.", transactionSaved: "Η συναλλαγή αποθηκεύτηκε επιτυχώς.", noExpenseInsight: "Δεν έχεις έξοδα για αυτόν τον μήνα. Καλή αρχή!", biggestCategoryInsight: "Η μεγαλύτερη κατηγορία εξόδων σου είναι {category}.", averageDailyExpenseInsight: "Το μέσο ημερήσιο έξοδό σου είναι {amount}.", exceededBudgetsInsight: "Έχεις ξεπεράσει {count} budget αυτόν τον μήνα.", exceededBudgetsInsightPlural: "Έχεις ξεπεράσει {count} budgets αυτόν τον μήνα.", negativeBalanceInsight: "Τα έξοδα ξεπερνούν τα έσοδα. Πρόσεξε τις επόμενες κινήσεις.", positiveBalanceInsight: "Κρατάς θετικό υπόλοιπο αυτόν τον μήνα.", confirmClearData: "Θέλεις σίγουρα να διαγράψεις όλα τα δεδομένα; Αυτή η ενέργεια δεν αναιρείται.", confirmRemovePin: "Θέλεις να αφαιρεθεί και το PIN;", confirmRestoreBackup: "Η επαναφορά θα αντικαταστήσει τα τωρινά δεδομένα. Συνέχεια;", budgetExceededAlert: "Ξεπέρασες το όριο για {category} κατά {amount}.", budgetNearAlert: "Πλησιάζεις το όριο για {category}. Έχεις ξοδέψει {spent} από {budget}.", pinActive: "Το PIN είναι ενεργό", enablePin: "Ενεργοποίηση PIN", currentPin: "Τρέχον PIN", newPin: "Νέο PIN", confirmPin: "Επιβεβαίωση PIN", confirmNewPin: "Επιβεβαίωση νέου PIN", saveNewPin: "Αποθήκευση νέου PIN", disablePin: "Απενεργοποίηση PIN", pinRequired: "Το PIN πρέπει να έχει ακριβώς 4 ψηφία.", pinMismatch: "Τα PIN δεν ταιριάζουν.", newPinMismatch: "Τα νέα PIN δεν ταιριάζουν.", pinEnabled: "Το PIN ενεργοποιήθηκε επιτυχώς.", wrongCurrentPin: "Το τρέχον PIN δεν είναι σωστό.", pinChanged: "Το PIN άλλαξε επιτυχώς.", pinDisabled: "Το PIN απενεργοποιήθηκε επιτυχώς.", categoryNameRequired: "Συμπλήρωσε όνομα κατηγορίας.", categoryExists: "Αυτή η κατηγορία υπάρχει ήδη.", categoryAdded: "Η κατηγορία προστέθηκε.", confirmDeleteCategory: "Θέλεις σίγουρα να διαγράψεις αυτή την κατηγορία;", confirmDeleteCategoryWithTransactions: "Υπάρχουν συναλλαγές με αυτή την κατηγορία. Αν τη διαγράψεις, οι παλιές συναλλαγές θα παραμείνουν όπως είναι.", categoryDeleted: "Η κατηγορία διαγράφηκε.", accountNameRequired: "Συμπλήρωσε όνομα λογαριασμού.", accountExists: "Υπάρχει ήδη λογαριασμός με αυτό το όνομα.", accountAdded: "Ο λογαριασμός προστέθηκε.", promptNewAccountName: "Νέο όνομα λογαριασμού", accountRenamed: "Ο λογαριασμός μετονομάστηκε.", needsActiveAccount: "Χρειάζεται τουλάχιστον ένας ενεργός λογαριασμός.", confirmArchiveAccountWithTransactions: "Υπάρχουν συναλλαγές σε αυτόν τον λογαριασμό. Θα γίνει αρχειοθέτηση και οι παλιές συναλλαγές θα παραμείνουν.", accountArchived: "Ο λογαριασμός αρχειοθετήθηκε.", accountDeleted: "Ο λογαριασμός διαγράφηκε.", lockNowSecurity: "Κλείδωμα τώρα",
 };
 
 let activeLanguage = localStorage.getItem(storageKeys.language) || "en";
@@ -48,22 +48,34 @@ function t(key, params = {}) {
   return String(value).replace(/\{(\w+)\}/g, (_, name) => params[name] ?? "");
 }
 function locale() { return currentLanguage() === "el" ? "el-GR" : "en-US"; }
-function localizedDefaultExpenseCategories() { return t("defaultExpenseCategories"); }
-function localizedDefaultIncomeCategories() { return t("defaultIncomeCategories"); }
 function accountTypeLabelsMap() { return { cash: t("cash"), bank: t("bank"), card: t("card"), savings: t("savings"), other: t("other") }; }
 const accountTypeKeys = { cash: "cash", bank: "bank", card: "card", savings: "savings", other: "other" };
-const defaultExpenseCategories = ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"];
-const defaultIncomeCategories = ["Salary", "Business", "Gift", "Sale", "Other"];
-const defaultCategoryTranslations = {
-  expense: {
-    en: defaultExpenseCategories,
-    el: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"],
-  },
-  income: {
-    en: defaultIncomeCategories,
-    el: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"],
-  },
+const defaultCategoryDefinitions = {
+  expense: [
+    { id: "home", key: "defaultCategoryHome", legacy: ["Home", "Σπίτι"] },
+    { id: "food", key: "defaultCategoryFood", legacy: ["Food", "Φαγητό"] },
+    { id: "coffee", key: "defaultCategoryCoffee", legacy: ["Coffee", "Καφές"] },
+    { id: "supermarket", key: "defaultCategorySupermarket", legacy: ["Supermarket"] },
+    { id: "transport", key: "defaultCategoryTransport", legacy: ["Transport", "Μεταφορές"] },
+    { id: "bills", key: "defaultCategoryBills", legacy: ["Bills", "Λογαριασμοί"] },
+    { id: "entertainment", key: "defaultCategoryEntertainment", legacy: ["Entertainment", "Ψυχαγωγία"] },
+    { id: "health", key: "defaultCategoryHealth", legacy: ["Health", "Υγεία"] },
+    { id: "child", key: "defaultCategoryChild", legacy: ["Child", "Παιδί"] },
+    { id: "pet", key: "defaultCategoryPet", legacy: ["Pet", "Κατοικίδιο"] },
+    { id: "other", key: "other", legacy: ["Other", "Άλλο"] },
+  ],
+  income: [
+    { id: "salary", key: "defaultCategorySalary", legacy: ["Salary", "Μισθός"] },
+    { id: "business", key: "defaultCategoryBusiness", legacy: ["Business", "Επιχείρηση"] },
+    { id: "gift", key: "defaultCategoryGift", legacy: ["Gift", "Δώρο"] },
+    { id: "sale", key: "defaultCategorySale", legacy: ["Sale", "Πώληση"] },
+    { id: "other", key: "other", legacy: ["Other", "Άλλο"] },
+  ],
 };
+const defaultExpenseCategories = defaultCategoryDefinitions.expense.map((category) => category.id);
+const defaultIncomeCategories = defaultCategoryDefinitions.income.map((category) => category.id);
+function localizedDefaultExpenseCategories() { return defaultExpenseCategories; }
+function localizedDefaultIncomeCategories() { return defaultIncomeCategories; }
 
 
 const today = new Date();
@@ -184,72 +196,47 @@ const elements = {
 
 
 
-function setText(selector, key) {
-  const element = document.querySelector(selector);
-  if (element) element.textContent = t(key);
-}
-function setLabelText(selector, key) {
-  const label = document.querySelector(selector);
-  if (!label) return;
-  const textNode = Array.from(label.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
+function translateLabelElement(label, key) {
+  const textNode = Array.from(label.childNodes).find((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
   if (textNode) textNode.textContent = `${t(key)} `;
   else label.prepend(document.createTextNode(`${t(key)} `));
 }
-function setControlLabelText(controlId, key) {
-  const control = document.getElementById(controlId);
-  const label = control?.closest("label");
-  if (label) setLabelTextForElement(label, key);
-}
-function setLabelTextForElement(label, key) {
-  const textNode = Array.from(label.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
-  if (textNode) textNode.textContent = `${t(key)} `;
-  else label.prepend(document.createTextNode(`${t(key)} `));
-}
-function setAttr(selector, attr, key) {
-  const element = document.querySelector(selector);
-  if (element) element.setAttribute(attr, t(key));
-}
+
 function applyStaticTranslations() {
   document.documentElement.lang = currentLanguage();
-  document.querySelector('meta[name="description"]')?.setAttribute("content", t("appDescription"));
-  setText(".eyebrow", "personalCash");
-  if (elements.manualLockHeader) elements.manualLockHeader.textContent = t("lockNow");
-  document.querySelector(".bottom-nav")?.setAttribute("aria-label", t("mainNavigation"));
-  ["dashboard", "add", "history", "goals", "settings"].forEach((view, index) => {
-    const nav = elements.navButtons[index]?.querySelector("span");
-    if (nav) nav.textContent = t(view === "dashboard" ? "home" : view);
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
   });
-  setText("#dashboard-title", "dashboard"); setText("#add-title", state.editingId ? "editTransaction" : "newTransaction"); setText("#history-title", "history"); setText("#goals-title", "goals"); setText("#settings-title", "settings");
-  setText("#friendlyMessage", "friendlyDefault");
-  document.querySelectorAll('[data-month-offset="-1"]').forEach((button) => button.setAttribute("aria-label", t("previousMonth")));
-  document.querySelectorAll('[data-month-offset="1"]').forEach((button) => button.setAttribute("aria-label", t("nextMonth")));
-  setAttr("#dashboard .month-selector", "aria-label", "selectDashboardMonth"); setAttr("#history .month-selector", "aria-label", "selectHistoryMonth");
-  const staticPairs = [
-    [".summary-card span", "monthlyBalance"], [".stat-card.income span", "monthIncome"], [".stat-card.expense span", "monthExpenses"],
-    [".account-summary-card h3", "accountBalances"], [".upcoming-card h3", "upcomingTransactions"], [".monthly-stats-card h3", "monthlyStats"],
-    ["#dashboard article:nth-of-type(4) h3", "expensesByCategory"], ["#dashboard article:nth-of-type(5) h3", "monthlyBudgets"], ["#dashboard article:nth-of-type(6) h3", "savingsProgress"],
-    ["#historySummary div:nth-child(1) span", "income"], ["#historySummary div:nth-child(2) span", "expense"], ["#historySummary div:nth-child(3) span", "balance"],
-    [".language-card h3", "language"], [".app-info-card h3", "appInfo"], [".security-card h3", "security"], [".accounts-settings-card h3", "walletsAccounts"], [".backup-card h3", "backupExport"], [".category-settings-card h3", "categories"], [".danger-zone-card h3", "dataManagement"]
-  ];
-  staticPairs.forEach(([selector, key]) => setText(selector, key));
-  if (elements.languageSelect) {
-    elements.languageSelect.value = currentLanguage();
-    elements.languageSelect.querySelector('option[value="en"]').textContent = t("english");
-    elements.languageSelect.querySelector('option[value="el"]').textContent = t("greek");
+  document.querySelectorAll("[data-i18n-label]").forEach((element) => {
+    translateLabelElement(element, element.dataset.i18nLabel);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+  });
+  document.querySelectorAll("[data-i18n-content]").forEach((element) => {
+    element.setAttribute("content", t(element.dataset.i18nContent));
+  });
+  if (elements.formTitle) elements.formTitle.textContent = t(state.editingId ? "editTransaction" : "newTransaction");
+  if (elements.formSubmit) elements.formSubmit.textContent = t(state.editingId ? "saveChanges" : "save");
+  if (elements.languageSelect) elements.languageSelect.value = currentLanguage();
+  if (elements.type) {
+    const previousType = elements.type.value || "income";
+    elements.type.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option><option value="transfer">${t("transfer")}</option>`;
+    elements.type.value = previousType;
   }
-  if (elements.type) { const previousType = elements.type.value || "income"; elements.type.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option><option value="transfer">${t("transfer")}</option>`; elements.type.value = previousType; }
-  const labelPairs = [["#categoryLabel", "category"], ["#accountLabel", "account"], [".toggle-row span", "recurringMonthly"]];
-  labelPairs.forEach(([selector, key]) => setLabelText(selector, key));
-  [
-    ["type", "type"], ["amount", "amount"], ["fromAccount", "fromAccount"], ["toAccount", "toAccount"],
-    ["note", "note"], ["date", "date"], ["goalAmount", "savingsGoal"], ["savedAmount", "currentSaved"],
-    ["accountName", "accountName"], ["accountType", "accountType"], ["accountStartingBalance", "startingBalance"],
-    ["categoryType", "categoryType"], ["categoryName", "categoryName"],
-  ].forEach(([controlId, key]) => setControlLabelText(controlId, key));
-  if (elements.categoryType) { const previousType = elements.categoryType.value || "income"; elements.categoryType.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option>`; elements.categoryType.value = previousType; }
-  if (elements.accountType) { const previousType = elements.accountType.value || "cash"; elements.accountType.innerHTML = Object.entries(accountTypeLabelsMap()).map(([value, label]) => `<option value="${value}">${label}</option>`).join(""); elements.accountType.value = previousType; }
-  setText("#formSubmit", state.editingId ? "saveChanges" : "save"); setText("#cancelEdit", "cancelEdit"); setText("#budgetForm .section-heading h3", "categoryBudgets"); setText("#budgetForm .muted", "setMonthlyLimit"); setText("#budgetForm button", "saveBudgets"); setText("#goalForm button", "updateGoal"); setText("#checkUpdate", "checkUpdate"); setText("#accountForm button", "addAccount"); setText("#categoryForm button", "addCategory"); setText("#downloadBackup", "downloadBackup"); setText("#exportCsv", "exportCsv"); setText(".restore-button", "restoreBackup"); setText("#clearAllData", "clearAllData");
-  setAttr("#note", "placeholder", "optionalDescription"); setAttr("#historySearch", "placeholder", "searchTransactionsPlaceholder"); setAttr("#accountName", "placeholder", "accountNamePlaceholder"); setAttr("#categoryName", "placeholder", "categoryNamePlaceholder");
+  if (elements.categoryType) {
+    const previousType = elements.categoryType.value || "income";
+    elements.categoryType.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option>`;
+    elements.categoryType.value = previousType;
+  }
+  if (elements.accountType) {
+    const previousType = elements.accountType.value || "cash";
+    elements.accountType.innerHTML = Object.entries(accountTypeLabelsMap()).map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+    elements.accountType.value = previousType;
+  }
 }
 function changeLanguage(language) {
   activeLanguage = translations[language] ? language : "en";
@@ -370,11 +357,19 @@ function allCategoriesForType(type) {
 }
 
 function allExpenseCategoryRows() {
-  return [...new Set([
+  const rows = [
     ...allCategoriesForType("expense"),
     ...state.transactions.filter((transaction) => transaction.type === "expense").map((transaction) => transaction.category),
     ...Object.keys(state.budgets || {}),
-  ])].filter(Boolean);
+  ].filter(Boolean);
+  const seen = new Set();
+  return rows.reduce((uniqueRows, category) => {
+    const key = canonicalCategoryName(category, "expense");
+    if (seen.has(key)) return uniqueRows;
+    seen.add(key);
+    uniqueRows.push(key);
+    return uniqueRows;
+  }, []);
 }
 
 function allHistoryCategories(monthly = selectedMonthTransactions()) {
@@ -1034,33 +1029,33 @@ function normalizedCategoryName(category) {
 }
 
 
-function defaultCategoryIndex(category, type) {
+function defaultCategoryDefinition(category, type) {
   const normalized = normalizedCategoryName(category);
-  return ["en", "el"].reduce((match, language) => {
-    if (match !== -1) return match;
-    return (defaultCategoryTranslations[type]?.[language] || []).findIndex((item) => normalizedCategoryName(item) === normalized);
-  }, -1);
+  return (defaultCategoryDefinitions[type] || []).find((definition) => {
+    const candidates = [definition.id, ...(definition.legacy || [])];
+    return candidates.some((candidate) => normalizedCategoryName(candidate) === normalized);
+  });
 }
 
 function getLocalizedCategoryName(category, type = "") {
   const name = String(category || "").trim();
   const types = type ? [type] : ["income", "expense"];
   for (const categoryType of types) {
-    const index = defaultCategoryIndex(name, categoryType);
-    if (index !== -1) return defaultCategoryTranslations[categoryType]?.[currentLanguage()]?.[index] || name;
+    const definition = defaultCategoryDefinition(name, categoryType);
+    if (definition) return t(definition.key);
   }
   return name;
 }
 
 function canonicalCategoryName(category, type = "expense") {
   const name = String(category || "").trim();
-  const index = defaultCategoryIndex(name, type);
-  return index === -1 ? name : defaultCategoryTranslations[type]?.en?.[index] || name;
+  const definition = defaultCategoryDefinition(name, type);
+  return definition ? definition.id : name;
 }
 
 function matchingExpenseCategory(category) {
-  const normalized = normalizedCategoryName(category);
-  return allExpenseCategoryRows().find((row) => normalizedCategoryName(row) === normalized) || String(category || "").trim();
+  const canonical = canonicalCategoryName(category, "expense");
+  return allExpenseCategoryRows().find((row) => canonicalCategoryName(row, "expense") === canonical) || String(category || "").trim();
 }
 
 function expenseTotalsByCategory(monthly) {
@@ -1074,8 +1069,8 @@ function expenseTotalsByCategory(monthly) {
 }
 
 function budgetForCategory(category) {
-  const normalized = normalizedCategoryName(category);
-  const budgetCategory = Object.keys(state.budgets || {}).find((key) => normalizedCategoryName(key) === normalized);
+  const canonical = canonicalCategoryName(category, "expense");
+  const budgetCategory = Object.keys(state.budgets || {}).find((key) => canonicalCategoryName(key, "expense") === canonical);
   return budgetCategory ? Number(state.budgets[budgetCategory]) || 0 : 0;
 }
 
@@ -1113,7 +1108,7 @@ function budgetAlertForTransaction(transaction) {
   const budget = budgetForCategory(category);
   if (budget <= 0) return null;
 
-  const spent = expenseTotalsByCategory(transactionsForMonth(transaction.date))[category] || 0;
+  const spent = expenseTotalsByCategory(transactionsForMonth(transaction.date))[canonicalCategoryName(category, "expense")] || 0;
   if (spent > budget) {
     return {
       level: "danger",
@@ -1426,7 +1421,7 @@ function transactionCard(transaction) {
 function renderBudgetInputs() {
   elements.budgetInputs.innerHTML = allExpenseCategoryRows().map((category) => `
     <label class="budget-input-row">
-      <span>${escapeHtml(category)}</span>
+      <span>${escapeHtml(getLocalizedCategoryName(category, "expense"))}</span>
       <input type="number" min="0" step="0.01" inputmode="decimal" data-budget-category="${escapeHtml(category)}" value="${state.budgets[category] || ""}" placeholder="0,00" />
     </label>`).join("");
 }
@@ -1489,12 +1484,12 @@ function renderCategorySettings() {
     const defaults = type === "expense" ? localizedDefaultExpenseCategories() : localizedDefaultIncomeCategories();
     const custom = state.customCategories[type] || [];
     const rows = [
-      ...defaults.map((category) => ({ category, fixed: true })),
-      ...custom.map((category) => ({ category, fixed: false })),
+      ...defaults.map((category) => ({ category, fixed: true, label: getLocalizedCategoryName(category, type) })),
+      ...custom.map((category) => ({ category, fixed: false, label: category })),
     ];
-    return rows.map(({ category, fixed }) => `
+    return rows.map(({ category, fixed, label }) => `
       <li class="category-list-item">
-        <span>${escapeHtml(category)}</span>
+        <span>${escapeHtml(label)}</span>
         ${fixed ? `<span class="fixed-category-badge">${t("defaultBadge")}</span>` : `<button class="delete-category-button" data-category-type="${type}" data-category-name="${escapeHtml(category)}" type="button">${t("delete")}</button>`}
       </li>`).join("");
   };
@@ -1548,12 +1543,16 @@ function categoriesForType(type) {
 }
 
 function validCategoryForType(type, category) {
-  return categoriesForType(type).includes(category);
+  const normalizedType = normalizedTransactionType(type);
+  const canonical = canonicalCategoryName(category, normalizedType);
+  return categoriesForType(normalizedType).includes(canonical);
 }
 
 function categoryForType(type, preferredCategory = "") {
-  const categories = categoriesForType(type);
-  return validCategoryForType(type, preferredCategory) ? preferredCategory : categories[0];
+  const normalizedType = normalizedTransactionType(type);
+  const categories = categoriesForType(normalizedType);
+  const canonical = canonicalCategoryName(preferredCategory, normalizedType);
+  return categories.includes(canonical) ? canonical : categories[0];
 }
 
 function updateAccountOptions(selectedValue = elements.account.value) {
@@ -1581,10 +1580,11 @@ function updateTransactionTypeUi() {
 }
 
 function updateCategoryOptions(selectedValue = elements.category.value) {
-  const baseCategories = categoriesForType(elements.type.value);
-  const trimmedSelected = String(selectedValue || "").trim();
-  const selectedCategory = baseCategories.includes(trimmedSelected) ? trimmedSelected : baseCategories[0];
-  elements.category.innerHTML = baseCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
+  const normalizedType = normalizedTransactionType(elements.type.value);
+  const baseCategories = categoriesForType(normalizedType);
+  const selectedCanonical = canonicalCategoryName(selectedValue, normalizedType);
+  const selectedCategory = baseCategories.includes(selectedCanonical) ? selectedCanonical : baseCategories[0];
+  elements.category.innerHTML = baseCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(getLocalizedCategoryName(category, normalizedType))}</option>`).join("");
   elements.category.value = selectedCategory || "";
 }
 
