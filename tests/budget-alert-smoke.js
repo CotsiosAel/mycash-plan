@@ -39,9 +39,11 @@ assert(/danger/.test(toast.className), 'showBudgetAlert did not apply the alert 
 const defaultExpenseMatch = js.match(/const defaultExpenseCategories = (\[[^\n]+\]);/);
 const defaultIncomeMatch = js.match(/const defaultIncomeCategories = (\[[^\n]+\]);/);
 const categoryOptionsMatch = js.match(/function updateCategoryOptions\(selectedValue = elements\.category\.value\) \{[\s\S]*?\n\}/);
+const syncAddFormMatch = js.match(/function syncAddTransactionForm\(selectedCategory = elements\.category\.value\) \{[\s\S]*?\n\}/);
 assert(defaultExpenseMatch, 'default expense categories are missing from app.js');
 assert(defaultIncomeMatch, 'default income categories are missing from app.js');
 assert(categoryOptionsMatch, 'updateCategoryOptions function is missing');
+assert(syncAddFormMatch, 'syncAddTransactionForm function is missing');
 
 const categorySelect = { value: '', innerHTML: '' };
 const categorySandbox = {
@@ -51,6 +53,11 @@ const categorySandbox = {
   elements: {
     type: { value: 'expense' },
     category: categorySelect,
+    categoryLabel: { hidden: false },
+    accountLabel: { hidden: false },
+    recurring: { closest: () => ({ hidden: false }) },
+    transferFields: { hidden: true },
+    account: { required: true },
   },
   escapeHtml: (value) => String(value).replace(/[&<>'"]/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#039;", '"': "&quot;",
@@ -64,13 +71,29 @@ vm.runInContext(`
     const custom = state?.customCategories?.[type] || [];
     return [...new Set([...defaults, ...custom])];
   }
+  function normalizedTransactionType(type) {
+    return type === "income" ? "income" : "expense";
+  }
   function categoriesForType(type) {
-    return allCategoriesForType(type);
+    return allCategoriesForType(normalizedTransactionType(type));
+  }
+  function updateTransactionTypeUi() {
+    const isTransfer = elements.type.value === "transfer";
+    elements.categoryLabel.hidden = isTransfer;
+    elements.accountLabel.hidden = isTransfer;
+    elements.recurring.closest("label").hidden = isTransfer;
+    elements.transferFields.hidden = !isTransfer;
+    elements.category.required = !isTransfer;
+    elements.account.required = !isTransfer;
   }
   ${categoryOptionsMatch[0]}
+  ${syncAddFormMatch[0]}
+  function render() {
+    syncAddTransactionForm();
+  }
 `, categorySandbox);
 
-vm.runInContext(`elements.type.value = "expense"; updateCategoryOptions("Μισθός");`, categorySandbox);
+vm.runInContext(`elements.type.value = "expense"; elements.category.value = "Μισθός"; render();`, categorySandbox);
 assert(categorySelect.value === categorySandbox.defaultExpenseCategories[0], 'expense type should auto-correct an income category to the first expense category');
 assert(!categorySelect.innerHTML.includes('value="Μισθός"'), 'expense category dropdown must not include the income category "Μισθός"');
 
