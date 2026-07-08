@@ -1398,9 +1398,8 @@ function updateTransactionTypeUi() {
 function updateCategoryOptions(selectedValue = elements.category.value) {
   const baseCategories = categoriesForType(elements.type.value);
   const trimmedSelected = String(selectedValue || "").trim();
-  const categories = trimmedSelected && !baseCategories.includes(trimmedSelected) ? [...baseCategories, trimmedSelected] : baseCategories;
-  const selectedCategory = categories.includes(trimmedSelected) ? trimmedSelected : categories[0];
-  elements.category.innerHTML = categories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
+  const selectedCategory = baseCategories.includes(trimmedSelected) ? trimmedSelected : baseCategories[0];
+  elements.category.innerHTML = baseCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
   elements.category.value = selectedCategory;
 }
 
