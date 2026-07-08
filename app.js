@@ -77,6 +77,7 @@ const elements = {
   formSubmit: document.querySelector("#formSubmit"),
   cancelEdit: document.querySelector("#cancelEdit"),
   formMessage: document.querySelector("#formMessage"),
+  budgetAlertToast: document.querySelector("#budgetAlertToast"),
   dashboardMonthLabel: document.querySelector("#dashboardMonthLabel"),
   historyMonthLabel: document.querySelector("#historyMonthLabel"),
   historyIncomeTotal: document.querySelector("#historyIncomeTotal"),
@@ -878,6 +879,58 @@ function expenseTotalsByCategory(monthly) {
     }, {});
 }
 
+function transactionsForMonth(dateValue) {
+  const date = new Date(`${dateValue}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return [];
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const monthStart = new Date(year, month, 1);
+
+  return state.transactions.reduce((monthly, transaction) => {
+    const transactionDate = new Date(`${transaction.date}T00:00:00`);
+    const isInMonth = transactionDate.getFullYear() === year && transactionDate.getMonth() === month;
+    if (isInMonth) {
+      monthly.push(transaction);
+      return monthly;
+    }
+    if (!transaction.recurring || new Date(transactionDate.getFullYear(), transactionDate.getMonth(), 1) > monthStart) return monthly;
+    monthly.push({ ...transaction, displayDate: recurringDisplayDate(transaction.date, year, month), isVirtualRecurring: true });
+    return monthly;
+  }, []);
+}
+
+function budgetAlertForTransaction(transaction) {
+  if (transaction.type !== "expense") return null;
+  const budget = Number(state.budgets?.[transaction.category]) || 0;
+  if (budget <= 0) return null;
+
+  const spent = expenseTotalsByCategory(transactionsForMonth(transaction.date))[transaction.category] || 0;
+  if (spent > budget) {
+    return {
+      level: "danger",
+      message: `Ξεπέρασες το όριο για ${transaction.category} κατά ${euro.format(spent - budget)}.`,
+    };
+  }
+  if (spent >= budget * 0.8) {
+    return {
+      level: "warning",
+      message: `Πλησιάζεις το όριο για ${transaction.category}. Έχεις ξοδέψει ${euro.format(spent)} από ${euro.format(budget)}.`,
+    };
+  }
+  return null;
+}
+
+function showBudgetAlert(alert) {
+  if (!alert || !elements.budgetAlertToast) return;
+  elements.budgetAlertToast.textContent = alert.message;
+  elements.budgetAlertToast.className = `budget-alert-toast ${alert.level}`;
+  elements.budgetAlertToast.hidden = false;
+  clearTimeout(showBudgetAlert.timeoutId);
+  showBudgetAlert.timeoutId = setTimeout(() => {
+    elements.budgetAlertToast.hidden = true;
+  }, 6500);
+}
+
 function renderCategorySummary(monthly) {
   const totals = expenseTotalsByCategory(monthly);
   const sorted = Object.entries(totals).sort(([, a], [, b]) => b - a);
@@ -1491,8 +1544,10 @@ elements.transactionForm.addEventListener("submit", (event) => {
     state.transactions.push(transaction);
     resetTransactionForm("Η συναλλαγή προστέθηκε επιτυχώς.");
   }
+  const budgetAlert = budgetAlertForTransaction(transaction);
   saveTransactions();
   render();
+  showBudgetAlert(budgetAlert);
 });
 
 elements.transactionList.addEventListener("click", (event) => {
