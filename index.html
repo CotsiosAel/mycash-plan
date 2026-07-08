@@ -87,46 +87,46 @@
         </section>
 
         <section id="add" class="view" aria-labelledby="add-title">
-          <h2 id="add-title">Νέα συναλλαγή</h2>
+          <h2 id="add-title">New transaction</h2>
           <p id="formMessage" class="success-message" aria-live="polite"></p>
           <form id="transactionForm" class="card form-card">
-            <label>Τύπος
+            <label>Type
               <select id="type" required>
-                <option value="income">Έσοδο</option>
-                <option value="expense">Έξοδο</option>
-                <option value="transfer">Μεταφορά</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+                <option value="transfer">Transfer</option>
               </select>
             </label>
-            <label>Ποσό (€)
-              <input id="amount" type="number" min="0.01" step="0.01" placeholder="π.χ. 45.50" required />
+            <label>Amount (€)
+              <input id="amount" type="number" min="0.01" step="0.01" placeholder="e.g. 45.50" required />
             </label>
-            <label id="categoryLabel">Κατηγορία
+            <label id="categoryLabel">Category
               <select id="category" required></select>
             </label>
-            <label id="accountLabel">Λογαριασμός
+            <label id="accountLabel">Account
               <select id="account" required></select>
             </label>
             <div id="transferFields" class="transfer-fields" hidden>
-              <label>Από λογαριασμό
+              <label>From account
                 <select id="fromAccount"></select>
               </label>
-              <label>Προς λογαριασμό
+              <label>To account
                 <select id="toAccount"></select>
               </label>
             </div>
-            <label>Σημείωση
-              <input id="note" type="text" placeholder="Προαιρετική περιγραφή" />
+            <label>Note
+              <input id="note" type="text" placeholder="Optional description" />
             </label>
-            <label>Ημερομηνία
+            <label>Date
               <input id="date" type="date" required />
             </label>
             <label class="toggle-row">
               <input id="recurring" type="checkbox" />
-              <span>Επαναλαμβάνεται κάθε μήνα</span>
+              <span>Repeats monthly</span>
             </label>
             <div class="form-actions">
-              <button id="formSubmit" type="submit" class="primary-button">Αποθήκευση</button>
-              <button id="cancelEdit" type="button" class="secondary-button" hidden>Ακύρωση επεξεργασίας</button>
+              <button id="formSubmit" type="submit" class="primary-button">Save</button>
+              <button id="cancelEdit" type="button" class="secondary-button" hidden>Cancel edit</button>
             </div>
           </form>
         </section>
@@ -187,18 +187,18 @@
             <div class="section-heading">
               <h3>Budgets ανά κατηγορία</h3>
             </div>
-            <p class="muted">Όρισε μηνιαίο όριο εξόδων για κάθε κατηγορία.</p>
+            <p class="muted">Set a monthly expense limit for each category.</p>
             <div id="budgetInputs" class="budget-inputs"></div>
-            <button type="submit" class="primary-button">Αποθήκευση budgets</button>
+            <button type="submit" class="primary-button">Save budgets</button>
           </form>
           <form id="goalForm" class="card form-card">
-            <label>Στόχος αποταμίευσης (€)
+            <label>Savings goal (€)
               <input id="goalAmount" type="number" min="0" step="0.01" placeholder="π.χ. 1000" />
             </label>
-            <label>Τρέχον αποταμιευμένο ποσό (€)
+            <label>Current saved amount (€)
               <input id="savedAmount" type="number" min="0" step="0.01" placeholder="π.χ. 250" />
             </label>
-            <button type="submit" class="primary-button">Ενημέρωση στόχου</button>
+            <button type="submit" class="primary-button">Update goal</button>
           </form>
           <article class="card goal-result">
             <span id="goalPercent">0%</span>
@@ -247,16 +247,16 @@
             <p id="accountMessage" class="account-message" aria-live="polite"></p>
             <form id="accountForm" class="account-form compact-form">
               <label>Όνομα λογαριασμού
-                <input id="accountName" type="text" placeholder="π.χ. Κύριος λογαριασμός, Revolut, Τράπεζα" autocomplete="off" />
+                <input id="accountName" type="text" placeholder="e.g. Main account, Revolut, Bank" autocomplete="off" />
               </label>
               <div class="compact-field-row">
-                <label>Τύπος
+                <label>Type
                   <select id="accountType">
-                    <option value="cash">Μετρητά</option>
-                    <option value="bank">Τράπεζα</option>
-                    <option value="card">Κάρτα</option>
-                    <option value="savings">Αποταμίευση</option>
-                    <option value="other">Άλλο</option>
+                    <option value="cash">Cash</option>
+                    <option value="bank">Bank</option>
+                    <option value="card">Card</option>
+                    <option value="savings">Savings</option>
+                    <option value="other">Other</option>
                   </select>
                 </label>
                 <label>Αρχικό υπόλοιπο
@@ -287,13 +287,13 @@
             <p class="muted">Φτιάξε δικές σου κατηγορίες για έσοδα και έξοδα.</p>
             <p id="categoryMessage" class="category-message" aria-live="polite"></p>
             <form id="categoryForm" class="category-form">
-              <label>Τύπος κατηγορίας
+              <label>Category type
                 <select id="categoryType" required>
-                  <option value="income">Έσοδο</option>
-                  <option value="expense">Έξοδο</option>
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
                 </select>
               </label>
-              <label>Όνομα κατηγορίας
+              <label>Category name
                 <input id="categoryName" type="text" placeholder="π.χ. Gym, Delivery, Καύσιμα" autocomplete="off" />
               </label>
               <button type="submit" class="primary-button">Προσθήκη κατηγορίας</button>

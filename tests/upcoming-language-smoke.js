@@ -13,12 +13,19 @@ function assert(condition, message) {
   }
 }
 
+const addSection = html.match(/<section id="add"[\s\S]*?<\/section>/)?.[0] || '';
+assert(addSection, 'Add transaction screen markup must exist');
+['Type', 'Amount (€)', 'Category', 'Account', 'Note', 'Date', 'Repeats monthly'].forEach((label) => {
+  assert(addSection.includes(label), `English Add transaction screen must render ${label}`);
+});
+['Τύπος', 'Ποσό', 'Κατηγορία', 'Λογαριασμός', 'Σημείωση', 'Ημερομηνία', 'Επαναλαμβάνεται'].forEach((label) => {
+  assert(!addSection.includes(label), `English Add transaction screen must not render Greek label ${label}`);
+});
+
 assert(/localStorage\.setItem\(storageKeys\.language, activeLanguage\)/.test(js), 'language switching must persist to localStorage');
 assert(/let activeLanguage = localStorage\.getItem\(storageKeys\.language\) \|\| "en"/.test(js), 'language must be restored from localStorage on reopen');
-assert(/labelPairs[\s\S]*\["label:has\(#type\)", "type"\][\s\S]*\["label:has\(#amount\)", "amount"\][\s\S]*\["#categoryLabel", "category"\][\s\S]*\["#accountLabel", "account"\][\s\S]*\["label:has\(#note\)", "note"\][\s\S]*\["label:has\(#date\)", "date"\][\s\S]*\["\.toggle-row span", "recurringMonthly"\]/.test(js), 'Add transaction labels must be translated dynamically');
-['Τύπος', 'Ποσό (€)', 'Κατηγορία', 'Λογαριασμός', 'Σημείωση', 'Ημερομηνία', 'Επαναλαμβάνεται κάθε μήνα'].forEach((label) => {
-  assert(new RegExp(`${label.replace(/[()€]/g, '\\$&')}[\\s\\S]*`).test(html) || js.includes(label), `fixture sanity check missing ${label}`);
-});
+assert(/function setControlLabelText\(controlId, key\)/.test(js), 'Add transaction labels must be translated through actual control labels');
+assert(!/label:has\(#(?:type|amount|note|date)\)/.test(js), 'Add transaction labels must not depend on CSS :has selectors');
 
 const sandbox = { Date, Intl };
 vm.createContext(sandbox);
@@ -39,9 +46,13 @@ function todayInputValue() { return localDateOnly(today); }
 function isEffectiveTransactionDate(dateValue) { const transactionDate = localDateOnly(dateValue); return Boolean(transactionDate) && transactionDate <= localDateOnly(today); }
 function isTransactionEffective(transactionDate) { return isEffectiveTransactionDate(transactionDate); }
 function recurringDisplayDate(startDate, year, month) { const originalDate = new Date(String(startDate) + 'T00:00:00'); const day = originalDate.getDate(); const lastDayOfSelectedMonth = new Date(year, month + 1, 0).getDate(); return formatDateInputValue(new Date(year, month, Math.min(day, lastDayOfSelectedMonth))); }
+function normalizeMatchText(value) { return String(value || '').trim().toLocaleLowerCase('el-GR').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/\\s+/g, ' '); }
+function transactionRecurringSourceId(transaction) { return transaction.recurringSourceId || transaction.sourceRecurringId || transaction.sourceId || transaction.parentRecurringId || transaction.generatedFromId || ''; }
+function transactionAccountMatchKey(transaction) { return [transaction.accountId || '', transaction.fromAccountId || '', transaction.toAccountId || ''].join('|'); }
 ${js.match(/function selectedMonthTransactions\(includeFuture = false\) \{[\s\S]*?\n\}/)[0]}
 function selectedMonthStatus() { return 'current'; }
-function recordedTransactionExistsForRecurringOccurrence() { return false; }
+${js.match(/function transactionsMatchRecurringOccurrence\(recurringOccurrence, recordedTransaction\) \{[\s\S]*?\n\}/)[0]}
+${js.match(/function recordedTransactionExistsForRecurringOccurrence\(recurringOccurrence\) \{[\s\S]*?\n\}/)[0]}
 ${js.match(/function upcomingTransactionsForSelectedMonth\(\) \{[\s\S]*?\n\}/)[0]}
 ${js.match(/function sumByType\(transactions, type\) \{[\s\S]*?\n\}/)[0]}
 function accountTransactionsThroughDate(endDate) { return state.transactions.filter((transaction) => isEffectiveTransactionDate(transaction.date)); }
@@ -56,6 +67,6 @@ this.upcomingIncomeLine = this.upcoming.find((transaction) => transaction.type =
 assert(sandbox.currentBalance === 653, 'future income tomorrow must not affect current balance');
 assert(sandbox.expectedIncome === 2000, 'future income tomorrow must appear in Expected income');
 assert(sandbox.forecast === 2653, 'forecast must include future income');
-assert(sandbox.upcomingIncomeLine.category === 'Salary' && sandbox.upcomingIncomeLine.amount === 2000 && sandbox.upcomingIncomeLine.displayDate === '2026-07-09', 'upcoming income list data must include category, amount, and due date');
+assert(sandbox.upcomingIncomeLine.category === 'Salary' && sandbox.upcomingIncomeLine.amount === 2000 && sandbox.upcomingIncomeLine.displayDate === '2026-07-09', 'upcoming income list data must include Salary, €2,000.00, and 2026-07-09');
 
 console.log('✅ upcoming transactions and language smoke check passed');
