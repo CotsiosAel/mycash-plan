@@ -205,7 +205,11 @@ function applyStaticTranslations() {
     [".language-card h3", "language"], [".app-info-card h3", "appInfo"], [".security-card h3", "security"], [".accounts-settings-card h3", "walletsAccounts"], [".backup-card h3", "backupExport"], [".category-settings-card h3", "categories"], [".danger-zone-card h3", "dataManagement"]
   ];
   staticPairs.forEach(([selector, key]) => setText(selector, key));
-  if (elements.languageSelect) elements.languageSelect.value = currentLanguage();
+  if (elements.languageSelect) {
+    elements.languageSelect.value = currentLanguage();
+    elements.languageSelect.querySelector('option[value="en"]').textContent = t("english");
+    elements.languageSelect.querySelector('option[value="el"]').textContent = t("greek");
+  }
   if (elements.type) { const previousType = elements.type.value || "income"; elements.type.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option><option value="transfer">${t("transfer")}</option>`; elements.type.value = previousType; }
   setAttr("#note", "placeholder", "optionalDescription"); setAttr("#historySearch", "placeholder", "searchTransactionsPlaceholder");
 }
@@ -682,12 +686,23 @@ function parseLocalDate(dateValue) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+function localDateOnly(dateValue = new Date()) {
+  if (dateValue instanceof Date) return formatDateInputValue(dateValue);
+  const parsed = parseLocalDate(dateValue);
+  return parsed ? formatDateInputValue(parsed) : "";
+}
+
 function todayInputValue() {
-  return formatDateInputValue(new Date());
+  return localDateOnly(new Date());
+}
+
+function isEffectiveTransactionDate(dateValue) {
+  const transactionDate = localDateOnly(dateValue);
+  return Boolean(transactionDate) && transactionDate <= localDateOnly(new Date());
 }
 
 function isTransactionEffective(transactionDate) {
-  return Boolean(transactionDate) && transactionDate <= todayInputValue();
+  return isEffectiveTransactionDate(transactionDate);
 }
 
 function recurringDisplayDate(startDate, year, month) {
@@ -718,7 +733,7 @@ function accountLabelForExport(transaction) {
 }
 
 function accountBalance(account, transactions = accountTransactionsThroughSelectedMonth()) {
-  return transactions.reduce((balance, transaction) => {
+  return transactions.filter((transaction) => isEffectiveTransactionDate(transaction.displayDate || transaction.date)).reduce((balance, transaction) => {
     if (transaction.type === "income" && transactionAccountId(transaction) === account.id) return balance + transaction.amount;
     if (transaction.type === "expense" && transactionAccountId(transaction) === account.id) return balance - transaction.amount;
     if (transaction.type === "transfer") {
@@ -854,14 +869,15 @@ function upcomingRecurringTransactionsForSelectedMonth() {
 }
 
 function accountTransactionsThroughDate(endDate) {
+  const endDateOnly = localDateOnly(endDate);
   return state.transactions.flatMap((transaction) => {
-    const originalDate = new Date(`${transaction.date}T00:00:00`);
-    if (originalDate > endDate) return [];
+    const originalDate = parseLocalDate(transaction.date);
+    if (!originalDate || localDateOnly(originalDate) > endDateOnly) return [];
     if (!transaction.recurring) return [{ ...transaction }];
     const occurrences = [];
     for (let cursor = new Date(originalDate.getFullYear(), originalDate.getMonth(), 1); cursor <= endDate; cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)) {
       const displayDate = recurringDisplayDate(transaction.date, cursor.getFullYear(), cursor.getMonth());
-      if (new Date(`${displayDate}T00:00:00`) <= endDate) {
+      if (isEffectiveTransactionDate(displayDate) && displayDate <= endDateOnly) {
         occurrences.push({ ...transaction, displayDate, isVirtualRecurring: cursor.getMonth() !== originalDate.getMonth() || cursor.getFullYear() !== originalDate.getFullYear() });
       }
     }
