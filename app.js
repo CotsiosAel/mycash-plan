@@ -1,4 +1,4 @@
-const appVersion = "2.3.3";
+const appVersion = "2.3.4";
 
 const storageKeys = {
   transactions: "mycash-plan-transactions",
@@ -1350,16 +1350,19 @@ function renderGoals() {
 }
 
 function render() {
-  updateTransactionTypeUi();
+  syncAddTransactionForm();
   updateAccountOptions();
-  updateCategoryOptions();
   renderDashboard();
   renderHistory();
   renderGoals();
 }
 
+function normalizedTransactionType(type) {
+  return type === "income" ? "income" : "expense";
+}
+
 function categoriesForType(type) {
-  return allCategoriesForType(type);
+  return allCategoriesForType(normalizedTransactionType(type));
 }
 
 function validCategoryForType(type, category) {
@@ -1400,17 +1403,21 @@ function updateCategoryOptions(selectedValue = elements.category.value) {
   const trimmedSelected = String(selectedValue || "").trim();
   const selectedCategory = baseCategories.includes(trimmedSelected) ? trimmedSelected : baseCategories[0];
   elements.category.innerHTML = baseCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join("");
-  elements.category.value = selectedCategory;
+  elements.category.value = selectedCategory || "";
+}
+
+function syncAddTransactionForm(selectedCategory = elements.category.value) {
+  updateTransactionTypeUi();
+  updateCategoryOptions(selectedCategory);
 }
 
 function resetTransactionForm(message = "") {
   state.editingId = null;
   elements.transactionForm.reset();
   elements.type.value = "income";
-  updateCategoryOptions();
+  syncAddTransactionForm();
   elements.date.valueAsDate = new Date();
   elements.recurring.checked = false;
-  updateTransactionTypeUi();
   updateAccountOptions();
   elements.formTitle.textContent = "Νέα συναλλαγή";
   elements.formSubmit.textContent = "Αποθήκευση";
@@ -1424,12 +1431,11 @@ function startEdit(transaction) {
   elements.formSubmit.textContent = "Αποθήκευση αλλαγών";
   elements.cancelEdit.hidden = false;
   elements.type.value = transaction.type;
-  updateTransactionTypeUi();
+  syncAddTransactionForm(transaction.category);
   updateAccountOptions(transaction.accountId || transaction.fromAccountId || defaultAccount().id);
   elements.account.value = transactionAccountId(transaction);
   elements.fromAccount.value = transaction.fromAccountId || defaultAccount().id;
   elements.toAccount.value = transaction.toAccountId || defaultAccount().id;
-  updateCategoryOptions(transaction.category);
   elements.amount.value = transaction.amount;
   elements.note.value = transaction.note;
   elements.date.value = transaction.date;
@@ -1439,6 +1445,7 @@ function startEdit(transaction) {
 }
 
 function switchView(viewName) {
+  if (viewName === "add") syncAddTransactionForm();
   elements.views.forEach((view) => view.classList.toggle("active", view.id === viewName));
   elements.navButtons.forEach((navButton) => navButton.classList.toggle("active", navButton.dataset.view === viewName));
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1455,7 +1462,7 @@ document.querySelectorAll("[data-month-offset]").forEach((button) => {
 });
 
 elements.navButtons.forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
-elements.type.addEventListener("change", () => { updateTransactionTypeUi(); updateCategoryOptions(); });
+elements.type.addEventListener("change", () => syncAddTransactionForm());
 elements.cancelEdit.addEventListener("click", () => resetTransactionForm());
 elements.downloadBackup.addEventListener("click", exportBackup);
 elements.exportCsv.addEventListener("click", exportTransactionsCsv);
