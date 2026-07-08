@@ -25,7 +25,7 @@ const translations = {
     categoryBudgets: "Budgets by category", setMonthlyLimit: "Set a monthly expense limit for each category.", saveBudgets: "Save budgets", savingsGoal: "Savings goal (€)", currentSaved: "Current saved amount (€)", updateGoal: "Update goal", noGoal: "No goal has been set yet.", savedOfGoal: "You have saved {saved} of {goal}.", budgetsSavedHint: "Set budgets from Goals to track your limits.", withinBudget: "Within budget", nearLimit: "Near limit", overBudget: "Over budget", spentOf: "{spent} of {budget}",
     appInfo: "App information", version: "Version", localData: "Your data is stored locally on your device.", syncFuture: "Account sync will be added in a future release.", checkUpdate: "Check for updates", security: "App security", pinHelp: "Set a PIN to protect your financial information.", walletsAccounts: "Wallets & Accounts", organizeMoney: "Organize where your money is.", accountName: "Account name", accountNamePlaceholder: "e.g. Main account, Revolut, Bank", accountType: "Type", cash: "Cash", bank: "Bank", card: "Card", savings: "Savings", other: "Other", startingBalance: "Starting balance", addAccount: "Add account", backupExport: "Backup & data export", backupHelp: "Your data is stored locally on your device. Keep a backup if you change device or browser.", downloadBackup: "Download backup", exportCsv: "Export CSV", restoreBackup: "Restore from backup", categories: "Categories", customCategoriesHelp: "Create your own categories for income and expenses.", categoryType: "Category type", categoryName: "Category name", categoryNamePlaceholder: "e.g. Gym, Delivery, Fuel", addCategory: "Add category", incomeCategories: "Income categories", expenseCategories: "Expense categories", openList: "Open list", dataManagement: "Data management", deleteDataHelp: "Delete transactions, goals, budgets and custom categories from this device.", clearAllData: "Delete all data", language: "Language", english: "English", greek: "Ελληνικά", languageSaved: "Language saved.", dataCleared: "Data was deleted.", updateChecked: "Update check completed.", updateCheckFailed: "Could not check for updates.", backupCreated: "Backup was created successfully.", csvCreated: "CSV was created successfully.", invalidBackup: "The backup file is not valid.", backupRestored: "Backup restored successfully.",
     welcome: "Welcome to MyCash Plan", onboardingText1: "Track income, expenses, budgets and savings goals.", onboardingText2: "Your data stays on your device. Keep a backup from Settings.", getStarted: "Get started", enterPin: "Enter PIN", unlock: "Unlock", wrongPin: "Wrong PIN. Try again.", default: "Default", archived: "Archived", rename: "Rename", archive: "Archive", appLocked: "PIN is active", enablePin: "Enable PIN", confirmPin: "Confirm PIN", changePin: "Change PIN", disablePin: "Disable PIN", currentPin: "Current PIN", newPin: "New PIN", confirmNewPin: "Confirm new PIN", saveNewPin: "Save new PIN",
-    defaultExpenseCategories: ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"], defaultIncomeCategories: ["Salary", "Business", "Gift", "Sale", "Other"], duplicateAccountWarning: "Similar accounts were found. You can archive the one you do not use.", defaultAccountName: "Main account", transferCategory: "Transfer", noExpensesMonth: "There are no expenses for this month. Good start!", noStats: "There is not enough data for this month's statistics.", biggestCategory: "Biggest category", totalIncome: "Total income", totalExpenses: "Total expenses", averageDailyExpense: "Average daily expense", exceededBudgets: "Exceeded budgets", whereExpensesWent: "Where expenses went", statsHelper: "Percentage of total monthly expenses.", noCategoryAnalysis: "There are no expenses for category analysis.", startFirstTransaction: "Start by adding your first income or expense.", positiveBalance: "Great! You are keeping a positive balance this month.", negativeBalance: "Warning: expenses exceed income. Small changes help.", evenBalance: "Income and expenses are balanced this month.", transactionSaved: "Transaction saved successfully.",
+    defaultExpenseCategories: ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"], defaultIncomeCategories: ["Salary", "Business", "Gift", "Sale", "Other"], duplicateAccountWarning: "Similar accounts were found. You can archive the one you do not use.", defaultAccountName: "Main account", transferCategory: "Transfer", noExpensesMonth: "There are no expenses for this month. Good start!", noStats: "There is not enough data for this month's statistics.", biggestCategory: "Biggest category", totalIncome: "Total income", totalExpenses: "Total expenses", averageDailyExpense: "Average daily expense", exceededBudgets: "Exceeded budgets", whereExpensesWent: "Where expenses went", statsHelper: "Percentage of total monthly expenses.", noCategoryAnalysis: "There are no expenses for category analysis.", startFirstTransaction: "Start by adding your first income or expense.", positiveBalance: "Great! You are keeping a positive balance this month.", negativeBalance: "Warning: expenses exceed income. Small changes help.", evenBalance: "Income and expenses are balanced this month.", transactionSaved: "Transaction saved successfully.", noExpenseInsight: "You have no expenses this month. Good start!", biggestCategoryInsight: "Your biggest expense category is {category}.", averageDailyExpenseInsight: "Your average daily expense is {amount}.", exceededBudgetsInsight: "You have exceeded {count} budget this month.", exceededBudgetsInsightPlural: "You have exceeded {count} budgets this month.", negativeBalanceInsight: "Expenses exceed income. Watch your next moves.", positiveBalanceInsight: "You are keeping a positive balance this month.", confirmClearData: "Are you sure you want to delete all data? This action cannot be undone.", confirmRemovePin: "Do you also want to remove the PIN?", confirmRestoreBackup: "Restore will replace your current data. Continue?", budgetExceededAlert: "You exceeded the limit for {category} by {amount}.", budgetNearAlert: "You are near the limit for {category}. You have spent {spent} of {budget}.", pinActive: "PIN is active", enablePin: "Enable PIN", currentPin: "Current PIN", newPin: "New PIN", confirmPin: "Confirm PIN", confirmNewPin: "Confirm new PIN", saveNewPin: "Save new PIN", disablePin: "Disable PIN", pinRequired: "PIN must be exactly 4 digits.", pinMismatch: "PINs do not match.", newPinMismatch: "New PINs do not match.", pinEnabled: "PIN was enabled successfully.", wrongCurrentPin: "The current PIN is not correct.", pinChanged: "PIN changed successfully.", pinDisabled: "PIN disabled successfully.", categoryNameRequired: "Enter a category name.", categoryExists: "This category already exists.", categoryAdded: "Category added.", confirmDeleteCategory: "Are you sure you want to delete this category?", confirmDeleteCategoryWithTransactions: "There are transactions in this category. If you delete it, old transactions will remain as they are.", categoryDeleted: "Category deleted.", accountNameRequired: "Enter an account name.", accountExists: "An account with this name already exists.", accountAdded: "Account added.", promptNewAccountName: "New account name", accountRenamed: "Account renamed.", needsActiveAccount: "At least one active account is required.", confirmArchiveAccountWithTransactions: "There are transactions in this account. It will be archived and old transactions will remain.", accountArchived: "Account archived.", accountDeleted: "Account deleted.", lockNowSecurity: "Lock now", confirmDeleteTransaction: "Are you sure you want to delete this transaction?", confirmDeleteRecurring: "This transaction repeats every month. Are you sure you want to delete it?",
   },
   el: {}
 };
@@ -37,7 +37,7 @@ translations.el = {
   all: "Όλα", allCategories: "Όλες οι κατηγορίες", allAccounts: "Όλοι οι λογαριασμοί", recurring: "Μηνιαίες", oneTime: "Μη μηνιαίες", clearFilters: "Καθαρισμός φίλτρων", noTransactionsMonth: "Δεν υπάρχουν συναλλαγές για αυτόν τον μήνα.", addIncomeExpenseStart: "Πρόσθεσε έσοδα ή έξοδα για να ξεκινήσεις.", noFilteredTransactions: "Δεν βρέθηκαν συναλλαγές με αυτά τα φίλτρα.", tryDifferentSearch: "Δοκίμασε διαφορετική αναζήτηση ή καθάρισε τα φίλτρα.", searchTransactionsPlaceholder: "Αναζήτηση συναλλαγών...", balance: "Υπόλοιπο",
   categoryBudgets: "Budgets ανά κατηγορία", setMonthlyLimit: "Όρισε μηνιαίο όριο εξόδων για κάθε κατηγορία.", saveBudgets: "Αποθήκευση budgets", savingsGoal: "Στόχος αποταμίευσης (€)", currentSaved: "Τρέχον αποταμιευμένο ποσό (€)", updateGoal: "Ενημέρωση στόχου", noGoal: "Δεν έχει οριστεί στόχος ακόμη.",
   appInfo: "Πληροφορίες εφαρμογής", localData: "Τα δεδομένα αποθηκεύονται τοπικά στη συσκευή σου.", syncFuture: "Συγχρονισμός με λογαριασμό θα προστεθεί σε μελλοντική έκδοση.", checkUpdate: "Έλεγχος ενημέρωσης", security: "Ασφάλεια εφαρμογής", pinHelp: "Βάλε PIN για να προστατεύεις τα οικονομικά σου στοιχεία.", walletsAccounts: "Πορτοφόλια & Λογαριασμοί", organizeMoney: "Οργάνωσε πού βρίσκονται τα χρήματά σου.", accountName: "Όνομα λογαριασμού", accountNamePlaceholder: "π.χ. Κύριος λογαριασμός, Revolut, Τράπεζα", cash: "Μετρητά", bank: "Τράπεζα", card: "Κάρτα", savings: "Αποταμίευση", other: "Άλλο", startingBalance: "Αρχικό υπόλοιπο", addAccount: "Προσθήκη λογαριασμού", backupExport: "Backup & Εξαγωγή δεδομένων", downloadBackup: "Λήψη backup", exportCsv: "Εξαγωγή CSV", restoreBackup: "Επαναφορά από backup", categories: "Κατηγορίες", addCategory: "Προσθήκη κατηγορίας", incomeCategories: "Κατηγορίες εσόδων", expenseCategories: "Κατηγορίες εξόδων", dataManagement: "Διαχείριση δεδομένων", clearAllData: "Διαγραφή όλων των δεδομένων", language: "Γλώσσα", languageSaved: "Η γλώσσα αποθηκεύτηκε.", dataCleared: "Τα δεδομένα διαγράφηκαν.", updateChecked: "Έγινε έλεγχος ενημέρωσης.", updateCheckFailed: "Δεν ήταν δυνατός ο έλεγχος ενημέρωσης.", backupCreated: "Το backup δημιουργήθηκε επιτυχώς.", csvCreated: "Το CSV δημιουργήθηκε επιτυχώς.", invalidBackup: "Το αρχείο backup δεν είναι έγκυρο.", backupRestored: "Το backup επαναφέρθηκε επιτυχώς.",
-  defaultExpenseCategories: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"], defaultIncomeCategories: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"], duplicateAccountWarning: "Βρέθηκαν παρόμοιοι λογαριασμοί. Μπορείς να αρχειοθετήσεις αυτόν που δεν χρησιμοποιείς.", defaultAccountName: "Κύριος λογαριασμός", transferCategory: "Μεταφορά", noExpensesMonth: "Δεν υπάρχουν έξοδα για αυτόν τον μήνα. Καλή αρχή!", noStats: "Δεν υπάρχουν αρκετά δεδομένα για στατιστικά αυτόν τον μήνα.", biggestCategory: "Μεγαλύτερη κατηγορία", totalIncome: "Σύνολο εσόδων", totalExpenses: "Σύνολο εξόδων", averageDailyExpense: "Μέσο ημερήσιο έξοδο", exceededBudgets: "Budgets που ξεπεράστηκαν", whereExpensesWent: "Πού πήγαν τα έξοδα", statsHelper: "Ποσοστό επί των συνολικών εξόδων του μήνα.", noCategoryAnalysis: "Δεν υπάρχουν έξοδα για ανάλυση κατηγοριών.", startFirstTransaction: "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.", positiveBalance: "Υπέροχα! Αυτόν τον μήνα κρατάς θετικό υπόλοιπο.", negativeBalance: "Προσοχή: τα έξοδα ξεπερνούν τα έσοδα. Μικρές αλλαγές βοηθούν.", evenBalance: "Τα έσοδα και τα έξοδα είναι ισορροπημένα αυτόν τον μήνα.", transactionSaved: "Η συναλλαγή αποθηκεύτηκε επιτυχώς.",
+  defaultExpenseCategories: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"], defaultIncomeCategories: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"], duplicateAccountWarning: "Βρέθηκαν παρόμοιοι λογαριασμοί. Μπορείς να αρχειοθετήσεις αυτόν που δεν χρησιμοποιείς.", defaultAccountName: "Κύριος λογαριασμός", transferCategory: "Μεταφορά", noExpensesMonth: "Δεν υπάρχουν έξοδα για αυτόν τον μήνα. Καλή αρχή!", noStats: "Δεν υπάρχουν αρκετά δεδομένα για στατιστικά αυτόν τον μήνα.", biggestCategory: "Μεγαλύτερη κατηγορία", totalIncome: "Σύνολο εσόδων", totalExpenses: "Σύνολο εξόδων", averageDailyExpense: "Μέσο ημερήσιο έξοδο", exceededBudgets: "Budgets που ξεπεράστηκαν", whereExpensesWent: "Πού πήγαν τα έξοδα", statsHelper: "Ποσοστό επί των συνολικών εξόδων του μήνα.", noCategoryAnalysis: "Δεν υπάρχουν έξοδα για ανάλυση κατηγοριών.", startFirstTransaction: "Ξεκίνα προσθέτοντας το πρώτο σου έσοδο ή έξοδο.", positiveBalance: "Υπέροχα! Αυτόν τον μήνα κρατάς θετικό υπόλοιπο.", negativeBalance: "Προσοχή: τα έξοδα ξεπερνούν τα έσοδα. Μικρές αλλαγές βοηθούν.", evenBalance: "Τα έσοδα και τα έξοδα είναι ισορροπημένα αυτόν τον μήνα.", transactionSaved: "Η συναλλαγή αποθηκεύτηκε επιτυχώς.", noExpenseInsight: "Δεν έχεις έξοδα για αυτόν τον μήνα. Καλή αρχή!", biggestCategoryInsight: "Η μεγαλύτερη κατηγορία εξόδων σου είναι {category}.", averageDailyExpenseInsight: "Το μέσο ημερήσιο έξοδό σου είναι {amount}.", exceededBudgetsInsight: "Έχεις ξεπεράσει {count} budget αυτόν τον μήνα.", exceededBudgetsInsightPlural: "Έχεις ξεπεράσει {count} budgets αυτόν τον μήνα.", negativeBalanceInsight: "Τα έξοδα ξεπερνούν τα έσοδα. Πρόσεξε τις επόμενες κινήσεις.", positiveBalanceInsight: "Κρατάς θετικό υπόλοιπο αυτόν τον μήνα.", confirmClearData: "Θέλεις σίγουρα να διαγράψεις όλα τα δεδομένα; Αυτή η ενέργεια δεν αναιρείται.", confirmRemovePin: "Θέλεις να αφαιρεθεί και το PIN;", confirmRestoreBackup: "Η επαναφορά θα αντικαταστήσει τα τωρινά δεδομένα. Συνέχεια;", budgetExceededAlert: "Ξεπέρασες το όριο για {category} κατά {amount}.", budgetNearAlert: "Πλησιάζεις το όριο για {category}. Έχεις ξοδέψει {spent} από {budget}.", pinActive: "Το PIN είναι ενεργό", enablePin: "Ενεργοποίηση PIN", currentPin: "Τρέχον PIN", newPin: "Νέο PIN", confirmPin: "Επιβεβαίωση PIN", confirmNewPin: "Επιβεβαίωση νέου PIN", saveNewPin: "Αποθήκευση νέου PIN", disablePin: "Απενεργοποίηση PIN", pinRequired: "Το PIN πρέπει να έχει ακριβώς 4 ψηφία.", pinMismatch: "Τα PIN δεν ταιριάζουν.", newPinMismatch: "Τα νέα PIN δεν ταιριάζουν.", pinEnabled: "Το PIN ενεργοποιήθηκε επιτυχώς.", wrongCurrentPin: "Το τρέχον PIN δεν είναι σωστό.", pinChanged: "Το PIN άλλαξε επιτυχώς.", pinDisabled: "Το PIN απενεργοποιήθηκε επιτυχώς.", categoryNameRequired: "Συμπλήρωσε όνομα κατηγορίας.", categoryExists: "Αυτή η κατηγορία υπάρχει ήδη.", categoryAdded: "Η κατηγορία προστέθηκε.", confirmDeleteCategory: "Θέλεις σίγουρα να διαγράψεις αυτή την κατηγορία;", confirmDeleteCategoryWithTransactions: "Υπάρχουν συναλλαγές με αυτή την κατηγορία. Αν τη διαγράψεις, οι παλιές συναλλαγές θα παραμείνουν όπως είναι.", categoryDeleted: "Η κατηγορία διαγράφηκε.", accountNameRequired: "Συμπλήρωσε όνομα λογαριασμού.", accountExists: "Υπάρχει ήδη λογαριασμός με αυτό το όνομα.", accountAdded: "Ο λογαριασμός προστέθηκε.", promptNewAccountName: "Νέο όνομα λογαριασμού", accountRenamed: "Ο λογαριασμός μετονομάστηκε.", needsActiveAccount: "Χρειάζεται τουλάχιστον ένας ενεργός λογαριασμός.", confirmArchiveAccountWithTransactions: "Υπάρχουν συναλλαγές σε αυτόν τον λογαριασμό. Θα γίνει αρχειοθέτηση και οι παλιές συναλλαγές θα παραμείνουν.", accountArchived: "Ο λογαριασμός αρχειοθετήθηκε.", accountDeleted: "Ο λογαριασμός διαγράφηκε.", lockNowSecurity: "Κλείδωμα τώρα",
 };
 
 let activeLanguage = localStorage.getItem(storageKeys.language) || "en";
@@ -54,6 +54,16 @@ function accountTypeLabelsMap() { return { cash: t("cash"), bank: t("bank"), car
 const accountTypeKeys = { cash: "cash", bank: "bank", card: "card", savings: "savings", other: "other" };
 const defaultExpenseCategories = ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"];
 const defaultIncomeCategories = ["Salary", "Business", "Gift", "Sale", "Other"];
+const defaultCategoryTranslations = {
+  expense: {
+    en: defaultExpenseCategories,
+    el: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"],
+  },
+  income: {
+    en: defaultIncomeCategories,
+    el: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"],
+  },
+};
 
 
 const today = new Date();
@@ -540,8 +550,8 @@ function finishOnboarding() {
 }
 
 function clearAllUserData() {
-  if (!confirm("Θέλεις σίγουρα να διαγράψεις όλα τα δεδομένα; Αυτή η ενέργεια δεν αναιρείται.")) return;
-  const removePin = confirm("Θέλεις να αφαιρεθεί και το PIN;");
+  if (!confirm(t("confirmClearData"))) return;
+  const removePin = confirm(t("confirmRemovePin"));
   state.transactions = [];
   state.accounts = normalizeAccounts([]);
   state.goals = { goalAmount: 0, savedAmount: 0 };
@@ -602,7 +612,7 @@ function exportTransactionsCsv() {
   const rows = state.transactions.map((transaction) => [
     transaction.date,
     transaction.type,
-    transaction.category,
+    getLocalizedCategoryName(transaction.category, transaction.type),
     transaction.note,
     Number(transaction.amount).toFixed(2),
     transaction.recurring ? "Yes" : "No",
@@ -629,7 +639,7 @@ function restoreBackupPayload(payload) {
     return;
   }
 
-  if (!confirm("Η επαναφορά θα αντικαταστήσει τα τωρινά δεδομένα. Συνέχεια;")) return;
+  if (!confirm(t("confirmRestoreBackup"))) return;
 
   state.accounts = normalizeAccounts(payload.accounts || []);
   state.transactions = normalizeTransactions(payload.transactions);
@@ -963,7 +973,7 @@ function renderUpcomingTransactions() {
           const dueDate = new Date(`${transaction.displayDate}T00:00:00`);
           const daysUntilDue = Math.round((dueDate - todayStart) / 86400000);
           const dueSoon = transaction.type === "expense" && daysUntilDue >= 0 && daysUntilDue <= 3;
-          const title = transaction.note || transaction.category || typeLabelForTransaction(transaction.type);
+          const title = transaction.note || getLocalizedCategoryName(transaction.category, transaction.type) || typeLabelForTransaction(transaction.type);
           const sign = transaction.type === "income" ? "+" : (transaction.type === "expense" ? "-" : "");
           const details = t("dueDateDetails", { name: title, amount: euro.format(transaction.amount), date: historyDateFormatter.format(dueDate) });
           return `
@@ -1023,6 +1033,31 @@ function normalizedCategoryName(category) {
     .replace(/\s+/g, " ");
 }
 
+
+function defaultCategoryIndex(category, type) {
+  const normalized = normalizedCategoryName(category);
+  return ["en", "el"].reduce((match, language) => {
+    if (match !== -1) return match;
+    return (defaultCategoryTranslations[type]?.[language] || []).findIndex((item) => normalizedCategoryName(item) === normalized);
+  }, -1);
+}
+
+function getLocalizedCategoryName(category, type = "") {
+  const name = String(category || "").trim();
+  const types = type ? [type] : ["income", "expense"];
+  for (const categoryType of types) {
+    const index = defaultCategoryIndex(name, categoryType);
+    if (index !== -1) return defaultCategoryTranslations[categoryType]?.[currentLanguage()]?.[index] || name;
+  }
+  return name;
+}
+
+function canonicalCategoryName(category, type = "expense") {
+  const name = String(category || "").trim();
+  const index = defaultCategoryIndex(name, type);
+  return index === -1 ? name : defaultCategoryTranslations[type]?.en?.[index] || name;
+}
+
 function matchingExpenseCategory(category) {
   const normalized = normalizedCategoryName(category);
   return allExpenseCategoryRows().find((row) => normalizedCategoryName(row) === normalized) || String(category || "").trim();
@@ -1032,7 +1067,7 @@ function expenseTotalsByCategory(monthly) {
   return monthly
     .filter((transaction) => transaction.type === "expense")
     .reduce((summary, transaction) => {
-      const category = matchingExpenseCategory(transaction.category);
+      const category = canonicalCategoryName(transaction.category, "expense");
       summary[category] = (summary[category] || 0) + transaction.amount;
       return summary;
     }, {});
@@ -1082,13 +1117,13 @@ function budgetAlertForTransaction(transaction) {
   if (spent > budget) {
     return {
       level: "danger",
-      message: `Ξεπέρασες το όριο για ${category} κατά ${alertEuro(spent - budget)}.`,
+      message: t("budgetExceededAlert", { category: getLocalizedCategoryName(category, "expense"), amount: alertEuro(spent - budget) }),
     };
   }
   if (spent >= budget * 0.8) {
     return {
       level: "warning",
-      message: `Πλησιάζεις το όριο για ${category}. Έχεις ξοδέψει ${alertEuro(spent)} από ${alertEuro(budget)}.`,
+      message: t("budgetNearAlert", { category: getLocalizedCategoryName(category, "expense"), spent: alertEuro(spent), budget: alertEuro(budget) }),
     };
   }
   return null;
@@ -1110,7 +1145,7 @@ function renderCategorySummary(monthly) {
   const sorted = Object.entries(totals).sort(([, a], [, b]) => b - a);
 
   elements.categorySummary.innerHTML = sorted.length
-    ? sorted.map(([category, total]) => `<div class="category-row"><span>${escapeHtml(category)}</span><strong>${euro.format(total)}</strong></div>`).join("")
+    ? sorted.map(([category, total]) => `<div class="category-row"><span>${escapeHtml(getLocalizedCategoryName(category, "expense"))}</span><strong>${euro.format(total)}</strong></div>`).join("")
     : `<p class="muted empty-copy">${t("noExpensesMonth")}</p>`;
 }
 
@@ -1145,18 +1180,18 @@ function monthlyStatsData(monthly) {
 
 function smartInsightMessages(stats) {
   const messages = [];
-  if (!stats.expenses) messages.push("Δεν έχεις έξοδα για αυτόν τον μήνα. Καλή αρχή!");
+  if (!stats.expenses) messages.push(t("noExpenseInsight"));
   else {
-    messages.push(`Η μεγαλύτερη κατηγορία εξόδων σου είναι ${stats.biggestExpenseCategory}.`);
-    messages.push(`Το μέσο ημερήσιο έξοδό σου είναι ${euro.format(stats.averageDailyExpense)}.`);
+    messages.push(t("biggestCategoryInsight", { category: getLocalizedCategoryName(stats.biggestExpenseCategory, "expense") }));
+    messages.push(t("averageDailyExpenseInsight", { amount: euro.format(stats.averageDailyExpense) }));
   }
 
   if (stats.exceededBudgetsCount > 0) {
-    messages.push(`Έχεις ξεπεράσει ${stats.exceededBudgetsCount} budget αυτόν τον μήνα.`);
+    messages.push(t(stats.exceededBudgetsCount === 1 ? "exceededBudgetsInsight" : "exceededBudgetsInsightPlural", { count: stats.exceededBudgetsCount }));
   }
 
-  if (stats.balance < 0) messages.push("Τα έξοδα ξεπερνούν τα έσοδα. Πρόσεξε τις επόμενες κινήσεις.");
-  else if (stats.balance > 0) messages.push("Κρατάς θετικό υπόλοιπο αυτόν τον μήνα.");
+  if (stats.balance < 0) messages.push(t("negativeBalanceInsight"));
+  else if (stats.balance > 0) messages.push(t("positiveBalanceInsight"));
 
   return messages.slice(0, 4);
 }
@@ -1194,7 +1229,7 @@ function renderMonthlyStatistics(monthly) {
       const percentage = stats.expenses > 0 ? (amount / stats.expenses) * 100 : 0;
       return `
         <div class="stats-bar-row">
-          <div class="stats-bar-top"><span>${escapeHtml(category)}</span><strong>${euro.format(amount)} · ${Math.round(percentage)}%</strong></div>
+          <div class="stats-bar-top"><span>${escapeHtml(getLocalizedCategoryName(category, "expense"))}</span><strong>${euro.format(amount)} · ${Math.round(percentage)}%</strong></div>
           <div class="stats-bar-track"><div class="stats-bar-fill" style="width: ${Math.max(percentage, 3)}%"></div></div>
         </div>`;
     }).join("")}`
@@ -1218,7 +1253,7 @@ function renderBudgetSummary(monthly) {
       return `
         <article class="budget-row ${status.className}">
           <div class="budget-row-top">
-            <strong>${escapeHtml(category)}</strong>
+            <strong>${escapeHtml(getLocalizedCategoryName(category, "expense"))}</strong>
             <span>${percentage}%</span>
           </div>
           <div class="budget-amounts">${t("spentOf", { spent: euro.format(spent), budget: euro.format(budget) })}</div>
@@ -1267,7 +1302,7 @@ function syncHistoryFilterControls(monthly = selectedMonthTransactions()) {
   elements.filter.value = state.filter;
   elements.categoryFilter.innerHTML = [
     `<option value="all">${t("allCategories")}</option>`,
-    ...historyCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`),
+    ...historyCategories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(getLocalizedCategoryName(category))}</option>`),
   ].join("");
   elements.categoryFilter.value = historyCategories.includes(state.categoryFilter) ? state.categoryFilter : "all";
   state.categoryFilter = elements.categoryFilter.value;
@@ -1286,7 +1321,7 @@ function transactionSearchText(transaction) {
   const typeLabel = transaction.type === "income" ? `${t("income")} income` : `${t("expense")} expense`;
   const sign = transaction.type === "income" ? "+" : "-";
   return [
-    transaction.category,
+    getLocalizedCategoryName(transaction.category, transaction.type),
     transaction.note,
     typeLabel,
     `${sign}${euro.format(transaction.amount)}`,
@@ -1372,7 +1407,7 @@ function transactionCard(transaction) {
     <article class="transaction-item ${transaction.type}">
       <div class="transaction-main">
         <div class="transaction-title-row">
-          <h4>${escapeHtml(transaction.category)}</h4>
+          <h4>${escapeHtml(getLocalizedCategoryName(transaction.category, transaction.type))}</h4>
           ${recurringBadge}<span class="type-badge ${transaction.type}">${typeLabel}</span>
         </div>
         ${note}
@@ -1405,20 +1440,20 @@ function renderSecurity() {
         <label>PIN
           <input id="newPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" placeholder="••••" />
         </label>
-        <label>Επιβεβαίωση PIN
+        <label>${t("confirmPin")}
           <input id="confirmPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" placeholder="••••" />
         </label>
-        <button type="submit" class="primary-button">Ενεργοποίηση PIN</button>
+        <button type="submit" class="primary-button">${t("enablePin")}</button>
       </form>`;
     return;
   }
 
   elements.securityPanel.innerHTML = `
-    <div class="security-status">Το PIN είναι ενεργό</div>
+    <div class="security-status">${t("pinActive")}</div>
     <div class="security-actions">
-      <button id="lockNowSecurity" type="button" class="secondary-button">Κλείδωμα τώρα</button>
-      <button id="showChangePin" type="button" class="secondary-button">Αλλαγή PIN</button>
-      <button id="showDisablePin" type="button" class="danger-button">Απενεργοποίηση PIN</button>
+      <button id="lockNowSecurity" type="button" class="secondary-button">${t("lockNowSecurity")}</button>
+      <button id="showChangePin" type="button" class="secondary-button">${t("changePin")}</button>
+      <button id="showDisablePin" type="button" class="danger-button">${t("disablePin")}</button>
     </div>
     <div id="pinActionPanel" class="pin-action-panel"></div>`;
 }
@@ -1428,14 +1463,14 @@ function renderPinAction(action) {
   if (!panel) return;
   panel.innerHTML = action === "change" ? `
     <form id="changePinForm" class="security-form">
-      <label>Τρέχον PIN<input id="currentPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" pattern="[0-9]*" /></label>
-      <label>Νέο PIN<input id="changedPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" /></label>
-      <label>Επιβεβαίωση νέου PIN<input id="changedConfirmPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" /></label>
-      <button type="submit" class="primary-button">Αποθήκευση νέου PIN</button>
+      <label>${t("currentPin")}<input id="currentPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" pattern="[0-9]*" /></label>
+      <label>${t("newPin")}<input id="changedPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" /></label>
+      <label>${t("confirmNewPin")}<input id="changedConfirmPin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" pattern="[0-9]*" /></label>
+      <button type="submit" class="primary-button">${t("saveNewPin")}</button>
     </form>` : `
     <form id="disablePinForm" class="security-form">
-      <label>Τρέχον PIN<input id="disableCurrentPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" pattern="[0-9]*" /></label>
-      <button type="submit" class="danger-button">Απενεργοποίηση PIN</button>
+      <label>${t("currentPin")}<input id="disableCurrentPin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" pattern="[0-9]*" /></label>
+      <button type="submit" class="danger-button">${t("disablePin")}</button>
     </form>`;
 }
 
@@ -1489,8 +1524,8 @@ function renderGoals() {
   elements.savedAmount.value = state.goals.savedAmount || "";
   elements.goalPercent.textContent = `${percent}%`;
   elements.goalText.textContent = state.goals.goalAmount > 0
-    ? `Έχεις αποταμιεύσει ${euro.format(state.goals.savedAmount)} από ${euro.format(state.goals.goalAmount)}.`
-    : "Δεν έχει οριστεί στόχος ακόμη.";
+    ? t("savedOfGoal", { saved: euro.format(state.goals.savedAmount), goal: euro.format(state.goals.goalAmount) })
+    : t("noGoal");
   renderSecurity();
   renderCategorySettings();
   renderAccounts();
@@ -1623,13 +1658,13 @@ elements.categoryForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const type = elements.categoryType.value === "income" ? "income" : "expense";
   const name = elements.categoryName.value.trim();
-  if (!name) return showCategoryMessage("Συμπλήρωσε όνομα κατηγορίας.", true);
+  if (!name) return showCategoryMessage(t("categoryNameRequired"), true);
   const exists = allCategoriesForType(type).some((category) => category.toLocaleLowerCase("el-GR") === name.toLocaleLowerCase("el-GR"));
-  if (exists) return showCategoryMessage("Αυτή η κατηγορία υπάρχει ήδη.", true);
+  if (exists) return showCategoryMessage(t("categoryExists"), true);
   state.customCategories[type].push(name);
   saveCustomCategories();
   elements.categoryName.value = "";
-  showCategoryMessage("Η κατηγορία προστέθηκε.");
+  showCategoryMessage(t("categoryAdded"));
   render();
 });
 
@@ -1638,24 +1673,24 @@ document.querySelector("#categorySettingsCard").addEventListener("click", (event
   if (!button) return;
   const type = button.dataset.categoryType;
   const name = button.dataset.categoryName;
-  if (!confirm("Θέλεις σίγουρα να διαγράψεις αυτή την κατηγορία;")) return;
+  if (!confirm(t("confirmDeleteCategory"))) return;
   const hasTransactions = state.transactions.some((transaction) => transaction.type === type && transaction.category === name);
-  if (hasTransactions && !confirm("Υπάρχουν συναλλαγές με αυτή την κατηγορία. Αν τη διαγράψεις, οι παλιές συναλλαγές θα παραμείνουν όπως είναι.")) return;
+  if (hasTransactions && !confirm(t("confirmDeleteCategoryWithTransactions"))) return;
   state.customCategories[type] = state.customCategories[type].filter((category) => category !== name);
   saveCustomCategories();
-  showCategoryMessage("Η κατηγορία διαγράφηκε.");
+  showCategoryMessage(t("categoryDeleted"));
   render();
 });
 
 elements.accountForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const name = elements.accountName.value.trim().replace(/\s+/g, " ");
-  if (!name) return showAccountMessage("Συμπλήρωσε όνομα λογαριασμού.", true);
-  if (accountNameExists(name)) return showAccountMessage("Υπάρχει ήδη λογαριασμός με αυτό το όνομα.", true);
+  if (!name) return showAccountMessage(t("accountNameRequired"), true);
+  if (accountNameExists(name)) return showAccountMessage(t("accountExists"), true);
   state.accounts.push({ id: `acc_${Date.now()}`, name, type: elements.accountType.value, startingBalance: Number(elements.accountStartingBalance.value) || 0, archived: false });
   saveAccounts();
   elements.accountForm.reset();
-  showAccountMessage("Ο λογαριασμός προστέθηκε.");
+  showAccountMessage(t("accountAdded"));
   render();
 });
 
@@ -1664,14 +1699,14 @@ document.querySelector("#accountsSettingsCard").addEventListener("click", (event
   if (editButton) {
     const account = state.accounts.find((item) => item.id === editButton.dataset.accountId);
     if (!account) return;
-    const name = prompt("Νέο όνομα λογαριασμού", displayAccountName(account));
+    const name = prompt(t("promptNewAccountName"), displayAccountName(account));
     if (name === null) return;
     const normalizedName = name.trim().replace(/\s+/g, " ");
-    if (!normalizedName) return showAccountMessage("Συμπλήρωσε όνομα λογαριασμού.", true);
-    if (accountNameExists(normalizedName, account.id)) return showAccountMessage("Υπάρχει ήδη λογαριασμός με αυτό το όνομα.", true);
+    if (!normalizedName) return showAccountMessage(t("accountNameRequired"), true);
+    if (accountNameExists(normalizedName, account.id)) return showAccountMessage(t("accountExists"), true);
     account.name = normalizedName;
     saveAccounts();
-    showAccountMessage("Ο λογαριασμός μετονομάστηκε.");
+    showAccountMessage(t("accountRenamed"));
     render();
     return;
   }
@@ -1682,15 +1717,15 @@ document.querySelector("#accountsSettingsCard").addEventListener("click", (event
   if (!account) return;
   const used = state.transactions.some((transaction) => transactionAccountId(transaction) === account.id || transaction.fromAccountId === account.id || transaction.toAccountId === account.id);
   if (used) {
-    if (!account.archived && activeAccounts().length <= 1) return showAccountMessage("Χρειάζεται τουλάχιστον ένας ενεργός λογαριασμός.", true);
-    if (!confirm("Υπάρχουν συναλλαγές σε αυτόν τον λογαριασμό. Θα γίνει αρχειοθέτηση και οι παλιές συναλλαγές θα παραμείνουν.")) return;
+    if (!account.archived && activeAccounts().length <= 1) return showAccountMessage(t("needsActiveAccount"), true);
+    if (!confirm(t("confirmArchiveAccountWithTransactions"))) return;
     account.archived = true;
   } else {
     state.accounts = state.accounts.filter((item) => item.id !== account.id);
     if (!state.accounts.length) state.accounts = normalizeAccounts([]);
   }
   saveAccounts();
-  showAccountMessage(used ? "Ο λογαριασμός αρχειοθετήθηκε." : "Ο λογαριασμός διαγράφηκε.");
+  showAccountMessage(used ? t("accountArchived") : t("accountDeleted"));
   render();
 });
 
@@ -1742,8 +1777,8 @@ elements.transactionList.addEventListener("click", (event) => {
   if (!deleteButton) return;
   const transaction = state.transactions.find((item) => item.id === deleteButton.dataset.id);
   const deleteMessage = transaction?.recurring
-    ? "Αυτή η συναλλαγή επαναλαμβάνεται κάθε μήνα. Θέλεις σίγουρα να τη διαγράψεις;"
-    : "Είσαι σίγουρος ότι θέλεις να διαγράψεις αυτή τη συναλλαγή;";
+    ? t("confirmDeleteRecurring")
+    : t("confirmDeleteTransaction");
   if (!confirm(deleteMessage)) return;
   state.transactions = state.transactions.filter((transaction) => transaction.id !== deleteButton.dataset.id);
   if (state.editingId === deleteButton.dataset.id) resetTransactionForm();
@@ -1755,7 +1790,7 @@ elements.upcomingList.addEventListener("click", (event) => {
   const button = event.target.closest(".record-upcoming-button");
   if (!button) return;
   button.disabled = true;
-  const occurrence = upcomingRecurringTransactionsForSelectedMonth().find((transaction) => upcomingTransactionKey(transaction) === button.dataset.upcomingKey);
+  const occurrence = upcomingTransactionsForSelectedMonth().find((transaction) => upcomingTransactionKey(transaction) === button.dataset.upcomingKey);
   if (!occurrence) {
     renderUpcomingTransactions();
     showUpcomingMessage(t("alreadyRecorded"), true);
@@ -1846,30 +1881,30 @@ elements.securityPanel.addEventListener("submit", async (event) => {
   if (form.id === "enablePinForm") {
     const pin = form.querySelector("#newPin").value;
     const confirmPin = form.querySelector("#confirmPin").value;
-    if (!isValidPin(pin)) return showSecurityMessage("Το PIN πρέπει να έχει ακριβώς 4 ψηφία.", true);
-    if (pin !== confirmPin) return showSecurityMessage("Τα PIN δεν ταιριάζουν.", true);
+    if (!isValidPin(pin)) return showSecurityMessage(t("pinRequired"), true);
+    if (pin !== confirmPin) return showSecurityMessage(t("pinMismatch"), true);
     await setNewPin(pin);
-    showSecurityMessage("Το PIN ενεργοποιήθηκε επιτυχώς.");
+    showSecurityMessage(t("pinEnabled"));
   }
   if (form.id === "changePinForm") {
     const currentPin = form.querySelector("#currentPin").value;
     const newPin = form.querySelector("#changedPin").value;
     const confirmPin = form.querySelector("#changedConfirmPin").value;
-    if (!(await verifyPin(currentPin))) return showSecurityMessage("Το τρέχον PIN δεν είναι σωστό.", true);
-    if (!isValidPin(newPin)) return showSecurityMessage("Το νέο PIN πρέπει να έχει ακριβώς 4 ψηφία.", true);
-    if (newPin !== confirmPin) return showSecurityMessage("Τα νέα PIN δεν ταιριάζουν.", true);
+    if (!(await verifyPin(currentPin))) return showSecurityMessage(t("wrongCurrentPin"), true);
+    if (!isValidPin(newPin)) return showSecurityMessage(t("pinRequired"), true);
+    if (newPin !== confirmPin) return showSecurityMessage(t("newPinMismatch"), true);
     await setNewPin(newPin);
-    showSecurityMessage("Το PIN άλλαξε επιτυχώς.");
+    showSecurityMessage(t("pinChanged"));
   }
   if (form.id === "disablePinForm") {
     const currentPin = form.querySelector("#disableCurrentPin").value;
-    if (!(await verifyPin(currentPin))) return showSecurityMessage("Το τρέχον PIN δεν είναι σωστό.", true);
+    if (!(await verifyPin(currentPin))) return showSecurityMessage(t("wrongCurrentPin"), true);
     state.security = { enabled: false, salt: "", pinHash: "" };
     saveSecurity();
     setSessionUnlocked(false);
     renderSecurity();
     applyLockState();
-    showSecurityMessage("Το PIN απενεργοποιήθηκε επιτυχώς.");
+    showSecurityMessage(t("pinDisabled"));
   }
 });
 

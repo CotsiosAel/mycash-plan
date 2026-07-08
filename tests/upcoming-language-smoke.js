@@ -27,6 +27,10 @@ assert(/let activeLanguage = localStorage\.getItem\(storageKeys\.language\) \|\|
 assert(/function setControlLabelText\(controlId, key\)/.test(js), 'Add transaction labels must be translated through actual control labels');
 assert(!/label:has\(#(?:type|amount|note|date)\)/.test(js), 'Add transaction labels must not depend on CSS :has selectors');
 
+const smartInsightBody = js.match(/function smartInsightMessages\(stats\) \{[\s\S]*?\n\}/)?.[0] || '';
+assert(smartInsightBody && !/[Α-Ωα-ωΆ-ώ]/.test(smartInsightBody), 'English dashboard/stat insight messages must be generated from translation keys, not hardcoded Greek');
+assert(/function getLocalizedCategoryName\(category, type = ""\)/.test(js), 'default category display names must go through getLocalizedCategoryName');
+
 const sandbox = { Date, Intl };
 vm.createContext(sandbox);
 vm.runInContext(`
@@ -54,6 +58,14 @@ function selectedMonthStatus() { return 'current'; }
 ${js.match(/function transactionsMatchRecurringOccurrence\(recurringOccurrence, recordedTransaction\) \{[\s\S]*?\n\}/)[0]}
 ${js.match(/function recordedTransactionExistsForRecurringOccurrence\(recurringOccurrence\) \{[\s\S]*?\n\}/)[0]}
 ${js.match(/function upcomingTransactionsForSelectedMonth\(\) \{[\s\S]*?\n\}/)[0]}
+const activeLanguage = "en";
+function currentLanguage() { return activeLanguage; }
+const defaultExpenseCategories = ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"];
+const defaultIncomeCategories = ["Salary", "Business", "Gift", "Sale", "Other"];
+const defaultCategoryTranslations = { expense: { en: defaultExpenseCategories, el: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"] }, income: { en: defaultIncomeCategories, el: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"] } };
+${js.match(/function normalizedCategoryName\(category\) \{[\s\S]*?\n\}/)[0]}
+${js.match(/function defaultCategoryIndex\(category, type\) \{[\s\S]*?\n\}/)[0]}
+${js.match(/function getLocalizedCategoryName\(category, type = ""\) \{[\s\S]*?\n\}/)[0]}
 ${js.match(/function sumByType\(transactions, type\) \{[\s\S]*?\n\}/)[0]}
 function accountTransactionsThroughDate(endDate) { return state.transactions.filter((transaction) => isEffectiveTransactionDate(transaction.date)); }
 function totalAvailableAccountBalance(accounts, transactions) { return transactions.reduce((sum, transaction) => sum + (transaction.type === 'income' ? transaction.amount : -transaction.amount), 0); }
@@ -62,11 +74,15 @@ this.upcoming = upcomingTransactionsForSelectedMonth();
 this.expectedIncome = sumByType(this.upcoming, 'income');
 this.forecast = this.currentBalance + this.expectedIncome - sumByType(this.upcoming, 'expense');
 this.upcomingIncomeLine = this.upcoming.find((transaction) => transaction.type === 'income');
+this.localizedTransport = getLocalizedCategoryName('Μεταφορές', 'expense');
+this.customCategory = getLocalizedCategoryName('Ταβέρνα', 'expense');
 `, sandbox);
 
 assert(sandbox.currentBalance === 653, 'future income tomorrow must not affect current balance');
 assert(sandbox.expectedIncome === 2000, 'future income tomorrow must appear in Expected income');
 assert(sandbox.forecast === 2653, 'forecast must include future income');
 assert(sandbox.upcomingIncomeLine.category === 'Salary' && sandbox.upcomingIncomeLine.amount === 2000 && sandbox.upcomingIncomeLine.displayDate === '2026-07-09', 'upcoming income list data must include Salary, €2,000.00, and 2026-07-09');
+assert(sandbox.localizedTransport === 'Transport', 'default Greek expense category must display in English in English mode');
+assert(sandbox.customCategory === 'Ταβέρνα', 'custom category must stay exactly as the user wrote it');
 
 console.log('✅ upcoming transactions and language smoke check passed');
