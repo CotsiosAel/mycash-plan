@@ -24,7 +24,7 @@ assert(addSection, 'Add transaction screen markup must exist');
 
 assert(/localStorage\.setItem\(storageKeys\.language, activeLanguage\)/.test(js), 'language switching must persist to localStorage');
 assert(/let activeLanguage = localStorage\.getItem\(storageKeys\.language\) \|\| "en"/.test(js), 'language must be restored from localStorage on reopen');
-assert(/function setControlLabelText\(controlId, key\)/.test(js), 'Add transaction labels must be translated through actual control labels');
+assert(/data-i18n-label/.test(html) && /function translateLabelElement\(label, key\)/.test(js), 'Add transaction labels must be translated through data-i18n-label and the central static translator');
 assert(!/label:has\(#(?:type|amount|note|date)\)/.test(js), 'Add transaction labels must not depend on CSS :has selectors');
 
 const smartInsightBody = js.match(/function smartInsightMessages\(stats\) \{[\s\S]*?\n\}/)?.[0] || '';
@@ -62,9 +62,9 @@ const activeLanguage = "en";
 function currentLanguage() { return activeLanguage; }
 const defaultExpenseCategories = ["Home", "Food", "Coffee", "Supermarket", "Transport", "Bills", "Entertainment", "Health", "Child", "Pet", "Other"];
 const defaultIncomeCategories = ["Salary", "Business", "Gift", "Sale", "Other"];
-const defaultCategoryTranslations = { expense: { en: defaultExpenseCategories, el: ["Σπίτι", "Φαγητό", "Καφές", "Supermarket", "Μεταφορές", "Λογαριασμοί", "Ψυχαγωγία", "Υγεία", "Παιδί", "Κατοικίδιο", "Άλλο"] }, income: { en: defaultIncomeCategories, el: ["Μισθός", "Επιχείρηση", "Δώρο", "Πώληση", "Άλλο"] } };
+const translations = { en: { defaultCategoryTransport: "Transport" } }; function t(key) { return translations.en[key] || key; } const defaultCategoryDefinitions = { expense: [{ id: "transport", key: "defaultCategoryTransport", legacy: ["Transport", "Μεταφορές"] }], income: [] };
 ${js.match(/function normalizedCategoryName\(category\) \{[\s\S]*?\n\}/)[0]}
-${js.match(/function defaultCategoryIndex\(category, type\) \{[\s\S]*?\n\}/)[0]}
+${js.match(/function defaultCategoryDefinition\(category, type\) \{[\s\S]*?\n\}/)[0]}
 ${js.match(/function getLocalizedCategoryName\(category, type = ""\) \{[\s\S]*?\n\}/)[0]}
 ${js.match(/function sumByType\(transactions, type\) \{[\s\S]*?\n\}/)[0]}
 function accountTransactionsThroughDate(endDate) { return state.transactions.filter((transaction) => isEffectiveTransactionDate(transaction.date)); }

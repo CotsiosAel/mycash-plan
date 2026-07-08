@@ -36,8 +36,8 @@ assert(toast.hidden === false, 'showBudgetAlert did not make the DOM toast visib
 assert(toast.textContent === 'Ξεπέρασες το όριο για Φαγητό κατά €20.', 'showBudgetAlert did not write the expected alert text');
 assert(/danger/.test(toast.className), 'showBudgetAlert did not apply the alert level class');
 
-const defaultExpenseMatch = js.match(/const defaultExpenseCategories = (\[[^\n]+\]);/);
-const defaultIncomeMatch = js.match(/const defaultIncomeCategories = (\[[^\n]+\]);/);
+const defaultExpenseMatch = js.match(/const defaultExpenseCategories = defaultCategoryDefinitions\.expense\.map/);
+const defaultIncomeMatch = js.match(/const defaultIncomeCategories = defaultCategoryDefinitions\.income\.map/);
 const categoryOptionsMatch = js.match(/function updateCategoryOptions\(selectedValue = elements\.category\.value\) \{[\s\S]*?\n\}/);
 const syncAddFormMatch = js.match(/function syncAddTransactionForm\(selectedCategory = elements\.category\.value\) \{[\s\S]*?\n\}/);
 assert(defaultExpenseMatch, 'default expense categories are missing from app.js');
@@ -47,8 +47,10 @@ assert(syncAddFormMatch, 'syncAddTransactionForm function is missing');
 
 const categorySelect = { value: '', innerHTML: '' };
 const categorySandbox = {
-  defaultExpenseCategories: JSON.parse(defaultExpenseMatch[1]),
-  defaultIncomeCategories: JSON.parse(defaultIncomeMatch[1]),
+  defaultExpenseCategories: ['home', 'food', 'coffee', 'supermarket', 'transport', 'bills', 'entertainment', 'health', 'child', 'pet', 'other'],
+  defaultIncomeCategories: ['salary', 'business', 'gift', 'sale', 'other'],
+  getLocalizedCategoryName: (category) => category,
+  canonicalCategoryName: (category) => category,
   state: { customCategories: { income: [], expense: [] } },
   elements: {
     type: { value: 'expense' },
@@ -93,12 +95,12 @@ vm.runInContext(`
   }
 `, categorySandbox);
 
-vm.runInContext(`elements.type.value = "expense"; elements.category.value = "Μισθός"; render();`, categorySandbox);
+vm.runInContext(`elements.type.value = "expense"; elements.category.value = "salary"; render();`, categorySandbox);
 assert(categorySelect.value === categorySandbox.defaultExpenseCategories[0], 'expense type should auto-correct an income category to the first expense category');
-assert(!categorySelect.innerHTML.includes('value="Μισθός"'), 'expense category dropdown must not include the income category "Μισθός"');
+assert(!categorySelect.innerHTML.includes('value="salary"'), 'expense category dropdown must not include the income category "Μισθός"');
 
-vm.runInContext(`elements.type.value = "income"; updateCategoryOptions("Φαγητό");`, categorySandbox);
+vm.runInContext(`elements.type.value = "income"; updateCategoryOptions("food");`, categorySandbox);
 assert(categorySelect.value === categorySandbox.defaultIncomeCategories[0], 'income type should auto-correct an expense category to the first income category');
-assert(!categorySelect.innerHTML.includes('value="Φαγητό"'), 'income category dropdown must not include the expense category "Φαγητό"');
+assert(!categorySelect.innerHTML.includes('value="food"'), 'income category dropdown must not include the expense category "Φαγητό"');
 
 console.log('✅ budget alert smoke check passed');
