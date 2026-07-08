@@ -19,7 +19,7 @@ const defaultAccountId = "acc_default_cash";
 const translations = {
   en: {
     appDescription: "MyCash Plan - personal financial planning in euros.", personalCash: "Personal cash flow", lockNow: "Lock now", mainNavigation: "Main navigation", dashboard: "Dashboard", home: "Home", add: "Add", history: "History", goals: "Goals", settings: "Settings",
-    selectDashboardMonth: "Select dashboard month", selectHistoryMonth: "Select history month", previousMonth: "Previous month", nextMonth: "Next month", monthlyBalance: "Monthly balance", monthIncome: "Monthly income", monthExpenses: "Monthly expenses", accountBalances: "Account balances", upcomingTransactions: "Upcoming transactions", monthlyStats: "Monthly statistics", expensesByCategory: "Expenses by category", monthlyBudgets: "Monthly budgets", savingsProgress: "Savings progress", setGoalStart: "Set a goal to get started.", friendlyDefault: "Let's organize your money calmly.", noActiveAccounts: "There are no active accounts.", totalAvailableBalance: "Total available balance", notMonthlyIncome: "Does not count as monthly income.", expectedIncome: "Expected income", expectedExpenses: "Expected expenses", forecastAfterUpcoming: "Forecast after upcoming transactions", upcomingHelper: "Only transactions that have not been recorded yet are shown.", noUpcomingPast: "There are no upcoming transactions for a past month.", noUpcomingMonth: "There are no upcoming transactions for this month.", monthly: "Monthly", dueSoon: "Due soon", record: "Record", more: "more", alreadyRecorded: "This transaction has already been recorded.", upcomingRecorded: "The upcoming transaction was recorded.",
+    selectDashboardMonth: "Select dashboard month", selectHistoryMonth: "Select history month", previousMonth: "Previous month", nextMonth: "Next month", monthlyBalance: "Monthly balance", monthIncome: "Monthly income", monthExpenses: "Monthly expenses", accountBalances: "Account balances", upcomingTransactions: "Upcoming transactions", monthlyStats: "Monthly statistics", expensesByCategory: "Expenses by category", monthlyBudgets: "Monthly budgets", savingsProgress: "Savings progress", setGoalStart: "Set a goal to get started.", friendlyDefault: "Let's organize your money calmly.", noActiveAccounts: "There are no active accounts.", totalAvailableBalance: "Total available balance", notMonthlyIncome: "Does not count as monthly income.", expectedIncome: "Expected income", expectedExpenses: "Expected expenses", forecastAfterUpcoming: "Forecast after upcoming transactions", upcomingHelper: "Only transactions that have not been recorded yet are shown.", noUpcomingPast: "There are no upcoming transactions for a past month.", noUpcomingMonth: "There are no upcoming transactions for this month.", monthly: "Monthly", dueSoon: "Due soon", record: "Record", more: "more", alreadyRecorded: "This transaction has already been recorded.", upcomingRecorded: "The upcoming transaction was recorded.", defaultBadge: "Default", categoriesCount: "{count} categories", archived: "Archived", rename: "Rename", archive: "Archive", dueDateDetails: "{name} — {amount} — {date}",
     newTransaction: "New transaction", editTransaction: "Edit transaction", type: "Type", income: "Income", expense: "Expense", transfer: "Transfer", amount: "Amount (€)", category: "Category", account: "Account", fromAccount: "From account", toAccount: "To account", note: "Note", optionalDescription: "Optional description", date: "Date", recurringMonthly: "Repeats every month", save: "Save", saveChanges: "Save changes", cancelEdit: "Cancel edit", transactionAdded: "Transaction added successfully.", changesSaved: "Changes saved successfully.", edit: "Edit", delete: "Delete", confirmDeleteRecurring: "This transaction repeats every month. Are you sure you want to delete it?", confirmDeleteTransaction: "Are you sure you want to delete this transaction?",
     historyMonthSummary: "Monthly history summary", advancedFilters: "Advanced history filters", searchTransactions: "Search transactions", searchTransactionsPlaceholder: "Search transactions...", transactionTypeFilter: "Transaction type filter", categoryFilter: "Transaction category filter", accountFilter: "Account filter", recurringFilter: "Monthly transaction filter", all: "All", allCategories: "All categories", allAccounts: "All accounts", recurring: "Monthly", oneTime: "One-time", clearFilters: "Clear filters", balance: "Balance", noTransactionsMonth: "There are no transactions for this month.", addIncomeExpenseStart: "Add income or expenses to get started.", noFilteredTransactions: "No transactions found with these filters.", tryDifferentSearch: "Try a different search or clear the filters.", transactions: "Transactions",
     categoryBudgets: "Budgets by category", setMonthlyLimit: "Set a monthly expense limit for each category.", saveBudgets: "Save budgets", savingsGoal: "Savings goal (€)", currentSaved: "Current saved amount (€)", updateGoal: "Update goal", noGoal: "No goal has been set yet.", savedOfGoal: "You have saved {saved} of {goal}.", budgetsSavedHint: "Set budgets from Goals to track your limits.", withinBudget: "Within budget", nearLimit: "Near limit", overBudget: "Over budget", spentOf: "{spent} of {budget}",
@@ -178,6 +178,12 @@ function setText(selector, key) {
   const element = document.querySelector(selector);
   if (element) element.textContent = t(key);
 }
+function setLabelText(selector, key) {
+  const label = document.querySelector(selector);
+  if (!label) return;
+  const textNode = Array.from(label.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
+  if (textNode) textNode.textContent = `${t(key)} `;
+}
 function setAttr(selector, attr, key) {
   const element = document.querySelector(selector);
   if (element) element.setAttribute(attr, t(key));
@@ -211,7 +217,18 @@ function applyStaticTranslations() {
     elements.languageSelect.querySelector('option[value="el"]').textContent = t("greek");
   }
   if (elements.type) { const previousType = elements.type.value || "income"; elements.type.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option><option value="transfer">${t("transfer")}</option>`; elements.type.value = previousType; }
-  setAttr("#note", "placeholder", "optionalDescription"); setAttr("#historySearch", "placeholder", "searchTransactionsPlaceholder");
+  const labelPairs = [
+    ["label:has(#type)", "type"], ["label:has(#amount)", "amount"], ["#categoryLabel", "category"], ["#accountLabel", "account"],
+    ["label:has(#fromAccount)", "fromAccount"], ["label:has(#toAccount)", "toAccount"], ["label:has(#note)", "note"], ["label:has(#date)", "date"],
+    [".toggle-row span", "recurringMonthly"], ["label:has(#goalAmount)", "savingsGoal"], ["label:has(#savedAmount)", "currentSaved"],
+    ["label:has(#accountName)", "accountName"], ["label:has(#accountType)", "accountType"], ["label:has(#accountStartingBalance)", "startingBalance"],
+    ["label:has(#categoryType)", "categoryType"], ["label:has(#categoryName)", "categoryName"],
+  ];
+  labelPairs.forEach(([selector, key]) => setLabelText(selector, key));
+  if (elements.categoryType) { const previousType = elements.categoryType.value || "income"; elements.categoryType.innerHTML = `<option value="income">${t("income")}</option><option value="expense">${t("expense")}</option>`; elements.categoryType.value = previousType; }
+  if (elements.accountType) { const previousType = elements.accountType.value || "cash"; elements.accountType.innerHTML = Object.entries(accountTypeLabelsMap()).map(([value, label]) => `<option value="${value}">${label}</option>`).join(""); elements.accountType.value = previousType; }
+  setText("#formSubmit", state.editingId ? "saveChanges" : "save"); setText("#cancelEdit", "cancelEdit"); setText("#budgetForm .section-heading h3", "categoryBudgets"); setText("#budgetForm .muted", "setMonthlyLimit"); setText("#budgetForm button", "saveBudgets"); setText("#goalForm button", "updateGoal"); setText("#checkUpdate", "checkUpdate"); setText("#accountForm button", "addAccount"); setText("#categoryForm button", "addCategory"); setText("#downloadBackup", "downloadBackup"); setText("#exportCsv", "exportCsv"); setText(".restore-button", "restoreBackup"); setText("#clearAllData", "clearAllData");
+  setAttr("#note", "placeholder", "optionalDescription"); setAttr("#historySearch", "placeholder", "searchTransactionsPlaceholder"); setAttr("#accountName", "placeholder", "accountNamePlaceholder"); setAttr("#categoryName", "placeholder", "categoryNamePlaceholder");
 }
 function changeLanguage(language) {
   activeLanguage = translations[language] ? language : "en";
@@ -858,13 +875,12 @@ function showUpcomingMessage(message, isError = false) {
   elements.upcomingMessage.classList.toggle("error", isError);
 }
 
-function upcomingRecurringTransactionsForSelectedMonth() {
+function upcomingTransactionsForSelectedMonth() {
   if (selectedMonthStatus() === "past") return [];
   const todayValue = todayInputValue();
   return selectedMonthTransactions(true)
-    .filter((transaction) => transaction.recurring && transaction.displayDate)
-    .filter((transaction) => selectedMonthStatus() === "future" || transaction.displayDate >= todayValue)
-    .filter((transaction) => !recordedTransactionExistsForRecurringOccurrence(transaction))
+    .filter((transaction) => transaction.displayDate && transaction.displayDate > todayValue)
+    .filter((transaction) => !transaction.recurring || !recordedTransactionExistsForRecurringOccurrence(transaction))
     .sort((a, b) => a.displayDate.localeCompare(b.displayDate) || a.category.localeCompare(b.category, "el"));
 }
 
@@ -887,7 +903,7 @@ function accountTransactionsThroughDate(endDate) {
 
 function typeLabelForTransaction(type) {
   if (type === "transfer") return t("transferCategory");
-  return type === "income" ? "Έσοδο" : "Έξοδο";
+  return type === "income" ? t("income") : t("expense");
 }
 
 function upcomingAccountName(transaction) {
@@ -898,7 +914,7 @@ function upcomingAccountName(transaction) {
 function renderUpcomingTransactions() {
   const status = selectedMonthStatus();
   showUpcomingMessage("");
-  const upcoming = upcomingRecurringTransactionsForSelectedMonth();
+  const upcoming = upcomingTransactionsForSelectedMonth();
   const upcomingIncome = sumByType(upcoming, "income");
   const upcomingExpenses = sumByType(upcoming, "expense");
   const activeAccountBalance = totalAvailableAccountBalance(activeAccounts(), accountTransactionsThroughDate(today));
@@ -926,35 +942,43 @@ function renderUpcomingTransactions() {
   }
 
   const todayStart = new Date(`${formatDateInputValue(today)}T00:00:00`);
-  const visible = upcoming.slice(0, 5);
-  const extraCount = upcoming.length - visible.length;
-  elements.upcomingList.innerHTML = `
-    ${visible.map((transaction) => {
-      const dueDate = new Date(`${transaction.displayDate}T00:00:00`);
-      const daysUntilDue = Math.round((dueDate - todayStart) / 86400000);
-      const dueSoon = transaction.type === "expense" && daysUntilDue >= 0 && daysUntilDue <= 3;
-      const title = transaction.note || transaction.category || typeLabelForTransaction(transaction.type);
-      const sign = transaction.type === "income" ? "+" : (transaction.type === "expense" ? "-" : "");
-      return `
-        <article class="upcoming-item ${transaction.type} ${dueSoon ? "due-soon" : ""}">
-          <div class="upcoming-item-main">
-            <div class="upcoming-title-row">
-              <strong>${escapeHtml(title)}</strong>
-              <span class="type-badge ${transaction.type}">${typeLabelForTransaction(transaction.type)}</span>
-            </div>
-            <p>${historyDateFormatter.format(dueDate)} · ${escapeHtml(upcomingAccountName(transaction))}</p>
-            <div class="upcoming-badges">
-              <span class="recurring-badge">Μηνιαίο</span>
-              ${dueSoon ? '<span class="due-soon-badge">Έρχεται σύντομα</span>' : ""}
-            </div>
-          </div>
-          <div class="upcoming-item-actions">
-            <strong class="amount ${transaction.type}">${sign}${euro.format(transaction.amount)}</strong>
-            ${transaction.type !== "transfer" ? `<button class="record-upcoming-button" type="button" data-upcoming-key="${escapeHtml(upcomingTransactionKey(transaction))}">Καταχώρηση</button>` : ""}
-          </div>
-        </article>`;
-    }).join("")}
-    ${extraCount > 0 ? `<p class="upcoming-more">+ ${extraCount} ακόμα</p>` : ""}`;
+  const renderGroup = (type) => {
+    const group = upcoming.filter((transaction) => transaction.type === type);
+    if (!group.length) return "";
+    return `
+      <section class="upcoming-group ${type}">
+        <h4>${type === "income" ? t("expectedIncome") : t("expectedExpenses")}</h4>
+        ${group.map((transaction) => {
+          const dueDate = new Date(`${transaction.displayDate}T00:00:00`);
+          const daysUntilDue = Math.round((dueDate - todayStart) / 86400000);
+          const dueSoon = transaction.type === "expense" && daysUntilDue >= 0 && daysUntilDue <= 3;
+          const title = transaction.note || transaction.category || typeLabelForTransaction(transaction.type);
+          const sign = transaction.type === "income" ? "+" : (transaction.type === "expense" ? "-" : "");
+          const details = t("dueDateDetails", { name: title, amount: euro.format(transaction.amount), date: historyDateFormatter.format(dueDate) });
+          return `
+            <article class="upcoming-item ${transaction.type} ${dueSoon ? "due-soon" : ""}">
+              <div class="upcoming-item-main">
+                <div class="upcoming-title-row">
+                  <strong>${escapeHtml(title)}</strong>
+                  <span class="type-badge ${transaction.type}">${typeLabelForTransaction(transaction.type)}</span>
+                </div>
+                <p>${escapeHtml(details)}</p>
+                <p>${escapeHtml(upcomingAccountName(transaction))}</p>
+                <div class="upcoming-badges">
+                  ${transaction.recurring ? `<span class="recurring-badge">${t("monthly")}</span>` : ""}
+                  ${dueSoon ? `<span class="due-soon-badge">${t("dueSoon")}</span>` : ""}
+                </div>
+              </div>
+              <div class="upcoming-item-actions">
+                <strong class="amount ${transaction.type}">${sign}${euro.format(transaction.amount)}</strong>
+                ${transaction.type !== "transfer" ? `<button class="record-upcoming-button" type="button" data-upcoming-key="${escapeHtml(upcomingTransactionKey(transaction))}">${t("record")}</button>` : ""}
+              </div>
+            </article>`;
+        }).join("")}
+      </section>`;
+  };
+  elements.upcomingList.innerHTML = `${renderGroup("income")}${renderGroup("expense")}`;
+
 }
 
 function progressPercent(saved, goal) {
@@ -1290,8 +1314,8 @@ function renderHistory() {
   if (!monthly.length) {
     elements.transactionList.innerHTML = `
       <div class="card empty-state history-empty">
-        <strong>Δεν υπάρχουν συναλλαγές για αυτόν τον μήνα.</strong>
-        <span>Πρόσθεσε έσοδα ή έξοδα για να ξεκινήσεις.</span>
+        <strong>${t("noTransactionsMonth")}</strong>
+        <span>${t("addIncomeExpenseStart")}</span>
       </div>`;
     return;
   }
@@ -1299,8 +1323,8 @@ function renderHistory() {
   if (!filtered.length) {
     elements.transactionList.innerHTML = `
       <div class="card empty-state history-empty">
-        <strong>Δεν βρέθηκαν συναλλαγές με αυτά τα φίλτρα.</strong>
-        <span>Δοκίμασε διαφορετική αναζήτηση ή καθάρισε τα φίλτρα.</span>
+        <strong>${t("noFilteredTransactions")}</strong>
+        <span>${t("tryDifferentSearch")}</span>
       </div>`;
     return;
   }
@@ -1315,7 +1339,7 @@ function renderHistory() {
     }, {});
 
   elements.transactionList.innerHTML = Object.entries(grouped).map(([date, transactions]) => `
-    <section class="transaction-date-group" aria-label="Συναλλαγές ${historyDateFormatter.format(new Date(`${date}T00:00:00`))}">
+    <section class="transaction-date-group" aria-label="${t("transactions")} ${historyDateFormatter.format(new Date(`${date}T00:00:00`))}">
       <h3 class="date-heading">${historyDateFormatter.format(new Date(`${date}T00:00:00`))}</h3>
       <div class="date-transactions">
         ${transactions.map((transaction) => transactionCard(transaction)).join("")}
@@ -1330,8 +1354,8 @@ function transactionCard(transaction) {
   const sign = isTransfer ? "" : (isIncome ? "+" : "-");
   const amount = `${sign}${euro.format(transaction.amount)}`;
   const note = transaction.note ? `<p class="transaction-note">${escapeHtml(transaction.note)}</p>` : "";
-  const recurringMeta = transaction.recurring ? " · Μηνιαίο" : "";
-  const recurringBadge = transaction.recurring ? '<span class="recurring-badge">Μηνιαίο</span>' : "";
+  const recurringMeta = transaction.recurring ? ` · ${t("monthly")}` : "";
+  const recurringBadge = transaction.recurring ? `<span class="recurring-badge">${t("monthly")}</span>` : "";
 
   return `
     <article class="transaction-item ${transaction.type}">
@@ -1346,8 +1370,8 @@ function transactionCard(transaction) {
       <div class="transaction-side">
         <strong class="amount ${transaction.type}">${amount}</strong>
         <div class="transaction-actions">
-          <button class="edit-button" data-id="${escapeHtml(transaction.id)}" type="button">Επεξεργασία</button>
-          <button class="delete-button" data-id="${escapeHtml(transaction.id)}" type="button">Διαγραφή</button>
+          <button class="edit-button" data-id="${escapeHtml(transaction.id)}" type="button">${t("edit")}</button>
+          <button class="delete-button" data-id="${escapeHtml(transaction.id)}" type="button">${t("delete")}</button>
         </div>
       </div>
     </article>`;
@@ -1425,24 +1449,24 @@ function renderCategorySettings() {
     return rows.map(({ category, fixed }) => `
       <li class="category-list-item">
         <span>${escapeHtml(category)}</span>
-        ${fixed ? '<span class="fixed-category-badge">Προεπιλογή</span>' : `<button class="delete-category-button" data-category-type="${type}" data-category-name="${escapeHtml(category)}" type="button">Διαγραφή</button>`}
+        ${fixed ? `<span class="fixed-category-badge">${t("defaultBadge")}</span>` : `<button class="delete-category-button" data-category-type="${type}" data-category-name="${escapeHtml(category)}" type="button">${t("delete")}</button>`}
       </li>`).join("");
   };
   elements.incomeCategoryList.innerHTML = renderList("income");
   elements.expenseCategoryList.innerHTML = renderList("expense");
-  elements.incomeCategoryPreview.textContent = `${categoryCountForType("income")} κατηγορίες`;
-  elements.expenseCategoryPreview.textContent = `${categoryCountForType("expense")} κατηγορίες`;
+  elements.incomeCategoryPreview.textContent = t("categoriesCount", { count: categoryCountForType("income") });
+  elements.expenseCategoryPreview.textContent = t("categoriesCount", { count: categoryCountForType("expense") });
 }
 
 function renderAccounts() {
   const duplicateWarning = duplicateAccountNameGroups().length
-    ? `<p class="account-duplicate-warning" role="alert">${duplicateAccountWarning}</p>`
+    ? `<p class="account-duplicate-warning" role="alert">${t("duplicateAccountWarning")}</p>`
     : "";
   const accountRows = state.accounts.map((account) => {
     const balance = accountBalance(account);
     const used = state.transactions.some((transaction) => transactionAccountId(transaction) === account.id || transaction.fromAccountId === account.id || transaction.toAccountId === account.id);
-    const archivedBadge = account.archived ? '<span class="archived-account-badge">Αρχειοθετημένος</span>' : "";
-    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(displayAccountName(account))}</strong><span>${escapeHtml(accountTypeLabel(account))}${archivedBadge}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="edit-account-button" data-account-id="${escapeHtml(account.id)}" type="button">Μετονομασία</button><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? "Αρχειοθέτηση" : t("delete")}</button></div>`;
+    const archivedBadge = account.archived ? `<span class="archived-account-badge">${t("archived")}</span>` : "";
+    return `<div class="account-list-item ${account.archived ? "archived" : ""}"><div><strong>${escapeHtml(displayAccountName(account))}</strong><span>${escapeHtml(accountTypeLabel(account))}${archivedBadge}</span></div><strong class="account-list-balance ${balance < 0 ? "negative" : "positive"}">${euro.format(balance)}</strong><button class="edit-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${t("rename")}</button><button class="delete-account-button" data-account-id="${escapeHtml(account.id)}" type="button">${used ? t("archive") : t("delete")}</button></div>`;
   }).join("");
   elements.accountsList.innerHTML = `${duplicateWarning}${accountRows}`;
 }
