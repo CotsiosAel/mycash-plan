@@ -562,17 +562,19 @@ function restoreBackupFile(file) {
   reader.readAsText(file);
 }
 
-function selectedMonthTransactions() {
+function selectedMonthTransactions(includeFuture = false) {
   const selectedYear = state.selectedMonth.getFullYear();
   const selectedMonth = state.selectedMonth.getMonth();
   const selectedMonthStart = new Date(selectedYear, selectedMonth, 1);
 
   return state.transactions.reduce((monthly, transaction) => {
-    const originalDate = new Date(`${transaction.date}T00:00:00`);
+    const originalDate = parseLocalDate(transaction.date);
+    if (!originalDate) return monthly;
+
     const isInSelectedMonth = originalDate.getMonth() === selectedMonth && originalDate.getFullYear() === selectedYear;
 
     if (isInSelectedMonth) {
-      monthly.push({ ...transaction, displayDate: transaction.date });
+      if (includeFuture || isTransactionEffective(transaction.date)) monthly.push({ ...transaction, displayDate: transaction.date });
       return monthly;
     }
 
@@ -581,13 +583,29 @@ function selectedMonthTransactions() {
     const startMonth = new Date(originalDate.getFullYear(), originalDate.getMonth(), 1);
     if (startMonth > selectedMonthStart) return monthly;
 
+    const displayDate = recurringDisplayDate(transaction.date, selectedYear, selectedMonth);
+    if (!includeFuture && !isTransactionEffective(displayDate)) return monthly;
+
     monthly.push({
       ...transaction,
-      displayDate: recurringDisplayDate(transaction.date, selectedYear, selectedMonth),
+      displayDate,
       isVirtualRecurring: true,
     });
     return monthly;
   }, []);
+}
+
+function parseLocalDate(dateValue) {
+  const date = new Date(`${dateValue}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function todayInputValue() {
+  return formatDateInputValue(new Date());
+}
+
+function isTransactionEffective(transactionDate) {
+  return Boolean(transactionDate) && transactionDate <= todayInputValue();
 }
 
 function recurringDisplayDate(startDate, year, month) {
@@ -630,17 +648,10 @@ function accountBalance(account, transactions = accountTransactionsThroughSelect
 }
 
 function accountTransactionsThroughSelectedMonth() {
-  const end = new Date(state.selectedMonth.getFullYear(), state.selectedMonth.getMonth() + 1, 0);
-  return state.transactions.flatMap((transaction) => {
-    const originalDate = new Date(`${transaction.date}T00:00:00`);
-    if (originalDate > end) return [];
-    if (!transaction.recurring) return [{ ...transaction }];
-    const occurrences = [];
-    for (let cursor = new Date(originalDate.getFullYear(), originalDate.getMonth(), 1); cursor <= end; cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)) {
-      occurrences.push({ ...transaction, displayDate: recurringDisplayDate(transaction.date, cursor.getFullYear(), cursor.getMonth()), isVirtualRecurring: cursor.getMonth() !== originalDate.getMonth() || cursor.getFullYear() !== originalDate.getFullYear() });
-    }
-    return occurrences;
-  });
+  const selectedMonthEnd = new Date(state.selectedMonth.getFullYear(), state.selectedMonth.getMonth() + 1, 0);
+  const todayEnd = parseLocalDate(todayInputValue());
+  const end = selectedMonthEnd > todayEnd ? todayEnd : selectedMonthEnd;
+  return accountTransactionsThroughDate(end);
 }
 
 function totalAvailableAccountBalance(accounts, balanceTransactions) {
@@ -752,8 +763,8 @@ function showUpcomingMessage(message, isError = false) {
 
 function upcomingRecurringTransactionsForSelectedMonth() {
   if (selectedMonthStatus() === "past") return [];
-  const todayValue = formatDateInputValue(today);
-  return selectedMonthTransactions()
+  const todayValue = todayInputValue();
+  return selectedMonthTransactions(true)
     .filter((transaction) => transaction.recurring && transaction.displayDate)
     .filter((transaction) => selectedMonthStatus() === "future" || transaction.displayDate >= todayValue)
     .filter((transaction) => !recordedTransactionExistsForRecurringOccurrence(transaction))
@@ -906,21 +917,24 @@ function alertEuro(amount) {
 }
 
 function transactionsForMonth(dateValue) {
-  const date = new Date(`${dateValue}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return [];
+  const date = parseLocalDate(dateValue);
+  if (!date) return [];
   const year = date.getFullYear();
   const month = date.getMonth();
   const monthStart = new Date(year, month, 1);
 
   return state.transactions.reduce((monthly, transaction) => {
-    const transactionDate = new Date(`${transaction.date}T00:00:00`);
+    const transactionDate = parseLocalDate(transaction.date);
+    if (!transactionDate) return monthly;
     const isInMonth = transactionDate.getFullYear() === year && transactionDate.getMonth() === month;
     if (isInMonth) {
-      monthly.push(transaction);
+      if (isTransactionEffective(transaction.date)) monthly.push(transaction);
       return monthly;
     }
     if (!transaction.recurring || new Date(transactionDate.getFullYear(), transactionDate.getMonth(), 1) > monthStart) return monthly;
-    monthly.push({ ...transaction, displayDate: recurringDisplayDate(transaction.date, year, month), isVirtualRecurring: true });
+    const displayDate = recurringDisplayDate(transaction.date, year, month);
+    if (!isTransactionEffective(displayDate)) return monthly;
+    monthly.push({ ...transaction, displayDate, isVirtualRecurring: true });
     return monthly;
   }, []);
 }
