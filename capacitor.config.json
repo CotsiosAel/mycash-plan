@@ -1,0 +1,6 @@
+{
+  "appId": "com.mycashplan.app",
+  "appName": "MyCash Plan",
+  "webDir": "dist/android-web",
+  "bundledWebRuntime": false
+}
