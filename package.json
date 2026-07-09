@@ -4,6 +4,7 @@
   "private": true,
   "description": "MyCash Plan Android packaging with Capacitor for the existing static PWA.",
   "scripts": {
+    "test": "node tests/i18n-guard-smoke.js && node tests/i18n-professional-smoke.js && node tests/upcoming-language-smoke.js && node tests/budget-alert-smoke.js && node tests/latest-merge-smoke.js",
     "android:prepare": "node scripts/prepare-android-web.js",
     "android:add": "npm run android:prepare && npx cap add android",
     "android:sync": "npm run android:prepare && npx cap sync android",
