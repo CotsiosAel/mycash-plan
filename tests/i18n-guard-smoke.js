@@ -25,5 +25,7 @@ assert(/defaultCategoryDefinitions/.test(js) && /id: "transport"/.test(js) && /i
 assert(/legacy: \["Transport", "Μεταφορές"\]/.test(js), 'Greek legacy default categories must be recognized for migration/display');
 assert(/return definition \? definition\.id : name;/.test(js), 'Default categories must canonicalize to stable ids without rewriting custom names');
 assert(/getLocalizedCategoryName\(category, type = ""\)/.test(js), 'Default and legacy category display must be localized through getLocalizedCategoryName');
+assert(/getLocalizedAccountName\(account\)/.test(js), 'Default and legacy account display must be localized through getLocalizedAccountName');
+assert(/legacyDefaultAccountNames/.test(js), 'Legacy default account names must be recognized for localization');
 
 console.log('✅ i18n guard smoke check passed');

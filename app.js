@@ -13,7 +13,7 @@ const storageKeys = {
 };
 
 const defaultAccountName = "Main account";
-const legacyDefaultAccountName = "Μετρητά";
+const legacyDefaultAccountNames = ["Μετρητά", "Κύριος λογαριασμός", "Main account"];
 const defaultAccountId = "acc_default_cash";
 
 const translations = {
@@ -78,7 +78,10 @@ function localizedDefaultExpenseCategories() { return defaultExpenseCategories; 
 function localizedDefaultIncomeCategories() { return defaultIncomeCategories; }
 
 
-const today = new Date();
+
+function appToday() {
+  return new Date();
+}
 
 const state = {
   accounts: normalizeAccounts(JSON.parse(localStorage.getItem(storageKeys.accounts) || "[]")),
@@ -91,7 +94,7 @@ const state = {
   recurringFilter: "all",
   accountFilter: "all",
   searchQuery: "",
-  selectedMonth: new Date(today.getFullYear(), today.getMonth(), 1),
+  selectedMonth: new Date(appToday().getFullYear(), appToday().getMonth(), 1),
   editingId: null,
   security: normalizeSecurity(JSON.parse(localStorage.getItem(storageKeys.security) || "{}")),
   hiddenAt: null,
@@ -298,11 +301,16 @@ function duplicateAccountNameGroups() {
 }
 
 function isLegacyDefaultAccount(account) {
-  return account?.id === defaultAccountId && normalizedAccountName(account.name) === normalizedAccountName(legacyDefaultAccountName);
+  return account?.id === defaultAccountId
+    && legacyDefaultAccountNames.some((name) => normalizedAccountName(account.name) === normalizedAccountName(name));
+}
+
+function getLocalizedAccountName(account) {
+  return isLegacyDefaultAccount(account) ? t("defaultAccountName") : account?.name || t("defaultAccountName");
 }
 
 function displayAccountName(account) {
-  return isLegacyDefaultAccount(account) ? t("defaultAccountName") : account?.name || t("defaultAccountName");
+  return getLocalizedAccountName(account);
 }
 
 function accountTypeLabel(account) {
@@ -726,12 +734,12 @@ function localDateOnly(dateValue = new Date()) {
 }
 
 function todayInputValue() {
-  return localDateOnly(new Date());
+  return localDateOnly(appToday());
 }
 
 function isEffectiveTransactionDate(dateValue) {
   const transactionDate = localDateOnly(dateValue);
-  return Boolean(transactionDate) && transactionDate <= localDateOnly(new Date());
+  return Boolean(transactionDate) && transactionDate <= todayInputValue();
 }
 
 function isTransactionEffective(transactionDate) {
@@ -811,7 +819,7 @@ function renderAccountSummary() {
 }
 
 function selectedMonthStatus() {
-  const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const currentMonthStart = new Date(appToday().getFullYear(), appToday().getMonth(), 1);
   const selectedMonthStart = new Date(state.selectedMonth.getFullYear(), state.selectedMonth.getMonth(), 1);
   if (selectedMonthStart < currentMonthStart) return "past";
   if (selectedMonthStart > currentMonthStart) return "future";
@@ -933,7 +941,7 @@ function renderUpcomingTransactions() {
   const upcoming = upcomingTransactionsForSelectedMonth();
   const upcomingIncome = sumByType(upcoming, "income");
   const upcomingExpenses = sumByType(upcoming, "expense");
-  const activeAccountBalance = totalAvailableAccountBalance(activeAccounts(), accountTransactionsThroughDate(today));
+  const activeAccountBalance = totalAvailableAccountBalance(activeAccounts(), accountTransactionsThroughDate(appToday()));
   const forecast = activeAccountBalance + upcomingIncome - upcomingExpenses;
 
   elements.upcomingSummary.innerHTML = `${[
@@ -957,7 +965,7 @@ function renderUpcomingTransactions() {
     return;
   }
 
-  const todayStart = new Date(`${formatDateInputValue(today)}T00:00:00`);
+  const todayStart = new Date(`${todayInputValue()}T00:00:00`);
   const renderGroup = (type) => {
     const group = upcoming.filter((transaction) => transaction.type === type);
     if (!group.length) return "";
@@ -1205,7 +1213,7 @@ function renderMonthlyStatistics(monthly) {
     [t("totalExpenses"), euro.format(stats.expenses)],
     [t("balance"), euro.format(stats.balance)],
     [t("averageDailyExpense"), euro.format(stats.averageDailyExpense)],
-    [t("biggestCategory"), stats.biggestExpenseCategory],
+    [t("biggestCategory"), stats.biggestExpenseCategory === "—" ? "—" : getLocalizedCategoryName(stats.biggestExpenseCategory, "expense")],
     [t("transactions"), String(stats.transactionCount)],
     [t("exceededBudgets"), String(stats.exceededBudgetsCount)],
   ];

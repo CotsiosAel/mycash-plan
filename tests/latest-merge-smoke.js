@@ -22,17 +22,11 @@ assert(/function accountBalance\([\s\S]*?isEffectiveTransactionDate\(transaction
 const sandbox = { Date };
 vm.createContext(sandbox);
 vm.runInContext(`
-  function formatDateInputValue(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return year + "-" + month + "-" + day;
-  }
-  function parseLocalDate(dateValue) {
-    const date = new Date(String(dateValue) + "T00:00:00");
-    return Number.isNaN(date.getTime()) ? null : date;
-  }
+  ${js.match(/function appToday\(\) \{[\s\S]*?\n\}/)[0]}
+  ${js.match(/function formatDateInputValue\(date\) \{[\s\S]*?\n\}/)[0]}
+  ${js.match(/function parseLocalDate\(dateValue\) \{[\s\S]*?\n\}/)[0]}
   ${js.match(/function localDateOnly\(dateValue = new Date\(\)\) \{[\s\S]*?\n\}/)[0]}
+  ${js.match(/function todayInputValue\(\) \{[\s\S]*?\n\}/)[0]}
   ${js.match(/function isEffectiveTransactionDate\(dateValue\) \{[\s\S]*?\n\}/)[0]}
 `, sandbox);
 
